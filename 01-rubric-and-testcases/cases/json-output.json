@@ -1,0 +1,471 @@
+{
+  "task": "json-output",
+  "version": "1.0",
+  "created": "2026-08-11",
+  "source_policy": "All source texts original, authored for this benchmark. See Test-Case-Design.md §1.",
+  "gold_form": "Exact expected object. `gold.expected` is the literal object the model should return and is compared key-by-key after parsing. `gold.notes` carries scoring guidance for the four rubric dimensions (parseability, schema conformance, enum/constraint conformance, content correctness).",
+  "measurement_intent": "This task measures FORMAT RELIABILITY, not content difficulty. Source texts are deliberately short and unambiguous so that content correctness is close to free — a model that scores badly here is failing on structure, not comprehension. Schema complexity is the variable that moves across cases: flat, nested, arrays of scalars, arrays of objects, optional/nullable fields, enums, and mixed scalar types.",
+  "conventions": {
+    "schema_in_prompt": "Every instruction states the full schema explicitly, including key names, types, nullability and any permitted value set. No case relies on a schema declared elsewhere.",
+    "raw_capture": "The harness stores the raw response byte-for-byte and does not strip markdown fences, leading prose, or trailing commentary before parsing. Fence-wrapping and wrapper prose are parseability failures and are scored as such (rubric §3.5). See Harness-Spec §1 — the harness is not permitted to repair responses.",
+    "parseability_gate": "Per rubric §3.5, an unparseable response scores 0 on parseability and its schema, enum and content dimensions are left unscored rather than scored 0, so the failure is attributed to format and not double-counted as a content failure.",
+    "key_ordering": "Key order is never scored. JSON objects are unordered; requiring an order would measure serialisation incidentals.",
+    "extra_keys": "Extra keys are a schema conformance failure even when their values are correct, because they break a consuming integration exactly as a missing key does.",
+    "null_vs_omit": "Where a key is declared nullable, the key must be present with a JSON null value. Omitting the key entirely is a schema conformance failure, not a null-handling nicety."
+  },
+  "cases": [
+    {
+      "case_id": "jsn-t01",
+      "difficulty": "typical",
+      "probes": "baseline: flat object, four string keys, unambiguous source",
+      "source": "Café Lindgren, 4 Harbour Lane, opens 07:00 and closes 16:00 daily.",
+      "instruction": "Return a JSON object describing the business in the text below. The schema is exactly: {\"name\": string, \"address\": string, \"opening_time\": string, \"closing_time\": string}. Times must be 24-hour HH:MM strings. Return only the JSON object with exactly these four keys and no others.\n\nTEXT:\nCafé Lindgren, 4 Harbour Lane, opens 07:00 and closes 16:00 daily.",
+      "gold": {
+        "expected": {
+          "name": "Café Lindgren",
+          "address": "4 Harbour Lane",
+          "opening_time": "07:00",
+          "closing_time": "16:00"
+        },
+        "notes": "The floor of the task. Content is trivially available, so any score below 3 is a format failure. Non-ASCII in the name is deliberate: the response must be valid JSON whether the é is emitted literally in UTF-8 or as the \\u00e9 escape — both parse to the same string and both score 3."
+      }
+    },
+    {
+      "case_id": "jsn-t02",
+      "difficulty": "typical",
+      "probes": "flat object with mixed scalar types — string, number, boolean; tests type fidelity rather than key recall",
+      "source": "Room 3B seats 12 people, has a projector, and is not accessible by lift.",
+      "instruction": "Return a JSON object describing the room in the text below. The schema is exactly: {\"room_id\": string, \"capacity\": number, \"has_projector\": boolean, \"lift_accessible\": boolean}. Numbers must be JSON numbers, not strings. Booleans must be JSON true or false, not the strings \"true\" or \"false\" and not \"Yes\" or \"No\". Return only the JSON object with exactly these four keys and no others.\n\nTEXT:\nRoom 3B seats 12 people, has a projector, and is not accessible by lift.",
+      "gold": {
+        "expected": {
+          "room_id": "3B",
+          "capacity": 12,
+          "has_projector": true,
+          "lift_accessible": false
+        },
+        "notes": "Schema conformance is the dominant dimension. \"12\" as a string, or \"true\" as a string, is a type violation and scores at most 1 on schema conformance even though the value reads correctly. room_id may be \"3B\" or \"Room 3B\"; content correctness is not scored on that distinction."
+      }
+    },
+    {
+      "case_id": "jsn-t03",
+      "difficulty": "typical",
+      "probes": "one level of nesting — an object inside an object",
+      "source": "Order 5512 was placed by Hana Vukovic, who can be reached at hana.v@example.net or on 0400 118 552.",
+      "instruction": "Return a JSON object for the order in the text below. The schema is exactly: {\"order_id\": string, \"customer\": {\"name\": string, \"email\": string, \"phone\": string}}. The customer object is nested inside the top-level object; do not flatten it into keys such as customer_name. Return only the JSON object.\n\nTEXT:\nOrder 5512 was placed by Hana Vukovic, who can be reached at hana.v@example.net or on 0400 118 552.",
+      "gold": {
+        "expected": {
+          "order_id": "5512",
+          "customer": {
+            "name": "Hana Vukovic",
+            "email": "hana.v@example.net",
+            "phone": "0400 118 552"
+          }
+        },
+        "notes": "Flattening to customer_name / customer_email / customer_phone is the specific schema conformance failure this case probes and scores 0 on that dimension, since a consumer reading response.customer.name gets nothing. Content correctness is unaffected by flattening and is still scored on the four values."
+      }
+    },
+    {
+      "case_id": "jsn-t04",
+      "difficulty": "typical",
+      "probes": "array of scalars — tests that a list is emitted as a JSON array rather than a delimited string",
+      "source": "The workshop covers three tools: Figma, Miro and Notion. It runs for two hours.",
+      "instruction": "Return a JSON object for the workshop in the text below. The schema is exactly: {\"title\": string, \"duration_hours\": number, \"tools\": array of strings}. tools must be a JSON array of separate strings, not a single comma-separated string. Return only the JSON object.\n\nTEXT:\nThe workshop covers three tools: Figma, Miro and Notion. It runs for two hours.",
+      "gold": {
+        "expected": {
+          "title": "Workshop",
+          "duration_hours": 2,
+          "tools": [
+            "Figma",
+            "Miro",
+            "Notion"
+          ]
+        },
+        "notes": "Array order is not scored. \"Figma, Miro and Notion\" as one string is the schema conformance failure this case probes. The source names no title, so any reasonable title string scores 3 on content correctness — title is present in the schema to keep the object from being a bare array, not to test extraction. duration_hours must be the number 2, not the string \"two hours\"."
+      }
+    },
+    {
+      "case_id": "jsn-t05",
+      "difficulty": "typical",
+      "probes": "array of objects — the most common real integration shape",
+      "source": "Stock check: 14 units of the M4 bolt, 3 of the M6 bolt, 40 of the washer pack.",
+      "instruction": "Return a JSON object for the stock check in the text below. The schema is exactly: {\"items\": array of objects, where each object is {\"part\": string, \"quantity\": number}}. Every element of items must have both keys. Return only the JSON object.\n\nTEXT:\nStock check: 14 units of the M4 bolt, 3 of the M6 bolt, 40 of the washer pack.",
+      "gold": {
+        "expected": {
+          "items": [
+            {
+              "part": "M4 bolt",
+              "quantity": 14
+            },
+            {
+              "part": "M6 bolt",
+              "quantity": 3
+            },
+            {
+              "part": "washer pack",
+              "quantity": 40
+            }
+          ]
+        },
+        "notes": "Two failure shapes are scored separately: emitting items as an object keyed by part name instead of an array is a schema conformance failure; dropping an item is a content correctness failure. Part-name casing is not scored."
+      }
+    },
+    {
+      "case_id": "jsn-t06",
+      "difficulty": "typical",
+      "probes": "single constrained enum with a value that must be mapped, not copied, from the source wording",
+      "source": "Ticket 8841: the customer cannot log in at all. Nothing works. Reported this morning.",
+      "instruction": "Return a JSON object for the ticket in the text below. The schema is exactly: {\"ticket_id\": string, \"summary\": string, \"severity\": string}. severity must be exactly one of these three values, lowercase: low, medium, high. Do not use any other value or capitalisation. Return only the JSON object.\n\nTEXT:\nTicket 8841: the customer cannot log in at all. Nothing works. Reported this morning.",
+      "gold": {
+        "expected": {
+          "ticket_id": "8841",
+          "summary": "Customer cannot log in at all",
+          "severity": "high"
+        },
+        "notes": "Enum conformance is the dominant dimension. \"High\", \"HIGH\", \"critical\", \"urgent\" and \"high (blocking)\" all score 0 on enum conformance regardless of how defensible the underlying judgment is — the permitted set was stated and a consuming system will reject anything outside it. summary is free text; any faithful one-line paraphrase scores 3."
+      }
+    },
+    {
+      "case_id": "jsn-t07",
+      "difficulty": "typical",
+      "probes": "nullable optional field where the value IS present — the counterweight case to jsn-a02, so that always-null cannot score well",
+      "source": "Parcel PK-3390 was delivered on 12 May 2026 and signed for by R. Okonjo.",
+      "instruction": "Return a JSON object for the parcel in the text below. The schema is exactly: {\"parcel_id\": string, \"delivered_date\": string, \"signed_by\": string or null}. delivered_date must be an ISO 8601 YYYY-MM-DD string. signed_by is nullable: give the signatory's name if the text states one, otherwise JSON null. The signed_by key must be present either way. Return only the JSON object.\n\nTEXT:\nParcel PK-3390 was delivered on 12 May 2026 and signed for by R. Okonjo.",
+      "gold": {
+        "expected": {
+          "parcel_id": "PK-3390",
+          "delivered_date": "2026-05-12",
+          "signed_by": "R. Okonjo"
+        },
+        "notes": "Deliberately paired with jsn-a02, which uses the same nullable pattern with a genuinely absent value. A model that has learned to emit null whenever a key is described as nullable fails here on content correctness, which is the point of pairing them — the nullable dimension must measure judgment, not caution (compare rubric v1.1 §3.4 on paired abstention cases)."
+      }
+    },
+    {
+      "case_id": "jsn-t08",
+      "difficulty": "typical",
+      "probes": "nested object plus an array of scalars in the same schema",
+      "source": "The Northgate branch is at 12 Foundry Street, postcode DN4 7QA. It offers currency exchange, safe deposit and business banking.",
+      "instruction": "Return a JSON object for the branch in the text below. The schema is exactly: {\"branch\": string, \"address\": {\"street\": string, \"postcode\": string}, \"services\": array of strings}. Return only the JSON object.\n\nTEXT:\nThe Northgate branch is at 12 Foundry Street, postcode DN4 7QA. It offers currency exchange, safe deposit and business banking.",
+      "gold": {
+        "expected": {
+          "branch": "Northgate",
+          "address": {
+            "street": "12 Foundry Street",
+            "postcode": "DN4 7QA"
+          },
+          "services": [
+            "currency exchange",
+            "safe deposit",
+            "business banking"
+          ]
+        },
+        "notes": "Two structural requirements in one object. Service string casing and order are not scored. Merging street and postcode into a single address string is a schema conformance failure."
+      }
+    },
+    {
+      "case_id": "jsn-t09",
+      "difficulty": "typical",
+      "probes": "numeric fidelity — integer, decimal and a value that must not be reformatted with separators or symbols",
+      "source": "Invoice total 1,204.50 EUR across 3 line items. Tax rate applied: 7.5 percent.",
+      "instruction": "Return a JSON object for the invoice in the text below. The schema is exactly: {\"total\": number, \"currency\": string, \"line_item_count\": number, \"tax_rate_percent\": number}. All three numeric fields must be JSON numbers with no thousands separators, no currency symbols and no quotation marks. currency must be a three-letter ISO 4217 code. Return only the JSON object.\n\nTEXT:\nInvoice total 1,204.50 EUR across 3 line items. Tax rate applied: 7.5 percent.",
+      "gold": {
+        "expected": {
+          "total": 1204.5,
+          "currency": "EUR",
+          "line_item_count": 3,
+          "tax_rate_percent": 7.5
+        },
+        "notes": "1204.50 and 1204.5 are the same JSON number and both score 3. \"1,204.50\" as a string, or the unquoted token 1,204.50, are distinct failures: the first is a type violation on schema conformance, the second is invalid JSON and scores 0 on parseability, after which the remaining dimensions are not scored. tax_rate_percent must be 7.5, not 0.075 — the key names the unit."
+      }
+    },
+    {
+      "case_id": "jsn-t10",
+      "difficulty": "typical",
+      "probes": "boolean-dense object where several values are stated as negatives in prose",
+      "source": "The new endpoint is rate limited, is not yet documented publicly, requires an API key, and does not support pagination.",
+      "instruction": "Return a JSON object describing the endpoint in the text below. The schema is exactly: {\"rate_limited\": boolean, \"publicly_documented\": boolean, \"requires_api_key\": boolean, \"supports_pagination\": boolean}. All four values must be JSON true or false. Return only the JSON object with exactly these four keys.\n\nTEXT:\nThe new endpoint is rate limited, is not yet documented publicly, requires an API key, and does not support pagination.",
+      "gold": {
+        "expected": {
+          "rate_limited": true,
+          "publicly_documented": false,
+          "requires_api_key": true,
+          "supports_pagination": false
+        },
+        "notes": "Two of the four keys are stated as negations in the source, so the value must be inverted relative to the surface wording. Getting a negation wrong is content correctness, not schema conformance — the object is still well formed. Emitting null for a negated field is a schema conformance failure: no key here is nullable."
+      }
+    },
+    {
+      "case_id": "jsn-t11",
+      "difficulty": "typical",
+      "probes": "a required array that must be emitted empty — tests that a key is not dropped when it has nothing in it",
+      "source": "Build 2291 completed in 4 minutes. All 86 tests passed. No warnings were emitted.",
+      "instruction": "Return a JSON object for the build in the text below. The schema is exactly: {\"build_id\": string, \"duration_minutes\": number, \"tests_passed\": number, \"tests_failed\": number, \"warnings\": array of strings}. warnings must always be present as an array; if there are no warnings it must be an empty array. Return only the JSON object.\n\nTEXT:\nBuild 2291 completed in 4 minutes. All 86 tests passed. No warnings were emitted.",
+      "gold": {
+        "expected": {
+          "build_id": "2291",
+          "duration_minutes": 4,
+          "tests_passed": 86,
+          "tests_failed": 0,
+          "warnings": []
+        },
+        "notes": "warnings must be [], not null, not the string \"none\", and not omitted — each of those is a schema conformance failure and each breaks a consumer that iterates the array. tests_failed must be 0: \"all 86 tests passed\" determines it, so returning null is a content correctness failure rather than a defensible abstention."
+      }
+    },
+    {
+      "case_id": "jsn-t12",
+      "difficulty": "typical",
+      "probes": "top-level JSON array rather than an object — tests whether the model wraps the result in an unrequested envelope key",
+      "source": "Attendees: Priya Menon (Finance), Ove Halvorsen (Legal), Sam Achebe (Finance).",
+      "instruction": "Return a JSON array — not an object — for the attendees in the text below. The top level of your response must be a JSON array. Each element is an object with the schema exactly: {\"name\": string, \"department\": string}. Do not wrap the array in an object under a key such as attendees or result. Return only the JSON array.\n\nTEXT:\nAttendees: Priya Menon (Finance), Ove Halvorsen (Legal), Sam Achebe (Finance).",
+      "gold": {
+        "expected": [
+          {
+            "name": "Priya Menon",
+            "department": "Finance"
+          },
+          {
+            "name": "Ove Halvorsen",
+            "department": "Legal"
+          },
+          {
+            "name": "Sam Achebe",
+            "department": "Finance"
+          }
+        ],
+        "notes": "This is the only case whose top-level gold is an array; the scoring comparison must not assume an object. Wrapping the array as {\"attendees\": [...]} is the schema conformance failure this case probes and scores 0 on that dimension even though every element is correct. Element order follows the source but is not scored."
+      }
+    },
+    {
+      "case_id": "jsn-h01",
+      "difficulty": "hard",
+      "probes": "wide schema — 14 keys across two nested objects and one array of objects, with every value stated plainly; difficulty is structural breadth, not comprehension",
+      "source": "PROPERTY LISTING — REF LS-2240\n\n2-bedroom flat, 68 square metres, second floor, lift in building.\nAddress: 9 Ashcombe Walk, Leeds, LS6 2PN.\nAsking price 245,000 GBP. Council tax band C. Leasehold, 112 years remaining.\nEnergy rating C.\n\nRooms:\n  Living room, 21.5 sqm, faces south\n  Bedroom 1, 14.0 sqm, faces south\n  Bedroom 2, 9.5 sqm, faces north\n  Kitchen, 11.0 sqm, faces north\n\nAgent: Wren & Colbeck, contact Dilnaz Rahimi, 0113 496 0022.",
+      "instruction": "Return a JSON object for the property listing below. The schema is exactly: {\"reference\": string, \"price\": number, \"currency\": string, \"bedrooms\": number, \"floor_area_sqm\": number, \"floor\": number, \"has_lift\": boolean, \"tenure\": string, \"lease_years_remaining\": number, \"council_tax_band\": string, \"energy_rating\": string, \"address\": {\"line1\": string, \"city\": string, \"postcode\": string}, \"rooms\": array of objects, where each object is {\"name\": string, \"area_sqm\": number, \"aspect\": string}, \"agent\": {\"firm\": string, \"contact\": string, \"phone\": string}}. All numbers must be JSON numbers with no separators or symbols. currency must be a three-letter ISO 4217 code. Return only the JSON object with exactly these keys.\n\nTEXT:\nPROPERTY LISTING — REF LS-2240\n\n2-bedroom flat, 68 square metres, second floor, lift in building.\nAddress: 9 Ashcombe Walk, Leeds, LS6 2PN.\nAsking price 245,000 GBP. Council tax band C. Leasehold, 112 years remaining.\nEnergy rating C.\n\nRooms:\n  Living room, 21.5 sqm, faces south\n  Bedroom 1, 14.0 sqm, faces south\n  Bedroom 2, 9.5 sqm, faces north\n  Kitchen, 11.0 sqm, faces north\n\nAgent: Wren & Colbeck, contact Dilnaz Rahimi, 0113 496 0022.",
+      "gold": {
+        "expected": {
+          "reference": "LS-2240",
+          "price": 245000,
+          "currency": "GBP",
+          "bedrooms": 2,
+          "floor_area_sqm": 68,
+          "floor": 2,
+          "has_lift": true,
+          "tenure": "Leasehold",
+          "lease_years_remaining": 112,
+          "council_tax_band": "C",
+          "energy_rating": "C",
+          "address": {
+            "line1": "9 Ashcombe Walk",
+            "city": "Leeds",
+            "postcode": "LS6 2PN"
+          },
+          "rooms": [
+            {
+              "name": "Living room",
+              "area_sqm": 21.5,
+              "aspect": "south"
+            },
+            {
+              "name": "Bedroom 1",
+              "area_sqm": 14.0,
+              "aspect": "south"
+            },
+            {
+              "name": "Bedroom 2",
+              "area_sqm": 9.5,
+              "aspect": "north"
+            },
+            {
+              "name": "Kitchen",
+              "area_sqm": 11.0,
+              "aspect": "north"
+            }
+          ],
+          "agent": {
+            "firm": "Wren & Colbeck",
+            "contact": "Dilnaz Rahimi",
+            "phone": "0113 496 0022"
+          }
+        },
+        "notes": "Hard on schema conformance through breadth: 11 top-level scalars plus two nested objects and a four-element array of objects. The two C values are unrelated (council tax band and energy rating) and both must be present. \"second floor\" must become the number 2. Dropping any of the four rooms is content correctness; dropping the aspect sub-key across all rooms is schema conformance. Room areas are decimals and must remain numbers — 14.0 and 14 are equivalent."
+      }
+    },
+    {
+      "case_id": "jsn-h02",
+      "difficulty": "hard",
+      "probes": "multiple independent enums in one schema, each with a different permitted set, plus one enum whose source wording does not match any permitted value verbatim",
+      "source": "Change request CR-118. Rolling out the new pricing page to everyone at once, this Thursday evening after close. Backing it out would mean a redeploy of the previous build, roughly twenty minutes. Sign-off is still sitting with the finance lead.",
+      "instruction": "Return a JSON object for the change request below. The schema is exactly: {\"change_id\": string, \"rollout_strategy\": string, \"risk\": string, \"approval_state\": string, \"rollback_minutes\": number}. Each of the three string fields below is constrained to a fixed set and must match one value exactly, in lowercase, with no additional words:\n- rollout_strategy must be one of: big_bang, phased, canary\n- risk must be one of: low, moderate, elevated\n- approval_state must be one of: approved, pending, rejected\nrollback_minutes must be a JSON number. Return only the JSON object with exactly these five keys.\n\nTEXT:\nChange request CR-118. Rolling out the new pricing page to everyone at once, this Thursday evening after close. Backing it out would mean a redeploy of the previous build, roughly twenty minutes. Sign-off is still sitting with the finance lead.",
+      "gold": {
+        "expected": {
+          "change_id": "CR-118",
+          "rollout_strategy": "big_bang",
+          "risk": "elevated",
+          "approval_state": "pending",
+          "rollback_minutes": 20
+        },
+        "notes": "Hard because none of the three enum values appears verbatim in the source: \"everyone at once\" maps to big_bang, \"sign-off is still sitting with\" maps to pending, and an unstaged full rollout with a redeploy-only rollback maps to elevated. Enum conformance and content correctness are scored separately and can diverge — \"high\" scores 0 on enum conformance while being the right idea, and \"low\" scores 3 on enum conformance while being wrong on content. Scoring them together would hide which failure occurred, which is the reason the rubric splits them. \"big bang\" with a space, or \"Big_Bang\", scores 0 on enum conformance. rollback_minutes must be the number 20, not \"roughly twenty minutes\"."
+      }
+    },
+    {
+      "case_id": "jsn-h03",
+      "difficulty": "hard",
+      "probes": "three different kinds of emptiness in one schema — a null scalar, an empty array, and an empty string — which must not be collapsed into each other",
+      "source": "Feedback form response #442.\nRating: 5\nWhat could we improve? (left blank — the respondent typed nothing and submitted)\nWhich features did you use? None selected.\nMay we contact you? The respondent skipped this question entirely.",
+      "instruction": "Return a JSON object for the form response below. The schema is exactly: {\"response_id\": string, \"rating\": number, \"improvement_comment\": string, \"features_used\": array of strings, \"contactable\": boolean or null}. These three fields have distinct meanings for emptiness and must not be interchanged: improvement_comment is a string and must be the empty string when the respondent submitted no text; features_used is an array and must be an empty array when nothing was selected; contactable is nullable and must be JSON null when the question was skipped. All five keys must be present. Return only the JSON object.\n\nTEXT:\nFeedback form response #442.\nRating: 5\nWhat could we improve? (left blank — the respondent typed nothing and submitted)\nWhich features did you use? None selected.\nMay we contact you? The respondent skipped this question entirely.",
+      "gold": {
+        "expected": {
+          "response_id": "442",
+          "rating": 5,
+          "improvement_comment": "",
+          "features_used": [],
+          "contactable": null
+        },
+        "notes": "Hard on schema conformance. The three empty forms are semantically distinct and the instruction assigns each explicitly, so substitution is a conformance failure and not a judgment call: null for improvement_comment, null or [\"none\"] for features_used, and false or the string \"skipped\" for contactable each score 0 on schema conformance. Dropping any of the three keys instead of emitting its empty form is the same failure by a different route. Emitting the literal string \"null\" rather than the JSON null token is also a conformance failure."
+      }
+    },
+    {
+      "case_id": "jsn-h04",
+      "difficulty": "hard",
+      "probes": "string escaping — values containing double quotes, a backslash, a newline and a non-ASCII character; a naive serialiser produces invalid JSON",
+      "source": "Log entry:\nLevel WARN\nMessage (verbatim, two lines):\nRetry aborted: config key \"batch.size\" missing\nfalling back to default\nSource path: C:\\jobs\\ingest\\runner.exe\nOperator note: vérifié par l'équipe",
+      "instruction": "Return a JSON object for the log entry below. The schema is exactly: {\"level\": string, \"message\": string, \"source_path\": string, \"operator_note\": string}. Each value must reproduce the source text exactly, character for character, correctly escaped as a JSON string. The message value spans two lines and must contain a newline between them. Return only the JSON object.\n\nTEXT:\nLog entry:\nLevel WARN\nMessage (verbatim, two lines):\nRetry aborted: config key \"batch.size\" missing\nfalling back to default\nSource path: C:\\jobs\\ingest\\runner.exe\nOperator note: vérifié par l'équipe",
+      "gold": {
+        "expected": {
+          "level": "WARN",
+          "message": "Retry aborted: config key \"batch.size\" missing\nfalling back to default",
+          "source_path": "C:\\jobs\\ingest\\runner.exe",
+          "operator_note": "vérifié par l'équipe"
+        },
+        "notes": "Hard on parseability specifically. Four escaping hazards: unescaped inner double quotes terminate the string, a literal newline inside a string is illegal JSON, a lone backslash before j is an invalid escape sequence, and the accented characters must survive as UTF-8 or as \\u escapes. Any one of these produces an unparseable response, which scores 0 on parseability and leaves the other three dimensions unscored per rubric §3.5. A response that parses but silently drops the newline, the inner quotes, or the accents parses fine and is scored down on content correctness instead — the two failure routes are deliberately separable here."
+      }
+    },
+    {
+      "case_id": "jsn-h05",
+      "difficulty": "hard",
+      "probes": "numeric edge cases — a negative value, a value that must retain a leading zero as a string identifier, a large integer, and a ratio that must not be reformatted as a percentage",
+      "source": "Sensor 0042 recorded a low of -7.5 °C overnight. Total readings stored to date: 18400000. Uptime ratio for the month: 0.9975.",
+      "instruction": "Return a JSON object for the sensor below. The schema is exactly: {\"sensor_id\": string, \"min_temp_celsius\": number, \"total_readings\": number, \"uptime_ratio\": number}. sensor_id is a string and must preserve its leading zeros exactly as written. min_temp_celsius is a negative JSON number. total_readings must be a plain JSON integer with no separators and no exponent notation. uptime_ratio must be the ratio as given, between 0 and 1, not converted to a percentage. Return only the JSON object.\n\nTEXT:\nSensor 0042 recorded a low of -7.5 °C overnight. Total readings stored to date: 18400000. Uptime ratio for the month: 0.9975.",
+      "gold": {
+        "expected": {
+          "sensor_id": "0042",
+          "min_temp_celsius": -7.5,
+          "total_readings": 18400000,
+          "uptime_ratio": 0.9975
+        },
+        "notes": "Four independent numeric traps. sensor_id as the number 42 loses the leading zeros and is a schema conformance failure (wrong type) as well as content correctness. 18400000 written as 18,400,000 is invalid JSON and scores 0 on parseability; written as 1.84e7 it parses and is numerically equal, so it scores 3 on parseability and 2 on schema conformance, since the instruction excluded exponent notation but a JSON consumer will read the same value. uptime_ratio returned as 99.75 contradicts the stated range constraint and scores 0 on enum/constraint conformance — this dimension covers stated value-range constraints, not only enumerated sets."
+      }
+    },
+    {
+      "case_id": "jsn-a01",
+      "difficulty": "adversarial",
+      "probes": "DEEP NESTING — four structural levels, with arrays inside objects inside arrays inside an object; tests whether the model closes brackets correctly and keeps the shape rather than flattening it",
+      "source": "AUTUMN PLATFORM FORUM — draft programme\n\nTrack: Reliability\n  Session: Error budgets in practice — 09:30, 45 minutes\n    Speaker: Lene Ostergaard, Vaskr Systems — topics: SRE, observability\n    Speaker: Tomas Bihari, Northmark Rail — topics: SRE\n  Session: Postmortems nobody reads — 10:30, 30 minutes\n    Speaker: Aditi Ranganathan, Fenpoint — topics: incident response, team culture\n\nTrack: Delivery\n  Session: Trunk-based at 200 engineers — 09:30, 45 minutes\n    Speaker: Marcus Wehrli, Solvang Bank — topics: continuous integration",
+      "instruction": "Return a JSON object for the conference programme below. The schema is exactly: {\"conference\": string, \"tracks\": array of objects, where each track object is {\"name\": string, \"sessions\": array of objects, where each session object is {\"title\": string, \"start_time\": string, \"duration_minutes\": number, \"speakers\": array of objects, where each speaker object is {\"name\": string, \"organisation\": string, \"topics\": array of strings}}}}. The nesting must be preserved exactly as described: tracks contain sessions, sessions contain speakers, and each speaker has an array of topic strings. Do not flatten any level. start_time must be a 24-hour HH:MM string. Return only the JSON object.\n\nTEXT:\nAUTUMN PLATFORM FORUM — draft programme\n\nTrack: Reliability\n  Session: Error budgets in practice — 09:30, 45 minutes\n    Speaker: Lene Ostergaard, Vaskr Systems — topics: SRE, observability\n    Speaker: Tomas Bihari, Northmark Rail — topics: SRE\n  Session: Postmortems nobody reads — 10:30, 30 minutes\n    Speaker: Aditi Ranganathan, Fenpoint — topics: incident response, team culture\n\nTrack: Delivery\n  Session: Trunk-based at 200 engineers — 09:30, 45 minutes\n    Speaker: Marcus Wehrli, Solvang Bank — topics: continuous integration",
+      "gold": {
+        "expected": {
+          "conference": "Autumn Platform Forum",
+          "tracks": [
+            {
+              "name": "Reliability",
+              "sessions": [
+                {
+                  "title": "Error budgets in practice",
+                  "start_time": "09:30",
+                  "duration_minutes": 45,
+                  "speakers": [
+                    {
+                      "name": "Lene Ostergaard",
+                      "organisation": "Vaskr Systems",
+                      "topics": [
+                        "SRE",
+                        "observability"
+                      ]
+                    },
+                    {
+                      "name": "Tomas Bihari",
+                      "organisation": "Northmark Rail",
+                      "topics": [
+                        "SRE"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "Postmortems nobody reads",
+                  "start_time": "10:30",
+                  "duration_minutes": 30,
+                  "speakers": [
+                    {
+                      "name": "Aditi Ranganathan",
+                      "organisation": "Fenpoint",
+                      "topics": [
+                        "incident response",
+                        "team culture"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Delivery",
+              "sessions": [
+                {
+                  "title": "Trunk-based at 200 engineers",
+                  "start_time": "09:30",
+                  "duration_minutes": 45,
+                  "speakers": [
+                    {
+                      "name": "Marcus Wehrli",
+                      "organisation": "Solvang Bank",
+                      "topics": [
+                        "continuous integration"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "notes": "ADVERSARIAL TARGET — deep nesting. Four levels: object → array of track objects → array of session objects → array of speaker objects → array of topic strings. The content is trivial; every failure here is structural, which is exactly what the task is meant to isolate. Three distinct failure shapes are scored separately. (1) Bracket or brace mismatch, or truncation before the structure closes — 0 on parseability, remaining dimensions unscored, logged TRUNCATION or MALFORMED per rubric §6. (2) Flattening — emitting a single flat array of sessions with a track_name key, or collapsing speakers into a comma-joined string — parses cleanly and scores 0 on schema conformance. (3) Single-element collapse: emitting speakers as a bare object rather than a one-element array where a session has only one speaker. This is the subtlest failure and the one most likely to survive a casual eyeball review; it is a schema conformance failure and must be scored as one, since a consumer iterating speakers breaks on it. Conference name casing is not scored. Note both 09:30 sessions are in different tracks and both must appear."
+      }
+    },
+    {
+      "case_id": "jsn-a02",
+      "difficulty": "adversarial",
+      "probes": "CONSTRAINED ENUM PLUS A GENUINELY-NULL OPTIONAL FIELD — the permitted value set excludes the phrasing the source uses, and one nullable key has no value in the source at all; tests whether the model emits null rather than omitting the key or inventing a plausible value",
+      "source": "RETURN REQUEST — RMA-6031\n\nCustomer: Ines Halloran\nItem: Ceramic pour-over kettle, 1.2 L\nWhat happened: it turned up with a hairline crack down one side. Box was fine, so it probably left the warehouse that way.\nWhat the customer wants: they'd like the same kettle sent out again rather than their money back.\nReturn label: not issued yet — awaiting warehouse confirmation before we generate one.\nRestocking fee: none applies to damaged goods.",
+      "instruction": "Return a JSON object for the return request below. The schema is exactly: {\"rma_id\": string, \"customer\": string, \"reason\": string, \"resolution\": string, \"return_tracking_number\": string or null, \"restocking_fee\": number}. Two fields are constrained to fixed sets and must match one value exactly, in lowercase, with no extra words:\n- reason must be one of: damaged, wrong_item, not_as_described, no_longer_needed\n- resolution must be one of: refund, replacement, store_credit\nreturn_tracking_number is nullable: give the tracking number as a string if the text states one, and JSON null if it does not. The key must be present in either case. restocking_fee must be a JSON number. Return only the JSON object with exactly these six keys.\n\nTEXT:\nRETURN REQUEST — RMA-6031\n\nCustomer: Ines Halloran\nItem: Ceramic pour-over kettle, 1.2 L\nWhat happened: it turned up with a hairline crack down one side. Box was fine, so it probably left the warehouse that way.\nWhat the customer wants: they'd like the same kettle sent out again rather than their money back.\nReturn label: not issued yet — awaiting warehouse confirmation before we generate one.\nRestocking fee: none applies to damaged goods.",
+      "gold": {
+        "expected": {
+          "rma_id": "RMA-6031",
+          "customer": "Ines Halloran",
+          "reason": "damaged",
+          "resolution": "replacement",
+          "return_tracking_number": null,
+          "restocking_fee": 0
+        },
+        "notes": "ADVERSARIAL TARGET — enum conformance and true-null emission, probed together because they fail together in practice.\n\nEnum side: the source says \"hairline crack\" and \"they'd like the same kettle sent out again\". Neither permitted value appears verbatim, so both must be mapped. \"cracked\", \"broken\", \"damaged_in_transit\", \"Damaged\" and \"damaged (hairline crack)\" all score 0 on enum conformance however accurate the description is — the set was stated and a consumer will reject anything outside it. \"exchange\" for resolution is the same failure. Note the source explicitly rules out the refund reading (\"rather than their money back\"), so choosing refund is content correctness, not an enum failure; the two dimensions are scored independently.\n\nNull side: the return label has explicitly not been issued, so return_tracking_number has no value in the source. Three failure modes, all scored on schema conformance and all observed in practice: omitting the key entirely; substituting a placeholder such as \"\", \"N/A\", \"pending\", \"not issued\" or \"TBD\"; or fabricating a tracking-number-shaped string, which is additionally logged as HALLUCINATION per rubric §6. Only the JSON null token scores 3. The instruction states the key must be present, so omission is not a defensible reading of optional.\n\nrestocking_fee is a stated zero, not an absent value, and is not nullable — it must be the number 0. Returning null conflates \"none applies\" with \"not stated\" and scores 0 on schema conformance. This is deliberately placed next to a genuine null so the case distinguishes a model that reasons about each field from one that treats every awkward field the same way. jsn-t07 is the paired counterweight: same nullable pattern, value present, so blanket-nulling cannot score well across the set."
+      }
+    },
+    {
+      "case_id": "jsn-a03",
+      "difficulty": "adversarial",
+      "probes": "WRAPPER PROSE AND MARKDOWN FENCES — a conversational instruction asking for a judgment the model will want to qualify; measures whether the response is bare parseable JSON or JSON buried in explanation, a preamble, or a ```json fence",
+      "source": "Hey — quick one before I reply to the client.\n\nWe committed to shipping the reporting export by 29 May. As of today the export itself works, but it only covers two of the four report types, and the person who wrote it is on leave until 26 May. QA hasn't seen any of it. Sunil thinks we can get the remaining two done in three days once she's back; Marta thinks that's optimistic and wants to descope to the two that work and ship those on time.\n\nI need this as structured data so I can drop it straight into the status sheet.",
+      "instruction": "Hey — quick one before I reply to the client. I need your read on this, but I need it as structured data so I can drop it straight into the status sheet, so please reply with the JSON object only: no preamble, no explanation after it, and no markdown code fences around it. Your entire reply must start with { and end with }.\n\nThe schema is exactly: {\"commitment_date\": string, \"scope_complete\": boolean, \"qa_started\": boolean, \"blocking_dependency\": string, \"recommended_action\": string, \"confidence\": string}. commitment_date must be an ISO 8601 YYYY-MM-DD string; assume 2026. recommended_action must be one of: ship_as_committed, descope_and_ship, delay. confidence must be one of: low, medium, high. Return only the JSON object with exactly these six keys.\n\nTEXT:\nWe committed to shipping the reporting export by 29 May. As of today the export itself works, but it only covers two of the four report types, and the person who wrote it is on leave until 26 May. QA hasn't seen any of it. Sunil thinks we can get the remaining two done in three days once she's back; Marta thinks that's optimistic and wants to descope to the two that work and ship those on time.",
+      "gold": {
+        "expected": {
+          "commitment_date": "2026-05-29",
+          "scope_complete": false,
+          "qa_started": false,
+          "blocking_dependency": "Author on leave until 26 May and no QA coverage",
+          "recommended_action": "descope_and_ship",
+          "confidence": "medium"
+        },
+        "notes": "ADVERSARIAL TARGET — parseability under prose pressure. This case is constructed so that the format requirement fights the model's instincts, and every element of that pressure is deliberate: the instruction is conversational rather than a specification, it asks for a recommendation and a confidence level on a contested judgment, it presents two named colleagues disagreeing, and it concerns a delivery risk a model will want to hedge or add context to. The likely responses are \"Here's the JSON:\" followed by the object, a ```json fenced block, or the object followed by a paragraph explaining why Marta is probably right.\n\nSCORING — the harness records the response byte-for-byte and does not strip fences, preambles or trailing text before parsing (Harness-Spec §1, conventions.raw_capture above). That is what makes this case measurable, so the repair must not be reintroduced at scoring time either: any leading or trailing character outside the JSON object means json.loads fails, which scores 0 on parseability and leaves schema, enum and content unscored per rubric §3.5, logged MALFORMED per §6. A fenced-but-otherwise-perfect object scores 0 on parseability. This is the intended reading and not an unduly harsh one: a caller doing json.loads(response) gets an exception either way, and the whole point of the dimension is to measure what that caller experiences.\n\nCONTENT — scored only if the response parses. blocking_dependency is free text; any answer naming the author's absence, QA, or both scores 3. recommended_action: descope_and_ship is the gold, since the two working report types can meet the date while the remaining two cannot clear both the 26 May return and unstarted QA by 29 May; delay is a defensible reading and scores 2; ship_as_committed contradicts the stated scope gap and scores 0. confidence is a judgment and any of the three permitted values scores 3 on content, but a value outside the set scores 0 on enum conformance. The date must not be inferred as a different year — the instruction fixes 2026."
+      }
+    }
+  ]
+}

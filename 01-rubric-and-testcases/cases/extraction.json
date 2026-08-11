@@ -1,0 +1,542 @@
+{
+  "task": "extraction",
+  "version": "1.0",
+  "created": "2026-08-11",
+  "source_policy": "All source texts original, authored for this benchmark. See Test-Case-Design.md §1.",
+  "gold_form": "Exact expected object. Unlike summarization, extraction has single right answers, so `gold.expected` is the literal object the model should return and is compared key-by-key. `gold.notes` carries scoring guidance for the four rubric dimensions (precision, recall, normalisation, null handling).",
+  "conventions": {
+    "dates": "ISO 8601, YYYY-MM-DD",
+    "amounts": "plain number, no thousands separators, no currency symbol",
+    "currency": "ISO 4217 three-letter code, separate field",
+    "absent_fields": "null, never a guess or an empty string",
+    "note": "These conventions are restated inside every `instruction` so each case is self-contained and the prompt sent to the model needs no external context."
+  },
+  "cases": [
+    {
+      "case_id": "ext-t01",
+      "difficulty": "typical",
+      "probes": "baseline: standard invoice, all fields present and clearly labelled",
+      "source": "MERIDIAN SUPPLY CO.\n17 Warehouse Road, Sector 4\n\nInvoice No. MSC-2291\nIssued: 4 March 2026\nPayment due: 3 April 2026\n\nBill to: Halverson Dental Group\n\nDescription: Sterilisation pouches, 12 cartons\nSubtotal: 1,840.00\nVAT (5%): 92.00\nTotal due: AED 1,932.00\n\nRemit to account ending 4471.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: invoice_number (string), invoice_date (string), due_date (string), vendor_name (string), customer_name (string), subtotal (number), tax_amount (number), total_amount (number), currency (string). Format all dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no currency symbol or thousands separator. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "invoice_number": "MSC-2291",
+          "invoice_date": "2026-03-04",
+          "due_date": "2026-04-03",
+          "vendor_name": "Meridian Supply Co.",
+          "customer_name": "Halverson Dental Group",
+          "subtotal": 1840.0,
+          "tax_amount": 92.0,
+          "total_amount": 1932.0,
+          "currency": "AED"
+        },
+        "notes": "Vendor name casing is not scored — 'MERIDIAN SUPPLY CO.' is equally acceptable. Normalisation is scored on the two dates, the three numeric amounts being unformatted numbers, and currency being the code AED rather than the symbol or word. Returning amounts as strings scores 2 on normalisation, not 3."
+      }
+    },
+    {
+      "case_id": "ext-t02",
+      "difficulty": "typical",
+      "probes": "baseline: shipping manifest, mix of identifiers and quantities",
+      "source": "CONSIGNMENT NOTE — Ashgrove Freight Lines\nTracking: AFL-7730-2210\nBooked by: Kestrel Instruments Ltd\nCollected from Coimbatore depot on 11/02/2026 (dd/mm/yyyy)\nDelivering to Pune, expected 14 February 2026\nPieces: 6\nGross weight: 138.5 kg\nDeclared value: INR 74,500\nService level: Express Road\nSignature required on delivery: Yes",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: tracking_number (string), carrier (string), shipper (string), origin_city (string), destination_city (string), collection_date (string), expected_delivery_date (string), piece_count (number), gross_weight_kg (number), declared_value (number), currency (string), signature_required (boolean). Format all dates as ISO 8601 YYYY-MM-DD. Give amounts and weights as plain numbers with no units, symbols or thousands separators. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "tracking_number": "AFL-7730-2210",
+          "carrier": "Ashgrove Freight Lines",
+          "shipper": "Kestrel Instruments Ltd",
+          "origin_city": "Coimbatore",
+          "destination_city": "Pune",
+          "collection_date": "2026-02-11",
+          "expected_delivery_date": "2026-02-14",
+          "piece_count": 6,
+          "gross_weight_kg": 138.5,
+          "declared_value": 74500,
+          "currency": "INR",
+          "signature_required": true
+        },
+        "notes": "The document states its own date format explicitly, so 2026-11-02 for collection_date is a normalisation error, not an ambiguity. signature_required must be a JSON boolean; the string \"Yes\" scores 1 on normalisation."
+      }
+    },
+    {
+      "case_id": "ext-t03",
+      "difficulty": "typical",
+      "probes": "baseline: resume, requires selecting the most recent role among several",
+      "source": "NOOR HASSANI\nnoor.hassani@example-mail.net · +971 50 555 0148 · Dubai\n\nEXPERIENCE\nSenior Data Analyst, Calder & Voss Retail — March 2023 to present\nData Analyst, Tinbridge Logistics — June 2020 to February 2023\nAnalyst Intern, Tinbridge Logistics — January 2020 to May 2020\n\nEDUCATION\nBSc Statistics, University of Sharjah, 2019\n\nSKILLS\nSQL, Python, Tableau, dbt",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: candidate_name (string), email (string), phone (string), location (string), current_title (string), current_employer (string), current_role_start_date (string), previous_employer (string), degree (string), university (string), graduation_year (number), skills (array of strings). current_* fields refer to the role the candidate holds now. Format all dates as ISO 8601 YYYY-MM-DD; where only a month and year are given, use the first day of that month. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "candidate_name": "Noor Hassani",
+          "email": "noor.hassani@example-mail.net",
+          "phone": "+971 50 555 0148",
+          "location": "Dubai",
+          "current_title": "Senior Data Analyst",
+          "current_employer": "Calder & Voss Retail",
+          "current_role_start_date": "2023-03-01",
+          "previous_employer": "Tinbridge Logistics",
+          "degree": "BSc Statistics",
+          "university": "University of Sharjah",
+          "graduation_year": 2019,
+          "skills": [
+            "SQL",
+            "Python",
+            "Tableau",
+            "dbt"
+          ]
+        },
+        "notes": "Precision failure if the internship rather than the Data Analyst role is returned as previous_employer's basis, or if an earlier employer is returned as current. Phone punctuation is not scored. Skills order is not scored; a missing skill is a recall failure."
+      }
+    },
+    {
+      "case_id": "ext-t04",
+      "difficulty": "typical",
+      "probes": "baseline: email containing a meeting request, times and duration",
+      "source": "From: Dev Raghunathan\nSubject: Re: quarterly planning\n\nHi both — let's lock the planning session for Wednesday 18 March. I've held 2:30pm to 4:00pm in the Aldrich room on level 3. Marisol and Tomas are confirmed; Halima is a maybe and will let me know Tuesday. I'll circulate the pre-read the day before. If 2:30 doesn't work we can push to 3, but not later — I have a hard stop at 5.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: organiser (string), meeting_date (string), start_time (string), end_time (string), duration_minutes (number), location (string), confirmed_attendees (array of strings), tentative_attendees (array of strings). Format the date as ISO 8601 YYYY-MM-DD and times as 24-hour HH:MM. Where the year is not stated, use 2026. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "organiser": "Dev Raghunathan",
+          "meeting_date": "2026-03-18",
+          "start_time": "14:30",
+          "end_time": "16:00",
+          "duration_minutes": 90,
+          "location": "Aldrich room, level 3",
+          "confirmed_attendees": [
+            "Marisol",
+            "Tomas"
+          ],
+          "tentative_attendees": [
+            "Halima"
+          ]
+        },
+        "notes": "duration_minutes is derived, not stated — 90 is required. Placing Halima in confirmed_attendees is a precision failure. The 3pm fallback and the 5pm hard stop are not the meeting time; using either is a precision failure."
+      }
+    },
+    {
+      "case_id": "ext-t05",
+      "difficulty": "typical",
+      "probes": "baseline: completed intake form, label-value pairs",
+      "source": "NEW CLIENT INTAKE FORM — Brightpath Physiotherapy\n\nFull name: Elena Marchetti\nDate of birth: 09 September 1988\nContact number: 021 447 9930\nEmail: e.marchetti@example.org\nReferred by: Dr Aroha Whitiora\nReason for visit: Recurring lower back pain, six weeks\nPrevious treatment for this issue: No\nInsurer: Southern Cross\nPolicy number: SC-8814772\nEmergency contact: Paolo Marchetti (brother), 021 447 9931\nConsent to share notes with referrer: Yes",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: full_name (string), date_of_birth (string), phone (string), email (string), referrer (string), reason_for_visit (string), prior_treatment (boolean), insurer (string), policy_number (string), emergency_contact_name (string), emergency_contact_relationship (string), emergency_contact_phone (string), consent_to_share (boolean). Format dates as ISO 8601 YYYY-MM-DD. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "full_name": "Elena Marchetti",
+          "date_of_birth": "1988-09-09",
+          "phone": "021 447 9930",
+          "email": "e.marchetti@example.org",
+          "referrer": "Dr Aroha Whitiora",
+          "reason_for_visit": "Recurring lower back pain, six weeks",
+          "prior_treatment": false,
+          "insurer": "Southern Cross",
+          "policy_number": "SC-8814772",
+          "emergency_contact_name": "Paolo Marchetti",
+          "emergency_contact_relationship": "brother",
+          "emergency_contact_phone": "021 447 9931",
+          "consent_to_share": true
+        },
+        "notes": "The two phone numbers differ by one digit — returning the client's number as the emergency contact number is the precision failure this case probes. prior_treatment must be boolean false, not the string \"No\" and not null; treating a stated 'No' as absent is a null-handling error in the opposite direction and scores 1."
+      }
+    },
+    {
+      "case_id": "ext-t06",
+      "difficulty": "typical",
+      "probes": "baseline: contract clause, term and notice conditions",
+      "source": "SERVICES AGREEMENT — EXTRACT\n\nThis Agreement is made between Larkfield Analytics Pty Ltd (\"Supplier\") and Nordvik Marine Holdings (\"Client\").\n\n2.1 This Agreement takes effect on 1 July 2026 and continues for an initial term of twenty-four (24) months.\n2.2 At the end of the initial term the Agreement renews automatically for successive twelve (12) month periods unless either party gives written notice of non-renewal not less than sixty (60) days before the end of the then-current term.\n2.3 The Client may terminate for convenience after month eighteen on ninety (90) days' written notice.\n\n9.4 This Agreement is governed by the laws of New South Wales.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: supplier (string), client (string), effective_date (string), initial_term_months (number), auto_renews (boolean), renewal_term_months (number), non_renewal_notice_days (number), termination_for_convenience_notice_days (number), governing_law (string). Format dates as ISO 8601 YYYY-MM-DD. Give all durations as plain numbers. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "supplier": "Larkfield Analytics Pty Ltd",
+          "client": "Nordvik Marine Holdings",
+          "effective_date": "2026-07-01",
+          "initial_term_months": 24,
+          "auto_renews": true,
+          "renewal_term_months": 12,
+          "non_renewal_notice_days": 60,
+          "termination_for_convenience_notice_days": 90,
+          "governing_law": "New South Wales"
+        },
+        "notes": "Three distinct durations in days and months appear close together. Swapping the 60-day non-renewal notice with the 90-day termination notice is the precision failure this case probes. Numbers written as words must be normalised to integers; returning \"twenty-four (24)\" scores 1 on normalisation."
+      }
+    },
+    {
+      "case_id": "ext-t07",
+      "difficulty": "typical",
+      "probes": "baseline: purchase order with repeating line items — array-of-objects extraction",
+      "source": "PURCHASE ORDER PO-40118\nFrom: Vellacott Interiors\nTo: Sandhu Timber & Board\nOrder date: 2026-05-19\nRequested delivery: 2026-06-02\n\nLINE ITEMS\n1. Birch ply 18mm, 2440x1220 — qty 40 — unit 3,150 — line total 126,000\n2. Edge banding, white, 50m roll — qty 12 — unit 890 — line total 10,680\n3. Softwood batten 45x45, 3m — qty 100 — unit 240 — line total 24,000\n\nOrder total: 160,680 INR\nDelivery terms: Kerbside, ground floor only",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: po_number (string), buyer (string), supplier (string), order_date (string), requested_delivery_date (string), line_items (array of objects, each with keys description (string), quantity (number), unit_price (number), line_total (number)), order_total (number), currency (string). Format dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no symbols or thousands separators. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "po_number": "PO-40118",
+          "buyer": "Vellacott Interiors",
+          "supplier": "Sandhu Timber & Board",
+          "order_date": "2026-05-19",
+          "requested_delivery_date": "2026-06-02",
+          "line_items": [
+            {
+              "description": "Birch ply 18mm, 2440x1220",
+              "quantity": 40,
+              "unit_price": 3150,
+              "line_total": 126000
+            },
+            {
+              "description": "Edge banding, white, 50m roll",
+              "quantity": 12,
+              "unit_price": 890,
+              "line_total": 10680
+            },
+            {
+              "description": "Softwood batten 45x45, 3m",
+              "quantity": 100,
+              "unit_price": 240,
+              "line_total": 24000
+            }
+          ],
+          "order_total": 160680,
+          "currency": "INR"
+        },
+        "notes": "Recall is scored on all three line items being present with all four sub-keys each; a dropped line item is a recall failure, a dropped sub-key across all items is a normalisation/schema failure. Descriptions need not match verbatim but must identify the right product. Note the buyer issues the PO and the supplier receives it — reversing them is the precision failure this case probes."
+      }
+    },
+    {
+      "case_id": "ext-t08",
+      "difficulty": "typical",
+      "probes": "baseline: support ticket, categorical and temporal fields mixed with prose",
+      "source": "Ticket TKT-99204 was raised on 22 April 2026 at 08:14 by Ingrid Solheim of Fenwick Grocers (Enterprise plan). Priority set to High by the triage bot on the basis of the word 'outage'. The customer reports that stock-level sync from their warehouse system stopped updating some time on the 21st; they noticed when a store manager flagged a negative on-hand count. Assigned to Rafael Duarte on the Integrations team. First response sent at 08:41. The ticket was resolved at 15:02 the same day and the root cause recorded as an expired API credential on the customer's side. Customer satisfaction survey returned 4 out of 5.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: ticket_id (string), reported_at (string), reporter_name (string), company (string), plan (string), priority (string), assignee (string), assignee_team (string), first_response_at (string), resolved_at (string), root_cause (string), csat_score (number). Format all timestamps as ISO 8601 YYYY-MM-DDTHH:MM. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "ticket_id": "TKT-99204",
+          "reported_at": "2026-04-22T08:14",
+          "reporter_name": "Ingrid Solheim",
+          "company": "Fenwick Grocers",
+          "plan": "Enterprise",
+          "priority": "High",
+          "assignee": "Rafael Duarte",
+          "assignee_team": "Integrations",
+          "first_response_at": "2026-04-22T08:41",
+          "resolved_at": "2026-04-22T15:02",
+          "root_cause": "Expired API credential on the customer's side",
+          "csat_score": 4
+        },
+        "notes": "The 21st is when the sync failure began, not when the ticket was reported — using 2026-04-21 for reported_at is the precision failure this case probes. 'the same day' must be resolved to 2026-04-22 for resolved_at; leaving it null is a recall failure."
+      }
+    },
+    {
+      "case_id": "ext-t09",
+      "difficulty": "typical",
+      "probes": "baseline: job posting, salary range and boolean attributes",
+      "source": "Operations Coordinator — Thornleigh Grain Co-operative\nLocation: Ballarat, Victoria. Hybrid, three days on site.\nEmployment type: Full-time, permanent\nSalary: AUD 78,000 – 86,000 per annum plus superannuation\nReports to: Regional Operations Manager\nApplications close 30 September 2026.\nWe are unable to sponsor work visas for this role.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: job_title (string), company (string), location (string), employment_type (string), fully_remote (boolean), salary_min (number), salary_max (number), currency (string), salary_period (string), reports_to (string), application_deadline (string), visa_sponsorship_available (boolean). Format dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no symbols or thousands separators. Give currency as a three-letter ISO 4217 code. salary_period must be one of \"annual\", \"monthly\", \"hourly\". If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "job_title": "Operations Coordinator",
+          "company": "Thornleigh Grain Co-operative",
+          "location": "Ballarat, Victoria",
+          "employment_type": "Full-time, permanent",
+          "fully_remote": false,
+          "salary_min": 78000,
+          "salary_max": 86000,
+          "currency": "AUD",
+          "salary_period": "annual",
+          "reports_to": "Regional Operations Manager",
+          "application_deadline": "2026-09-30",
+          "visa_sponsorship_available": false
+        },
+        "notes": "Hybrid with three days on site means fully_remote is false, not null and not true — this is the inference this case probes. Superannuation is not part of the quoted range and must not be added to salary_max."
+      }
+    },
+    {
+      "case_id": "ext-t10",
+      "difficulty": "typical",
+      "probes": "baseline: receipt, partial card number and derived tax",
+      "source": "THE COPPER KETTLE\nCafé & Bakery · 22 Marlowe Street\n\n14 Jun 2026  19:42\nTable 7 · Server: Bea\n\n2 x Flat white          9.00\n1 x Sourdough toastie   8.50\n1 x Almond croissant    4.25\n\nSubtotal               21.75\nService charge (10%)    2.18\nTOTAL                  23.93\n\nVISA ****3092  APPROVED\nAuth code 551204\nGST included in total: 3.12\nGBP",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: merchant (string), transaction_datetime (string), subtotal (number), service_charge (number), total_amount (number), tax_included (number), currency (string), payment_method (string), card_last4 (string), auth_code (string), item_count (number). item_count is the total number of individual items purchased. Format the timestamp as ISO 8601 YYYY-MM-DDTHH:MM. Give amounts as plain numbers with no symbols. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "merchant": "The Copper Kettle",
+          "transaction_datetime": "2026-06-14T19:42",
+          "subtotal": 21.75,
+          "service_charge": 2.18,
+          "total_amount": 23.93,
+          "tax_included": 3.12,
+          "currency": "GBP",
+          "payment_method": "VISA",
+          "card_last4": "3092",
+          "auth_code": "551204",
+          "item_count": 4
+        },
+        "notes": "item_count requires summing quantities (2+1+1), not counting lines — returning 3 is the precision failure this case probes. card_last4 must be the string \"3092\" without asterisks; returning \"****3092\" scores 2 on normalisation."
+      }
+    },
+    {
+      "case_id": "ext-t11",
+      "difficulty": "typical",
+      "probes": "baseline: confirmation email, quantity and per-unit vs total amounts",
+      "source": "Your registration is confirmed.\n\nEvent: Southern Highlands Beekeepers Field Day\nDate: Saturday 8 August 2026, gates open 08:00\nVenue: Bowral Showground, Pavilion 2\nOrder reference: SHB-2026-1174\nTicket type: Member day pass\nTickets: 3 @ 45.00 each\nBooking fee: 4.50\nOrder total: 139.50 AUD\nCatering: not included; food trucks on site.\nRefunds available until 25 July 2026.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: event_name (string), event_date (string), gates_open_time (string), venue (string), order_reference (string), ticket_type (string), ticket_quantity (number), ticket_unit_price (number), booking_fee (number), order_total (number), currency (string), refund_deadline (string), catering_included (boolean). Format dates as ISO 8601 YYYY-MM-DD and times as 24-hour HH:MM. Give amounts as plain numbers with no symbols. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "event_name": "Southern Highlands Beekeepers Field Day",
+          "event_date": "2026-08-08",
+          "gates_open_time": "08:00",
+          "venue": "Bowral Showground, Pavilion 2",
+          "order_reference": "SHB-2026-1174",
+          "ticket_type": "Member day pass",
+          "ticket_quantity": 3,
+          "ticket_unit_price": 45.0,
+          "booking_fee": 4.5,
+          "order_total": 139.5,
+          "currency": "AUD",
+          "refund_deadline": "2026-07-25",
+          "catering_included": false
+        },
+        "notes": "ticket_unit_price is 45.00, not 135.00 — collapsing unit price into line total is the precision failure this case probes. The refund deadline is a different date from the event date; swapping them is a precision failure."
+      }
+    },
+    {
+      "case_id": "ext-t12",
+      "difficulty": "typical",
+      "probes": "baseline: transaction alert, signed amounts and a debit/credit direction",
+      "source": "Account alert — Rivergate Bank\n\nAccount ending 6620 (Everyday Transaction)\nA debit of 249.00 was posted on 27 January 2026 at 11:07.\nMerchant: NORTHWIND TYRES PTY LTD, Geelong\nCard used: debit card ending 1145\nAvailable balance after transaction: 1,812.44\nCurrency: AUD\nThis transaction was flagged as a card-not-present purchase.\nYou were not charged a foreign transaction fee.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: bank (string), account_last4 (string), account_type (string), direction (string), amount (number), posted_at (string), merchant (string), merchant_location (string), card_last4 (string), available_balance (number), currency (string), card_present (boolean), foreign_transaction_fee (number). direction must be either \"debit\" or \"credit\". Format the timestamp as ISO 8601 YYYY-MM-DDTHH:MM. Give amounts as plain numbers with no symbols or thousands separators. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "bank": "Rivergate Bank",
+          "account_last4": "6620",
+          "account_type": "Everyday Transaction",
+          "direction": "debit",
+          "amount": 249.0,
+          "posted_at": "2026-01-27T11:07",
+          "merchant": "Northwind Tyres Pty Ltd",
+          "merchant_location": "Geelong",
+          "card_last4": "1145",
+          "available_balance": 1812.44,
+          "currency": "AUD",
+          "card_present": false,
+          "foreign_transaction_fee": 0
+        },
+        "notes": "Two different four-digit endings appear — 6620 is the account, 1145 is the card. Swapping them is the precision failure this case probes. amount must be positive 249.00 with direction \"debit\"; returning -249.00 scores 2 on normalisation. 'not charged a foreign transaction fee' means 0, not null — this distinction between a stated zero and an absent value is deliberate."
+      }
+    },
+    {
+      "case_id": "ext-h01",
+      "difficulty": "hard",
+      "probes": "long input; many fields distributed across a document with substantial irrelevant text between them",
+      "source": "REQUEST FOR QUOTATION — RFQ/2026/CIV/0338\nIssued by the Procurement Unit, Halveston Municipal Council, on behalf of the Water Services Directorate.\n\n1. BACKGROUND\nThe Council operates fourteen pressure-monitoring stations across the northern distribution zone. The existing telemetry units were installed between 2011 and 2014 and have reached end of support. A condition survey completed in November 2025 recommended full replacement rather than refurbishment, on the grounds that spare parts for the current controllers are no longer manufactured and the units cannot report at the interval required by the revised regulatory reporting standard.\n\n2. SCOPE\nSupply, installation and commissioning of fourteen (14) replacement telemetry units, including removal and certified disposal of the units being replaced. Civil works are excluded and will be procured separately. Training for four Council staff is included in scope.\n\n3. TIMETABLE\nQuotations must be received no later than 17:00 on 12 October 2026. Late submissions will not be opened. A non-mandatory site visit will be held on 24 September 2026, departing from the Council depot at 09:30. Clarification questions must be submitted in writing by 30 September 2026; responses will be published to all registered bidders by 3 October 2026. The Council intends to award by 6 November 2026 with works commencing 4 January 2027.\n\n4. COMMERCIAL\nThe indicative budget envelope is 640,000 GBP excluding VAT. Quotations materially above this may be set aside. Prices must be held firm for 90 days from the submission deadline. Payment terms are 30 days from receipt of a valid invoice. A performance bond of 10% of contract value is required. Retention of 5% will be held for twelve months from practical completion.\n\n5. EVALUATION\nAward will be on the basis of most economically advantageous tender, weighted 60% quality and 40% price.\n\n6. CONTACT\nAll correspondence to Ms Adaeze Nwankwo, Senior Procurement Officer, quoting the RFQ reference in the subject line. Telephone enquiries will not be answered.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: rfq_reference (string), issuing_body (string), unit_count (number), submission_deadline (string), site_visit_date (string), clarification_deadline (string), clarification_response_date (string), intended_award_date (string), works_start_date (string), budget_amount (number), currency (string), budget_includes_vat (boolean), price_validity_days (number), payment_terms_days (number), performance_bond_percent (number), retention_percent (number), retention_period_months (number), quality_weighting_percent (number), price_weighting_percent (number), contact_name (string), contact_role (string), civil_works_included (boolean), training_included (boolean). Format dates as ISO 8601 YYYY-MM-DD and timestamps as YYYY-MM-DDTHH:MM. Give amounts and percentages as plain numbers with no symbols. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "rfq_reference": "RFQ/2026/CIV/0338",
+          "issuing_body": "Halveston Municipal Council",
+          "unit_count": 14,
+          "submission_deadline": "2026-10-12T17:00",
+          "site_visit_date": "2026-09-24",
+          "clarification_deadline": "2026-09-30",
+          "clarification_response_date": "2026-10-03",
+          "intended_award_date": "2026-11-06",
+          "works_start_date": "2027-01-04",
+          "budget_amount": 640000,
+          "currency": "GBP",
+          "budget_includes_vat": false,
+          "price_validity_days": 90,
+          "payment_terms_days": 30,
+          "performance_bond_percent": 10,
+          "retention_percent": 5,
+          "retention_period_months": 12,
+          "quality_weighting_percent": 60,
+          "price_weighting_percent": 40,
+          "contact_name": "Adaeze Nwankwo",
+          "contact_role": "Senior Procurement Officer",
+          "civil_works_included": false,
+          "training_included": true
+        },
+        "notes": "Hard on recall: 23 fields across six sections with narrative text between them. The six dates are the main recall risk — dropping clarification_response_date or works_start_date is the most common miss. Note works_start_date is in 2027, not 2026; carrying the year forward incorrectly is a normalisation failure. The four staff trained and the fourteen units both appear as spelled-out-plus-digit forms; unit_count must be 14 and must not be confused with the training headcount."
+      }
+    },
+    {
+      "case_id": "ext-h02",
+      "difficulty": "hard",
+      "probes": "forwarded email chain where earlier values are superseded later; correct extraction takes the latest stated value",
+      "source": "---------- Forwarded message ----------\nFrom: Yusuf Adeyemi\nDate: Fri, 5 Jun 2026\nSubject: Fwd: Re: Re: Booking — Tarrant Hall\n\nPassing to you for the final invoice. Latest details are in Ola's message below, not mine.\n\n> From: Ola Bergqvist\n> Date: Thu, 4 Jun 2026\n> Confirming the changes we agreed on the phone: we've moved to Saturday 19 September, not the 12th. Headcount is now 140, up from the 120 in the original booking. We still want the Garden Room, but we've dropped the projector hire. Deposit stays at 1,500.\n>\n> > From: Priya Nadar\n> > Date: Tue, 2 Jun 2026\n> > Booking reference TH-5561. Saturday 12 September 2026, Garden Room, 120 guests, projector hire included, deposit 1,500 EUR, balance due 14 days before the event.\n> >\n> > > From: Ola Bergqvist\n> > > Date: Mon, 1 Jun 2026\n> > > Can you hold a Saturday in September for around 100 people?",
+      "instruction": "Extract the current, agreed booking details from this email chain as a JSON object with exactly these keys: booking_reference (string), event_date (string), room (string), guest_count (number), projector_hire (boolean), deposit_amount (number), currency (string), balance_due_days_before_event (number), balance_due_date (string). Where a value was changed later in the chain, use the most recent value. Format dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no symbols. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "booking_reference": "TH-5561",
+          "event_date": "2026-09-19",
+          "room": "Garden Room",
+          "guest_count": 140,
+          "projector_hire": false,
+          "deposit_amount": 1500,
+          "currency": "EUR",
+          "balance_due_days_before_event": 14,
+          "balance_due_date": "2026-09-05"
+        },
+        "notes": "Hard because the correct values are split across two messages and the quoting order puts the superseded values lower in the text, where a model reading positionally will find them first. Returning 2026-09-12 or 120 is the precision failure this case probes. balance_due_date is derived from the revised event date (19 September minus 14 days); computing it from the superseded 12 September, giving 2026-08-29, is a precision failure. The 100-person figure in the earliest message is a decoy."
+      }
+    },
+    {
+      "case_id": "ext-h03",
+      "difficulty": "hard",
+      "probes": "heavy normalisation load: mixed units, mixed date formats, amounts written inconsistently within one document",
+      "source": "DOCKET 4471-B — Tullamore Cold Chain\n\nPickup: Mar 3, 2026 · 6:45 AM\nDelivery window: 03-05-2026 to 03-07-2026 (US format, mm-dd-yyyy)\n\nPallets: eight\nNet weight: 2,240 lb\nTemperature setpoint: 38°F (do not exceed 41°F)\nDistance: 512 miles\n\nCharges:\n  Linehaul .......... one thousand nine hundred and forty dollars\n  Fuel surcharge .... $310.40\n  Detention (2 hrs) . $ 90\n  TOTAL ............. USD 2,340.40\n\nCarrier: Bellweather Transit LLC · MC 884120",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: docket_number (string), carrier (string), carrier_mc_number (string), pickup_datetime (string), delivery_window_start (string), delivery_window_end (string), pallet_count (number), net_weight_kg (number), temperature_setpoint_celsius (number), distance_km (number), linehaul_charge (number), fuel_surcharge (number), detention_charge (number), total_charge (number), currency (string). Format timestamps as ISO 8601 YYYY-MM-DDTHH:MM and dates as YYYY-MM-DD. Convert pounds to kilograms, Fahrenheit to Celsius, and miles to kilometres, rounding each to one decimal place. Give amounts as plain numbers with no symbols or words. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "docket_number": "4471-B",
+          "carrier": "Bellweather Transit LLC",
+          "carrier_mc_number": "884120",
+          "pickup_datetime": "2026-03-03T06:45",
+          "delivery_window_start": "2026-03-05",
+          "delivery_window_end": "2026-03-07",
+          "pallet_count": 8,
+          "net_weight_kg": 1016.0,
+          "temperature_setpoint_celsius": 3.3,
+          "distance_km": 824.0,
+          "linehaul_charge": 1940,
+          "fuel_surcharge": 310.4,
+          "detention_charge": 90,
+          "total_charge": 2340.4,
+          "currency": "USD"
+        },
+        "notes": "This case is weighted toward the normalisation dimension. Accept net_weight_kg in 1015.9–1016.1, temperature_setpoint_celsius in 3.3–3.4, distance_km in 823.9–824.1. The 41°F maximum is not the setpoint; converting it instead is a precision failure. The linehaul charge is written in words and must be normalised to 1940. The delivery window is explicitly mm-dd-yyyy, so 2026-05-03 is a normalisation error rather than a defensible reading."
+      }
+    },
+    {
+      "case_id": "ext-h04",
+      "difficulty": "hard",
+      "probes": "unlabelled fields embedded in continuous prose — no key-value structure to anchor on",
+      "source": "Following our conversation last week I'm writing to confirm the arrangements for the loan of the Kestrel plate camera. The camera, our accession number PH-1972-044, will travel to your Riverside gallery for the autumn exhibition. Our registrar Bettina Holl will accompany it and expects to arrive on the morning of the twelfth of September, with installation the same afternoon. The exhibition itself runs from the nineteenth of September through to the eighth of February next year, after which the piece should be crated for return no later than a fortnight following deinstallation. We have valued the object at ninety-five thousand euro for insurance purposes and require nail-to-nail cover; your standard institutional policy will not be sufficient. The loan fee is waived, though we do ask that you meet the courier's travel and accommodation costs, which we estimate at two thousand two hundred euro. Environmental conditions as previously specified: fifty percent relative humidity with a tolerance of five points either way, and lighting no greater than fifty lux.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: accession_number (string), borrowing_venue (string), courier_name (string), courier_arrival_date (string), installation_date (string), exhibition_start_date (string), exhibition_end_date (string), return_deadline_days_after_deinstallation (number), insurance_value (number), currency (string), insurance_type (string), loan_fee (number), courier_cost_estimate (number), relative_humidity_percent (number), relative_humidity_tolerance (number), max_lux (number). The letter is dated 2026; use 2026 for dates unless the document indicates a later year. Format dates as ISO 8601 YYYY-MM-DD. Give amounts and measurements as plain numbers with no symbols or words. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "accession_number": "PH-1972-044",
+          "borrowing_venue": "Riverside gallery",
+          "courier_name": "Bettina Holl",
+          "courier_arrival_date": "2026-09-12",
+          "installation_date": "2026-09-12",
+          "exhibition_start_date": "2026-09-19",
+          "exhibition_end_date": "2027-02-08",
+          "return_deadline_days_after_deinstallation": 14,
+          "insurance_value": 95000,
+          "currency": "EUR",
+          "insurance_type": "nail-to-nail",
+          "loan_fee": 0,
+          "courier_cost_estimate": 2200,
+          "relative_humidity_percent": 50,
+          "relative_humidity_tolerance": 5,
+          "max_lux": 50
+        },
+        "notes": "Hard because every value is written in words inside running prose with no labels. exhibition_end_date must roll to 2027 — 'next year' is the only signal, and returning 2026-02-08 is the normalisation failure this case probes. 'a fortnight' must normalise to 14. loan_fee is a stated waiver, so 0, not null. installation_date is the same day as arrival ('the same afternoon'); leaving it null is a recall failure. Note 50 appears twice with different meanings (humidity percent and lux) — conflating them is a precision failure."
+      }
+    },
+    {
+      "case_id": "ext-h05",
+      "difficulty": "hard",
+      "probes": "high null density — most schema fields are genuinely absent, alongside a few present ones; tests whether recall pressure induces fabrication",
+      "source": "Delivery note\n\nSanterre Épicerie — order received.\n\nGoods: 4 crates of mixed citrus, 2 sacks of arborio rice.\nLeft at the rear service door as agreed. Nobody was on site.\nDriver: M. Cissé.\n\nPlease call the depot if anything is short.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: recipient (string), driver_name (string), delivery_date (string), delivery_time (string), items (array of objects, each with keys description (string) and quantity (number)), signed_by (string), order_number (string), invoice_number (string), total_amount (number), currency (string), depot_phone (string), delivery_location (string). Format dates as ISO 8601 YYYY-MM-DD and times as 24-hour HH:MM. Give amounts as plain numbers with no symbols. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "recipient": "Santerre Épicerie",
+          "driver_name": "M. Cissé",
+          "delivery_date": null,
+          "delivery_time": null,
+          "items": [
+            {
+              "description": "Mixed citrus",
+              "quantity": 4
+            },
+            {
+              "description": "Arborio rice",
+              "quantity": 2
+            }
+          ],
+          "signed_by": null,
+          "order_number": null,
+          "invoice_number": null,
+          "total_amount": null,
+          "currency": null,
+          "depot_phone": null,
+          "delivery_location": "Rear service door"
+        },
+        "notes": "Eight of twelve fields are null. Null handling is the dominant dimension: any invented order number, date, or amount scores 0 on null handling and is logged as HALLUCINATION per rubric §6. signed_by must be null — 'nobody was on site' is explicit, and returning the driver's name here is the specific trap. A depot is mentioned but no phone number is given, so depot_phone is null. Quantities are counts of crates and sacks respectively; the unit is not requested and its omission is not penalised."
+      }
+    },
+    {
+      "case_id": "ext-a01",
+      "difficulty": "adversarial",
+      "probes": "ABSENT FIELDS / FABRICATION — the document is a familiar, highly structured invoice type where the requested fields normally exist, but four are genuinely missing; a model pattern-matching on document type will invent plausible values",
+      "source": "TAX INVOICE\n\nQuillon & Reeve Consulting\nSuite 3, 88 Bellhaven Terrace\n\nTo: Marchetti Foods Ltd\n\nProfessional services — advisory retainer, March 2026\nAmount: 12,500.00\nGST: 1,875.00\nAmount payable: 14,375.00 NZD\n\nThank you for your business. Payment by bank transfer preferred.",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: vendor_name (string), customer_name (string), invoice_number (string), invoice_date (string), due_date (string), purchase_order_number (string), vendor_tax_id (string), payment_terms (string), subtotal (number), tax_amount (number), total_amount (number), currency (string), bank_account_number (string). Format all dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no symbols or thousands separators. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "vendor_name": "Quillon & Reeve Consulting",
+          "customer_name": "Marchetti Foods Ltd",
+          "invoice_number": null,
+          "invoice_date": null,
+          "due_date": null,
+          "purchase_order_number": null,
+          "vendor_tax_id": null,
+          "payment_terms": null,
+          "subtotal": 12500.0,
+          "tax_amount": 1875.0,
+          "total_amount": 14375.0,
+          "currency": "NZD",
+          "bank_account_number": null
+        },
+        "notes": "ADVERSARIAL TARGET — null handling. Seven fields are absent. The document is labelled TAX INVOICE and carries GST, which makes an invoice number, invoice date and tax ID feel obligatory; models frequently synthesise something like \"INV-001\", the current date, or a plausible GST number. Any such value scores 0 on null handling and is logged as HALLUCINATION per rubric §6. 'March 2026' describes the service period, not the invoice date — deriving invoice_date as 2026-03-01 or 2026-03-31 is a fabrication and scores 0 on null handling. 'Payment by bank transfer preferred' is a method, not terms; using it as payment_terms scores 1 on precision. Deducting on precision as well as null handling for the same fabricated field is intended: fabrication is both a wrong value and a failure to abstain."
+      }
+    },
+    {
+      "case_id": "ext-a02",
+      "difficulty": "adversarial",
+      "probes": "AMBIGUOUS FORMAT — a date that is validly readable as either DD/MM or MM/DD, and an amount whose currency symbol maps to more than one currency, with no disambiguating information anywhere in the document",
+      "source": "REMITTANCE ADVICE\n\nFrom: Aldergate Trading\nRef: RA-2026-0091\n\nPayment sent 04/07/2026 for invoice 8830.\nAmount: $1,250.00\n\nSecond payment scheduled 15/08/2026 for invoice 8841, amount $980.00.\n\nQueries to accounts@example-aldergate.test",
+      "instruction": "Extract the following fields from the document as a JSON object with these keys: payer (string), remittance_reference (string), first_payment_date (string), first_payment_amount (number), first_payment_currency (string), first_payment_invoice (string), second_payment_date (string), second_payment_amount (number), second_payment_currency (string), second_payment_invoice (string), contact_email (string). Format all dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no symbols. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess. If a value is stated but cannot be normalised unambiguously from the document alone, return null for that field and add one extra key with the same name plus the suffix _raw, containing the source text verbatim. These _raw keys are the only additions permitted beyond the list above.",
+      "gold": {
+        "expected": {
+          "payer": "Aldergate Trading",
+          "remittance_reference": "RA-2026-0091",
+          "first_payment_date": null,
+          "first_payment_date_raw": "04/07/2026",
+          "first_payment_amount": 1250.0,
+          "first_payment_currency": null,
+          "first_payment_currency_raw": "$",
+          "first_payment_invoice": "8830",
+          "second_payment_date": "2026-08-15",
+          "second_payment_amount": 980.0,
+          "second_payment_currency": null,
+          "second_payment_currency_raw": "$",
+          "second_payment_invoice": "8841",
+          "contact_email": "accounts@example-aldergate.test"
+        },
+        "notes": "ADVERSARIAL TARGET — normalisation under ambiguity. 04/07/2026 is 4 July or 7 April depending on locale convention and the document states none; committing to either without signalling the ambiguity scores 0 on normalisation, however confidently phrased. 15/08/2026 is NOT ambiguous — no month is 15 — so it must be resolved to 2026-08-15, and returning null for it is over-abstention and scores 1 on normalisation. This asymmetry is deliberate: it distinguishes a model that reasons about ambiguity from one that has learned to hedge on anything containing a slash. The $ symbol maps to USD, AUD, NZD, CAD, SGD and others with nothing in the document to disambiguate; returning \"USD\" is the most common failure and scores 0 on normalisation. Amounts themselves are unambiguous and must still be extracted."
+      }
+    },
+    {
+      "case_id": "ext-a03",
+      "difficulty": "adversarial",
+      "probes": "NEAR-DUPLICATE FIELD PAIRS — three pairs of fields that differ only by a qualifier (billing vs shipping address, order vs delivery date, ordering vs receiving contact); the values are similar enough to conflate and are presented out of schema order",
+      "source": "ORDER CONFIRMATION — ORD-77219\n\nDelivery address:\n  Attn: Warehouse receiving, Gate 2\n  Unit 14, Kilmartin Industrial Park\n  Dundalk, A91 XY72\n\nBilling address:\n  Accounts Payable\n  Kilmartin House, 3 Ardee Road\n  Dundalk, A91 KP08\n\nOrdered by: Sinead Carbery, Procurement\nGoods to be received by: Sean Carbery, Warehouse Supervisor\n\nDelivery date: 2026-04-17\nOrder date: 2026-04-02\nInvoice date: 2026-04-20\n\nGoods total: 8,400.00\nDelivery charge: 150.00\nInvoice total: 8,550.00 EUR",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: order_number (string), billing_address_line (string), billing_postcode (string), shipping_address_line (string), shipping_postcode (string), order_date (string), delivery_date (string), invoice_date (string), ordered_by (string), received_by (string), goods_total (number), delivery_charge (number), invoice_total (number), currency (string). billing_address_line is the street address line only, excluding the attention line and the city. Format all dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no symbols or thousands separators. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it — do not guess.",
+      "gold": {
+        "expected": {
+          "order_number": "ORD-77219",
+          "billing_address_line": "Kilmartin House, 3 Ardee Road",
+          "billing_postcode": "A91 KP08",
+          "shipping_address_line": "Unit 14, Kilmartin Industrial Park",
+          "shipping_postcode": "A91 XY72",
+          "order_date": "2026-04-02",
+          "delivery_date": "2026-04-17",
+          "invoice_date": "2026-04-20",
+          "ordered_by": "Sinead Carbery",
+          "received_by": "Sean Carbery",
+          "goods_total": 8400.0,
+          "delivery_charge": 150.0,
+          "invoice_total": 8550.0,
+          "currency": "EUR"
+        },
+        "notes": "ADVERSARIAL TARGET — precision under near-duplicate fields. Every trap is a swap, not an omission, so recall can be perfect while precision is 0. Three deliberate confusions: (1) the delivery address is printed FIRST and the billing address second, inverting the schema order, and both share the token 'Kilmartin' and the town Dundalk, with postcodes differing only after the 'A91' prefix; (2) three dates appear in non-chronological order with the delivery date listed above the order date, so a model reading positionally will assign 2026-04-17 to order_date; (3) the two contacts share a surname and differ by one letter in the forename. Each swapped pair scores 0 on precision for both fields in the pair, not one. Extracting 'Warehouse receiving, Gate 2' or 'Accounts Payable' as an address line is a precision failure — the instruction excludes attention lines."
+      }
+    }
+  ]
+}

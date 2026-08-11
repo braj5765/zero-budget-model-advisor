@@ -1,0 +1,268 @@
+{
+  "task": "summarization",
+  "version": "1.0",
+  "created": "2026-08-10",
+  "source_policy": "All source texts original, authored for this benchmark. See Test-Case-Design.md §1.",
+  "cases": [
+    {
+      "case_id": "sum-t01",
+      "difficulty": "typical",
+      "probes": "baseline: straightforward meeting notes, clear key points",
+      "source": "Notes from the Tuesday platform sync. Attendance: Riya, Daniel, Farah, Kwame. Riya reported that the migration to the new queueing service finished over the weekend with no customer-visible downtime, though two internal dashboards broke and were patched Monday morning. Daniel raised that the on-call rotation is now down to four people after Sana's transfer, which he described as unsustainable past September. Farah asked whether the queue migration changes anything about the retry semantics teams depend on; Riya confirmed retries now cap at five attempts rather than unlimited, and said she would send a note to all consuming teams by Friday. Kwame noted the storage cost projection for Q4 came in eleven percent under budget, mostly because the compression change shipped earlier than planned. No decisions were deferred. Next sync is in two weeks.",
+      "instruction": "Summarize these meeting notes in 3-4 sentences for someone who missed the meeting.",
+      "gold": {
+        "must_include": ["queueing service migration completed with no customer downtime", "on-call rotation down to four people / unsustainable past September", "retries now cap at five attempts, note going out by Friday", "Q4 storage cost 11% under budget"],
+        "must_not_include": ["any decision to hire or backfill Sana's role", "customer impact from the migration"],
+        "reference": "The queueing service migration completed over the weekend with no customer-visible downtime, though two internal dashboards broke and were patched Monday. Daniel flagged that the on-call rotation is down to four people after Sana's transfer and won't be sustainable past September. Retry behaviour has changed: attempts now cap at five instead of being unlimited, and Riya will notify consuming teams by Friday. Q4 storage costs came in 11% under budget due to the early compression change.",
+        "notes": "Coverage requires all four substantive points. Penalise faithfulness if the summary asserts a hiring decision — none was made."
+      }
+    },
+    {
+      "case_id": "sum-t02",
+      "difficulty": "typical",
+      "probes": "baseline: customer support thread, action-oriented",
+      "source": "Ticket #48812. Customer wrote in Thursday saying their scheduled exports stopped arriving after the 14th. First responder checked and found the exports were running successfully but delivering to an email address that had bounced repeatedly and been auto-suppressed by the mail provider. Customer confirmed the address belonged to an employee who left in March. Support updated the destination to a shared team inbox and re-ran the three missed exports, which the customer confirmed receiving. Customer then asked whether they could be notified when a destination address gets suppressed in future. Support confirmed no such notification exists today and logged a feature request. Customer was satisfied with the resolution but noted they had lost about ten days of reporting before noticing. Ticket closed Friday.",
+      "instruction": "Summarize this support ticket in 3-4 sentences for a product manager reviewing weekly issues.",
+      "gold": {
+        "must_include": ["exports were running but delivering to a suppressed, bounced address", "address belonged to an employee who left in March", "fixed by switching to a shared inbox and re-running three missed exports", "customer requested notification for suppressed addresses; feature request logged", "roughly ten days of reporting lost before the customer noticed"],
+        "must_not_include": ["a bug in the export system itself", "any commitment to build the notification feature"],
+        "reference": "A customer's scheduled exports appeared to stop after the 14th, but were actually running and delivering to an email address that had bounced and been auto-suppressed — it belonged to an employee who left in March. Support redirected exports to a shared team inbox and re-ran the three missed sends. The customer asked to be notified when a destination is suppressed; no such capability exists and a feature request was logged. Notably, about ten days of reporting were lost before anyone noticed the silent failure.",
+        "notes": "Faithfulness: the exports were not broken. A summary saying 'exports failed' is a material misreading and should score 1 or below on faithfulness."
+      }
+    },
+    {
+      "case_id": "sum-t03",
+      "difficulty": "typical",
+      "probes": "baseline: policy text, dense with conditions",
+      "source": "Effective 1 October, the expense reimbursement policy changes as follows. Claims must be submitted within 45 days of the expense date, reduced from 90. Claims submitted after 45 days require written approval from a director or above and will not be processed in the same cycle. Receipts remain required for any single expense above 2,000 rupees; below that threshold a description suffices. Travel booked outside the approved vendor now requires pre-authorisation rather than post-hoc justification. Meal claims during domestic travel are capped at 1,500 rupees per day, unchanged. The mileage rate rises from 12 to 14 rupees per kilometre. Claims for home internet remain ineligible. Employees with claims currently in flight under the old policy will have those processed under the previous rules provided they were submitted before 1 October.",
+      "instruction": "Summarize the changes in this policy update in 3-4 sentences. Focus on what is changing.",
+      "gold": {
+        "must_include": ["submission window cut from 90 to 45 days", "late claims need director approval and miss the cycle", "out-of-vendor travel now needs pre-authorisation instead of post-hoc justification", "mileage rate rises 12 to 14 rupees per km", "in-flight claims submitted before 1 October follow old rules"],
+        "must_not_include": ["a change to the meal cap", "a change to the receipt threshold", "home internet becoming eligible"],
+        "reference": "From 1 October, the expense claim window shortens from 90 days to 45, with late claims requiring director-level written approval and missing the current processing cycle. Travel booked outside the approved vendor now needs pre-authorisation rather than after-the-fact justification. The mileage rate increases from 12 to 14 rupees per kilometre. Claims submitted before 1 October are still processed under the old rules.",
+        "notes": "The instruction says focus on changes. Listing unchanged items (meal cap, receipt threshold) is a concision failure, not a faithfulness one."
+      }
+    },
+    {
+      "case_id": "sum-t04",
+      "difficulty": "typical",
+      "probes": "baseline: product spec excerpt, technical register",
+      "source": "The draft import feature accepts CSV and TSV files up to 50 MB. On upload the file is parsed client-side to detect delimiter and header row; the user then maps source columns to destination fields in a preview step showing the first twenty rows. Unmapped columns are discarded silently in the current draft, which reviewers flagged as a risk. Validation runs server-side after mapping is confirmed and rejects the entire file if more than five percent of rows fail, on the reasoning that a high failure rate usually indicates a mapping error rather than dirty data. Files under that threshold import successfully with failed rows returned as a downloadable error report. There is no partial-retry mechanism; correcting the errors requires re-uploading the whole file. Duplicate detection is out of scope for the first release.",
+      "instruction": "Summarize this feature specification in 3-4 sentences for a stakeholder unfamiliar with the details.",
+      "gold": {
+        "must_include": ["accepts CSV/TSV up to 50 MB with client-side parsing and a column-mapping preview", "whole file rejected if over 5% of rows fail validation", "failed rows returned as a downloadable error report", "no partial retry — fixing errors means re-uploading the whole file", "duplicate detection out of scope for first release"],
+        "must_not_include": ["unmapped columns are flagged to the user", "partial import retry exists"],
+        "reference": "The import feature takes CSV or TSV files up to 50 MB, parses them in the browser, and has users map source columns to destination fields with a twenty-row preview. Server-side validation rejects the entire file if more than 5% of rows fail, on the assumption that indicates a mapping mistake; below that, the import succeeds and failed rows come back as a downloadable error report. There is no partial retry, so fixing errors requires re-uploading the whole file. Duplicate detection is deferred past the first release.",
+        "notes": "The silent discarding of unmapped columns is a flagged risk, not a feature. Reversing this is a faithfulness error."
+      }
+    },
+    {
+      "case_id": "sum-t05",
+      "difficulty": "typical",
+      "probes": "baseline: chat log, informal register, signal buried in chatter",
+      "source": "ravi: anyone else seeing the staging env time out\nmeera: yeah since about 11\nravi: cool cool cool not great\nmeera: i think it's the seed data job, it's been running 40 min\nravi: 40? it's normally like 4\njoseph: morning. what did i miss\nmeera: staging is dead, seed job is stuck\njoseph: is it the new fixtures pr\nmeera: ...probably yes\nravi: i'll revert it\njoseph: wait before you revert can we grab the query plan, i want to know which insert is hanging\nmeera: +1 otherwise we'll just hit this again next week\nravi: fine, 10 min then i revert\njoseph: deal\nmeera: got the plan, it's the attachments fixture, no index on the join column\nravi: reverting now\njoseph: i'll open a ticket for the index",
+      "instruction": "Summarize what happened in this chat log in 3-4 sentences.",
+      "gold": {
+        "must_include": ["staging environment timing out from around 11", "cause was the seed data job taking 40 minutes instead of ~4", "traced to the new fixtures PR — attachments fixture with no index on the join column", "PR reverted, ticket opened for the index"],
+        "must_not_include": ["staging was fixed by adding the index", "customer impact"],
+        "reference": "Staging began timing out around 11 because the seed data job was running for 40 minutes instead of its usual four. The team traced it to a recently merged fixtures PR, and before reverting, captured the query plan at Joseph's suggestion so the cause wouldn't recur. Meera identified the attachments fixture as the culprit — no index on the join column. Ravi reverted the PR and Joseph opened a ticket to add the index.",
+        "notes": "Reward summaries that capture the diagnose-before-revert decision; it is the substantive judgment in the log. Missing it is a coverage gap, not a faithfulness error."
+      }
+    },
+    {
+      "case_id": "sum-t06",
+      "difficulty": "typical",
+      "probes": "baseline: user research notes, qualitative",
+      "source": "Interview 6 of 9. Participant is an operations lead at a mid-size logistics firm, four years in role. She described her morning as 'checking six things that should be one thing' — pulling driver availability, vehicle status, and route exceptions from three separate systems and reconciling them in a spreadsheet she has maintained herself for three years. When asked what she would fix first, she said not the reconciliation but the fact that exceptions arrive by email, so she cannot tell which are still open without reading each thread. She was skeptical of a unified dashboard, saying two previous vendors promised one and both required her to keep the spreadsheet anyway. She said she would trust a tool that started by just tracking exception status and did nothing else well. She mentioned her spreadsheet has become load-bearing for two other teams who read it but do not maintain it.",
+      "instruction": "Summarize the key findings from this research interview in 3-4 sentences.",
+      "gold": {
+        "must_include": ["reconciles driver availability, vehicle status and route exceptions from three systems into a self-maintained spreadsheet", "her stated top priority is exception status tracking, not the reconciliation", "skeptical of unified dashboards after two vendors failed to remove the spreadsheet", "spreadsheet is load-bearing for two other teams who read but don't maintain it"],
+        "must_not_include": ["she wants a unified dashboard", "she is satisfied with her current process"],
+        "reference": "An operations lead spends her mornings reconciling driver availability, vehicle status, and route exceptions from three separate systems into a spreadsheet she has maintained herself for three years. Her priority fix is not the reconciliation but exception tracking — exceptions arrive by email, so she can't tell which remain open. She is explicitly skeptical of unified dashboards, having had two vendors promise one without removing her spreadsheet, and said she'd trust a tool that only tracked exception status well. Her spreadsheet has also become a dependency for two other teams that consume it without maintaining it.",
+        "notes": "The counterintuitive finding — she doesn't want the obvious solution — is the point of the interview. A summary that reports she wants a dashboard inverts the finding and should score 0 on faithfulness."
+      }
+    },
+    {
+      "case_id": "sum-t07",
+      "difficulty": "typical",
+      "probes": "baseline: incident postmortem, causal chain",
+      "source": "Incident 2026-07-03. Duration 74 minutes. Impact: password resets failed for approximately 8% of users. The trigger was a routine certificate rotation on the identity provider. The new certificate was valid but was deployed to three of four regions; the fourth was skipped because its deployment pipeline had been paused during an unrelated maintenance window two days earlier and never resumed. Users routed to the fourth region received a validation error the client rendered as a generic failure, which is why the initial reports described the problem as 'reset link does not work' rather than pointing at auth. Detection came from a customer report, not monitoring, because the synthetic check for password reset only ran against the primary region. Resolution was resuming the paused pipeline. Two follow-ups were agreed: synthetic checks per region, and an alert for pipelines paused longer than 24 hours.",
+      "instruction": "Summarize this incident report in 3-4 sentences.",
+      "gold": {
+        "must_include": ["74 minutes, ~8% of users could not reset passwords", "certificate rotation reached three of four regions; fourth pipeline was paused during unrelated maintenance and never resumed", "detected by customer report, not monitoring, because synthetic checks only covered the primary region", "follow-ups: per-region synthetic checks and an alert for pipelines paused over 24 hours"],
+        "must_not_include": ["the certificate was invalid or expired", "a security breach"],
+        "reference": "For 74 minutes, roughly 8% of users could not reset their passwords. A routine certificate rotation reached only three of four regions — the fourth's deployment pipeline had been paused during unrelated maintenance days earlier and never resumed — and the client surfaced the resulting validation error as a generic failure, obscuring the auth cause. Monitoring missed it entirely because the synthetic password-reset check only ran against the primary region, so detection came from a customer report. Fixes agreed: per-region synthetic checks and an alert for pipelines paused more than 24 hours.",
+        "notes": "The certificate itself was valid. Summaries claiming an expired or bad certificate fail faithfulness."
+      }
+    },
+    {
+      "case_id": "sum-t08",
+      "difficulty": "typical",
+      "probes": "baseline: length instruction adherence, single sentence",
+      "source": "The pilot ran for six weeks across two warehouses. Warehouse A adopted the new picking sequence in week one and saw picks per hour rise from 41 to 52 by week three, holding steady after. Warehouse B delayed adoption to week three following a staffing shortage and reached 48 picks per hour by week six, still trending upward at the end of the pilot. Error rates were flat at both sites. Staff feedback was mixed: experienced pickers found the new sequence slower for the first week and faster afterward, while newer staff reported no adjustment period. Two supervisors independently noted the sequence works poorly for oversized items, which represent about 6% of volume. The recommendation is to roll out with an exception path for oversized items.",
+      "instruction": "Summarize this in exactly one sentence.",
+      "gold": {
+        "must_include": ["picking sequence improved throughput at both warehouses", "recommendation to roll out with an oversized-item exception"],
+        "must_not_include": ["error rates increased"],
+        "reference": "A six-week pilot of the new picking sequence raised throughput at both warehouses (41 to 52 picks/hour at A, 48 by week six at B) with flat error rates, and is recommended for rollout with an exception path for oversized items.",
+        "notes": "Instruction adherence is the primary dimension here. More than one sentence scores 0 on adherence regardless of content quality. Coverage is judged leniently given the length constraint."
+      }
+    },
+    {
+      "case_id": "sum-t09",
+      "difficulty": "typical",
+      "probes": "baseline: audience instruction adherence, non-technical reader",
+      "source": "The recommendation service currently computes results synchronously at request time, joining user event history against a product embedding index. At p50 this completes in 180 ms, but p99 reaches 2.4 seconds because event history for high-activity users can exceed 40,000 rows and the join is unbounded. The proposal is to precompute recommendations nightly for all users with more than 500 events, serving them from cache, and fall back to the live path for everyone else. This trades freshness for tail latency: precomputed users would see recommendations up to 24 hours stale. Estimated cache size is 90 GB. An alternative considered was capping event history at the most recent 2,000 rows, which preserves freshness and is far simpler, but early tests showed a measurable drop in recommendation relevance for long-tenured users.",
+      "instruction": "Summarize this for a non-technical business stakeholder in 3-4 sentences. Avoid jargon.",
+      "gold": {
+        "must_include": ["recommendations are slow for the most active users", "proposal is to calculate them overnight in advance for heavy users, at the cost of being up to a day out of date", "simpler alternative of limiting history was rejected because it hurt quality for long-standing users"],
+        "must_not_include": ["p99 / embedding index / cache terminology left unexplained"],
+        "reference": "Recommendations are generated the moment a user asks for them, which works fine for most people but is slow for the most active users — occasionally taking well over two seconds. The proposal is to calculate recommendations overnight for heavy users and serve the saved results instantly, accepting that those recommendations could be up to a day out of date. A simpler option — only looking at each user's most recent activity — was tested but made recommendations noticeably worse for long-standing customers.",
+        "notes": "Instruction adherence: unexplained jargon (p99, embeddings, cache size) is the failure this case probes. Content-correct but jargon-heavy summaries should score 1 on adherence."
+      }
+    },
+    {
+      "case_id": "sum-t10",
+      "difficulty": "typical",
+      "probes": "baseline: numbers must survive summarization accurately",
+      "source": "Quarterly summary. Total active accounts closed at 14,280, up from 13,110 the prior quarter. New signups were 2,340, against 1,170 churned accounts, giving net growth of 1,170. Average revenue per account fell slightly from 1,840 to 1,795 rupees, attributed to a higher share of accounts on the entry plan following the March pricing change. Total revenue nonetheless rose from 24.1 to 25.6 million rupees. Support ticket volume grew 22% while headcount was flat, and median first-response time rose from 3.1 to 5.4 hours. The entry plan now represents 38% of accounts, up from 26%. Renewal rate among accounts older than twelve months was 91%, essentially unchanged.",
+      "instruction": "Summarize this quarterly report in 4 sentences, preserving the key figures.",
+      "gold": {
+        "must_include": ["active accounts 13,110 to 14,280, net growth 1,170", "ARPA fell 1,840 to 1,795 due to entry-plan mix shift", "total revenue rose 24.1 to 25.6 million", "support tickets up 22% with flat headcount, first response 3.1 to 5.4 hours", "entry plan 26% to 38% of accounts"],
+        "must_not_include": ["revenue declined", "churn increased sharply"],
+        "reference": "Active accounts grew from 13,110 to 14,280, with 2,340 signups against 1,170 churned. Average revenue per account slipped from 1,840 to 1,795 rupees as the entry plan grew from 26% to 38% of accounts following the March pricing change, though total revenue still rose from 24.1 to 25.6 million rupees. Support strain is the concern: ticket volume rose 22% against flat headcount, pushing median first response from 3.1 to 5.4 hours. Renewal among accounts over twelve months old held at 91%.",
+        "notes": "Faithfulness here is largely numerical. Any transposed, rounded-wrongly, or invented figure scores 1 or below."
+      }
+    },
+    {
+      "case_id": "sum-t11",
+      "difficulty": "typical",
+      "probes": "baseline: email thread with a decision and open items",
+      "source": "From Priya, Monday: Sending the vendor comparison ahead of Thursday. Short version, Vendor A is cheaper by about 18% over three years but requires us to migrate off our current auth setup. Vendor B costs more but drops in.\nFrom Tomas, Monday: Do we have an estimate for the auth migration effort? That number decides this.\nFrom Priya, Tuesday: Rough estimate from the platform team is six to eight weeks of one engineer, plus an unknown amount of coordination with the three teams that depend on the current setup.\nFrom Tomas, Tuesday: Then it is not 18% cheaper. Let's go with B unless someone objects by Thursday.\nFrom Anika, Wednesday: No objection, but flagging that B's contract auto-renews annually with 90 days notice, which bit us with the last vendor. Ask for 30.\nFrom Tomas, Wednesday: Agreed, I'll raise it in negotiation.",
+      "instruction": "Summarize this email thread in 3-4 sentences, making clear what was decided and what is still open.",
+      "gold": {
+        "must_include": ["Vendor A cheaper by ~18% over three years but requires auth migration", "migration estimated 6-8 weeks of one engineer plus unknown coordination with three dependent teams", "decision: go with Vendor B unless objection by Thursday", "open: negotiate B's 90-day auto-renewal notice down to 30 days"],
+        "must_not_include": ["the contract has been signed", "Vendor A was chosen"],
+        "reference": "Vendor A came in about 18% cheaper over three years but requires migrating off the current auth setup, estimated at six to eight weeks of one engineer plus unquantified coordination with three dependent teams. On that basis Tomas decided to proceed with Vendor B, pending any objection by Thursday. Anika raised no objection but flagged that B's contract auto-renews annually with 90 days' notice — a problem with a previous vendor — and asked for 30. Tomas agreed to raise the notice period in negotiation.",
+        "notes": "The instruction asks explicitly for decided vs open. Merging them is an adherence failure."
+      }
+    },
+    {
+      "case_id": "sum-t12",
+      "difficulty": "typical",
+      "probes": "baseline: bullet-format instruction adherence",
+      "source": "The onboarding redesign shipped to 50% of new accounts on 12 June. Over the following four weeks, completion of the setup flow rose from 54% to 67%. Time to first meaningful action fell from a median of 19 minutes to 11. However, day-30 retention was statistically indistinguishable between the two groups, which the team did not expect. Qualitative follow-up suggested the redesign helps users finish setup but does not change whether the product fits their need. Two segments diverged: self-serve accounts improved most, while accounts arriving via partner referral showed no completion improvement at all, possibly because they arrive with different expectations. The team recommends shipping to 100% on the completion gains alone, while treating retention as an unrelated problem.",
+      "instruction": "Summarize this as exactly 4 bullet points.",
+      "gold": {
+        "must_include": ["setup completion 54% to 67%", "time to first meaningful action 19 to 11 minutes median", "day-30 retention unchanged, contrary to expectation", "partner-referral accounts showed no improvement", "recommendation: ship to 100% on completion gains, treat retention separately"],
+        "must_not_include": ["retention improved"],
+        "reference": "- Setup flow completion rose from 54% to 67% after the redesign shipped to half of new accounts on 12 June\n- Median time to first meaningful action fell from 19 minutes to 11\n- Day-30 retention was unchanged, which the team did not expect; follow-up suggests the redesign helps users finish setup but not judge product fit\n- Self-serve accounts improved most while partner-referral accounts showed no gain; recommendation is to ship to 100% on completion gains and treat retention as a separate problem",
+        "notes": "Adherence: not exactly 4 bullets, or prose instead of bullets, scores 0 on adherence."
+      }
+    },
+    {
+      "case_id": "sum-h01",
+      "difficulty": "hard",
+      "probes": "long input near context pressure; key points distributed across the whole text",
+      "source": "Annual review of the field operations programme. The programme began in 2023 with four regions and expanded to eleven by the end of 2025. Headcount grew from 22 to 71 over the same period, with the sharpest increase in 2024 when three regions were added simultaneously following the acquisition of a regional competitor. Training was standardised in early 2024 after inconsistent onboarding was identified as the leading cause of first-year attrition, which stood at 34% in 2023 and fell to 19% by 2025. Equipment costs per field technician fell from 84,000 to 61,000 rupees, largely through a consolidated procurement agreement signed in June 2024, though the agreement also reduced the range of available equipment, which two regional managers have flagged as a constraint for specialised jobs. Customer satisfaction for field visits held between 4.2 and 4.4 out of 5 throughout, with no clear trend. Average time to complete a standard installation fell from 3.1 hours to 2.4, attributed roughly equally to the standardised training and to a route planning tool introduced in late 2024. Two regions, North East and Central, consistently underperform on completion time, both averaging above 3 hours; a review found both cover unusually large geographic areas rather than having process problems. Scheduled maintenance visits, which were 12% of workload in 2023, are now 31%, reflecting the maturing installed base, and this shift is the main driver of the 2026 headcount request. The programme has not yet measured revenue impact of maintenance visits separately from installations, which the finance team has raised twice.",
+      "instruction": "Summarize this annual review in 4-5 sentences for an executive audience.",
+      "gold": {
+        "must_include": ["expanded from 4 to 11 regions and 22 to 71 headcount over 2023-2025", "first-year attrition 34% to 19% after training standardisation", "installation time 3.1 to 2.4 hours from training plus route planning tool", "maintenance visits grew 12% to 31% of workload, driving the 2026 headcount request", "revenue impact of maintenance not yet measured separately, raised twice by finance"],
+        "must_not_include": ["North East and Central have process problems", "customer satisfaction improved"],
+        "reference": "The field operations programme expanded from four regions to eleven and from 22 to 71 staff between 2023 and 2025. Standardised training cut first-year attrition from 34% to 19%, and installation time fell from 3.1 to 2.4 hours through a combination of that training and a route planning tool. Consolidated procurement lowered per-technician equipment costs from 84,000 to 61,000 rupees, though it narrowed equipment choice in ways two regional managers say constrain specialised work. Customer satisfaction was flat throughout at 4.2-4.4. The structural shift is in workload mix — maintenance visits rose from 12% to 31% — which drives the 2026 headcount request, but their revenue impact has never been measured separately, a gap finance has raised twice.",
+        "notes": "Hard because signal is distributed and several figures are decoys at executive level. The finance measurement gap is the item most often dropped; its absence is a coverage failure. Attributing North East / Central underperformance to process rather than geography is a faithfulness failure."
+      }
+    },
+    {
+      "case_id": "sum-h02",
+      "difficulty": "hard",
+      "probes": "internally contradictory source; correct behaviour is to surface the contradiction rather than silently pick one side",
+      "source": "Project status, week 9. The engineering lead reports the integration work is approximately 80% complete and on track for the 30 September date. The QA lead reports that only 40% of integration test cases have been written, and that of those executed, a third are failing against the current build. The engineering lead's estimate counts code-complete work; the QA lead notes that three of the five integration points have not been made available in the test environment, so their status is unknown rather than passing. The project manager's summary to the steering committee last week stated the project was 'green'. The QA lead has requested the status be changed to amber. No decision has been made. The 30 September date is tied to a customer commitment made in April.",
+      "instruction": "Summarize this project status in 3-4 sentences.",
+      "gold": {
+        "must_include": ["engineering reports ~80% complete and on track for 30 September", "QA reports only 40% of integration tests written, a third of executed tests failing", "the estimates measure different things — code-complete vs verified; three of five integration points not available in the test environment", "status disputed: reported green, QA requesting amber, no decision made", "date tied to an April customer commitment"],
+        "must_not_include": ["the project is on track", "the project is behind schedule"],
+        "reference": "Engineering reports the integration is roughly 80% complete and on track for 30 September, while QA reports only 40% of integration tests written and a third of those executed failing — the two are measuring different things, since engineering counts code-complete work and three of five integration points aren't yet available in the test environment, leaving their status unknown rather than passing. The project was reported as green to the steering committee last week and QA has requested it be moved to amber; no decision has been made. The 30 September date is tied to a customer commitment made in April.",
+        "notes": "This case's whole point is the contradiction. A summary that reports either 'on track' or 'behind' as settled fact scores 0 on faithfulness. Surfacing the disagreement AND its cause scores 3."
+      }
+    },
+    {
+      "case_id": "sum-h03",
+      "difficulty": "hard",
+      "probes": "noisy, poorly structured source with irrelevant material interleaved",
+      "source": "Ok so writing this up before I forget. Coffee machine is broken again, someone should call them. Anyway — the thing with the batch job. So it runs at 2am and it's been fine for like a year. Last Tuesday it didn't run. Nobody noticed until Thursday. (Also Priya's last day is the 22nd, we should do something.) The reason it didn't run is the cron entry was on the old scheduler box and that box got decommissioned as part of the cleanup, which was supposed to be checked against a list of what was running on it, and there was a list, but the list was generated from a different inventory system than the one that had the cron entries. So the box looked empty and it wasn't. There are probably other things on other decommissioned boxes, we should check, I don't know how many boxes are in scope, maybe six? Also parking is being reassigned next month. The job has been moved to the new scheduler and backfilled for the missing two days, that part is done.",
+      "instruction": "Summarize the substantive issue described here in 3-4 sentences. Ignore unrelated remarks.",
+      "gold": {
+        "must_include": ["nightly 2am batch job failed to run last Tuesday, not noticed until Thursday", "cron entry lived on a decommissioned scheduler box", "the decommission checklist was generated from a different inventory system than the one holding cron entries, so the box appeared empty", "risk that other decommissioned boxes (~six) have similar hidden dependencies", "job moved to the new scheduler and the two missing days backfilled"],
+        "must_not_include": ["coffee machine", "Priya's last day", "parking"],
+        "reference": "A nightly 2am batch job silently stopped running last Tuesday and went unnoticed until Thursday. Its cron entry lived on a scheduler box that was decommissioned during a cleanup — the decommission checklist had been generated from a different inventory system than the one holding cron entries, so the box appeared empty when it wasn't. The same gap likely affects other recently decommissioned boxes, possibly around six, which should be checked. The job has been moved to the new scheduler and the two missed days backfilled.",
+        "notes": "Concision dimension is the discriminator. Including coffee, Priya, or parking is an explicit adherence and concision failure given the instruction."
+      }
+    },
+    {
+      "case_id": "sum-h04",
+      "difficulty": "hard",
+      "probes": "mixed register and mixed content types in one source (prose, table-like data, quotes)",
+      "source": "Post-launch review, mobile checkout.\nHeadline numbers, first 14 days vs prior 14: conversion 2.8% to 3.4%; average order value 1,240 to 1,190; cart abandonment 68% to 61%; support contacts about payment 41 to 66.\nWhat the team expected: conversion up, abandonment down. Both happened.\nWhat surprised them: order value fell and payment support contacts rose by more than half.\nOne support agent, quoted from the review: 'Most of them are not complaints, they're people asking whether the payment went through because the confirmation screen looks different now.'\nThe design lead's view is that the new confirmation screen is technically clearer but reads as an interstitial rather than a terminal state, so users are not sure they are done.\nThe growth lead's view is that the AOV drop is a mix effect from more low-value orders converting, not a real decline, and that this is a good outcome.\nNeither view has been tested. A follow-up on the confirmation screen is scheduled; no follow-up is planned on AOV.",
+      "instruction": "Summarize this post-launch review in 4-5 sentences.",
+      "gold": {
+        "must_include": ["conversion 2.8% to 3.4%, abandonment 68% to 61% — as expected", "AOV fell 1,240 to 1,190 and payment support contacts rose 41 to 66 — unexpected", "support contacts are mostly confusion about whether payment completed, attributed to the new confirmation screen reading as interstitial", "growth lead believes AOV drop is a mix effect from more low-value orders converting", "both explanations untested; confirmation screen follow-up scheduled, AOV follow-up not"],
+        "must_not_include": ["the AOV drop has been confirmed as a mix effect", "payment failures increased"],
+        "reference": "Mobile checkout delivered the expected gains — conversion rose from 2.8% to 3.4% and cart abandonment fell from 68% to 61%. Two results surprised the team: average order value fell from 1,240 to 1,190, and payment-related support contacts jumped from 41 to 66. The support contacts appear not to be complaints but users unsure whether their payment succeeded, which the design lead attributes to a new confirmation screen that reads as an interstitial rather than a final state. The growth lead believes the AOV decline is a mix effect from more low-value orders converting rather than a real drop. Neither explanation has been tested; a confirmation-screen follow-up is scheduled but nothing is planned on AOV.",
+        "notes": "Both explanations are hypotheses. Reporting either as established fact is a faithfulness failure — this is the specific trap."
+      }
+    },
+    {
+      "case_id": "sum-h05",
+      "difficulty": "hard",
+      "probes": "dense technical source requiring the summary to preserve conditional logic accurately",
+      "source": "Access rules for the reporting API, revised. A request is authorised if the caller holds the reports.read scope AND the requested workspace is one the caller's token is bound to. Tokens bound to a parent organisation implicitly cover child workspaces created before the token was issued, but not those created after — this was previously the opposite and is the main change. Service tokens are exempt from the workspace binding check but require the reports.admin scope instead, and are rate limited at one tenth the standard limit. Requests for archived workspaces are rejected regardless of scope, except for callers holding reports.admin, who receive a read-only response with a deprecation header. Delegated tokens inherit the scope of the issuing user at issue time and do not update if that user's permissions later change; revocation is the only mechanism to remove access. There is no scope that grants cross-organisation access.",
+      "instruction": "Summarize these access rules in 4-5 sentences, preserving the conditions accurately.",
+      "gold": {
+        "must_include": ["needs reports.read scope AND token bound to the requested workspace", "parent-org tokens cover child workspaces created BEFORE issuance, not after — this reverses previous behaviour and is the main change", "service tokens skip workspace binding but need reports.admin and get one tenth the rate limit", "archived workspaces rejected except for reports.admin, who get read-only with a deprecation header", "delegated tokens freeze scope at issue time; only revocation removes access", "no cross-organisation scope exists"],
+        "must_not_include": ["parent tokens cover workspaces created after issuance", "delegated token permissions update automatically"],
+        "reference": "Access requires both the reports.read scope and a token bound to the requested workspace. Tokens bound to a parent organisation now cover only child workspaces created before the token was issued — not those created after, which reverses the previous behaviour and is the main change. Service tokens bypass the workspace binding check but must hold reports.admin and are rate limited to one tenth of the standard allowance. Archived workspaces are rejected for everyone except reports.admin holders, who get a read-only response with a deprecation header. Delegated tokens freeze the issuing user's scope at issue time and never update, so revocation is the only way to remove their access; no scope grants cross-organisation access.",
+        "notes": "Faithfulness is judged strictly on conditional logic. Inverting the before/after rule — the single most likely error — scores 0."
+      }
+    },
+    {
+      "case_id": "sum-a01",
+      "difficulty": "adversarial",
+      "probes": "HALLUCINATION BY INFERENCE — source invites a causal conclusion it does not state; a faithful summary must not assert it",
+      "source": "Support ticket volume rose 34% in July. The new pricing page launched on 3 July. Ticket volume in June was 4,100 and in July was 5,494. The largest category of increase was billing questions, up from 610 to 1,340. Of those billing tickets, the team has categorised 400 so far: 210 concern proration on plan changes, 90 concern invoice formatting, 60 concern payment method updates, and 40 are miscellaneous. The remaining 940 have not been categorised. July also included the annual renewal date for approximately 2,900 accounts that signed up during the same promotional period last year. Marketing ran a re-engagement campaign to lapsed accounts from 8 to 22 July. Two support agents were on leave for the second half of the month.",
+      "instruction": "Summarize this data in 3-4 sentences.",
+      "gold": {
+        "must_include": ["ticket volume rose 34% (4,100 to 5,494) in July", "billing questions more than doubled, 610 to 1,340", "only 400 of those categorised — mostly proration questions — with 940 uncategorised", "multiple coincident events: pricing page launch, ~2,900 annual renewals, a re-engagement campaign, two agents on leave"],
+        "must_not_include": ["the pricing page caused the increase", "the pricing page launch is responsible for the billing tickets", "the increase is due to the new pricing"],
+        "reference": "Support ticket volume rose 34% in July, from 4,100 to 5,494, with billing questions more than doubling from 610 to 1,340. Only 400 of those billing tickets have been categorised — mostly proration questions on plan changes — leaving 940 unexamined. Several things coincided in July: the new pricing page launched on the 3rd, roughly 2,900 accounts hit their annual renewal, a re-engagement campaign ran mid-month, and two agents were on leave. The source does not establish which of these drove the increase.",
+        "notes": "ADVERSARIAL TARGET. The source deliberately places the pricing launch next to the volume rise without asserting causation. Any summary stating or strongly implying the pricing page caused the increase scores 0 on faithfulness and is logged as HALLUCINATION. Explicitly noting that causation is not established scores 3."
+      }
+    },
+    {
+      "case_id": "sum-a02",
+      "difficulty": "adversarial",
+      "probes": "BURIED LEDE — the most consequential fact is placed last and phrased mildly; a naive summary will lead with the volume of routine detail",
+      "source": "Weekly engineering update. The search reindexing job completed for all locales. Documentation for the new webhook format is drafted and in review. The team closed 23 tickets, up from 17 last week. Onboarding for the two new engineers is proceeding; both have shipped their first changes. The flaky test in the payments suite was fixed by removing a timing assumption. Dependency upgrades are current with the exception of one library pending a breaking change review. The design system upgrade is unblocked following the accessibility audit. Separately, during the reindexing work the team discovered that search results have been excluding archived-then-restored records since the March index change, which affects an estimated 40,000 records across roughly 900 customer accounts; no customer has reported it, and a fix plus reindex is estimated at one week.",
+      "instruction": "Summarize this engineering update in 3-4 sentences.",
+      "gold": {
+        "must_include": ["search has been silently excluding archived-then-restored records since March", "~40,000 records across ~900 accounts affected", "no customer has reported it; fix plus reindex estimated at one week"],
+        "must_not_include": ["the issue has been fixed", "customers have complained"],
+        "reference": "The significant item is a defect discovered during reindexing: search has been excluding archived-then-restored records since the March index change, affecting an estimated 40,000 records across roughly 900 customer accounts. No customer has reported it, and the fix plus reindex is estimated at one week. Routine progress otherwise — search reindexing completed across all locales, 23 tickets closed (up from 17), webhook documentation in review, both new engineers shipping, and the design system upgrade unblocked after the accessibility audit.",
+        "notes": "ADVERSARIAL TARGET. Coverage scores 0 if the search defect is omitted, and 1 if it is mentioned only as one item in a list of equals. Scoring 3 requires the summary to foreground it. This measures whether the model summarizes by position/volume or by significance."
+      }
+    },
+    {
+      "case_id": "sum-a03",
+      "difficulty": "adversarial",
+      "probes": "FABRICATED SPECIFICITY — source is deliberately vague on quantities; models tend to invent plausible precise figures",
+      "source": "The retention experiment did not go as planned. We had intended to run it for a full quarter but stopped early when the treatment group's usage diverged in a way that concerned the team. The divergence appeared in the second half of the run. We had a reasonably large sample, though smaller than we originally powered for because the eligibility filter excluded more accounts than expected. The effect on the primary metric was negative and outside what we would attribute to noise, though the confidence interval was wide. Secondary metrics were mixed and we do not consider them informative at this sample size. The team's conclusion is that the mechanism we assumed — that surfacing usage summaries would prompt re-engagement — may work in the opposite direction for accounts already at low usage, essentially reminding them they are not getting value. We are not planning to re-run it in this form.",
+      "instruction": "Summarize the results of this experiment in 3-4 sentences.",
+      "gold": {
+        "must_include": ["experiment stopped early when the treatment group's usage diverged in the second half", "sample was smaller than powered for because the eligibility filter excluded more accounts than expected", "negative effect on the primary metric, beyond noise but with a wide confidence interval", "hypothesis: usage summaries may reduce engagement for already-low-usage accounts by highlighting lack of value", "not being re-run in this form"],
+        "must_not_include": ["any specific sample size", "any specific p-value or effect size percentage", "any specific number of weeks or days", "any specific confidence interval bounds"],
+        "reference": "The retention experiment was stopped before its intended full-quarter run when the treatment group's usage diverged during the second half. The sample ended up smaller than originally powered for, because the eligibility filter excluded more accounts than expected. The effect on the primary metric was negative and larger than noise would explain, though with a wide confidence interval; secondary metrics were mixed and not considered informative at this sample size. The team's read is that surfacing usage summaries may backfire for accounts already at low usage by highlighting the value they aren't getting, and they don't plan to re-run it in this form.",
+        "notes": "ADVERSARIAL TARGET. The source contains no numbers at all. Any invented figure — sample size, effect size, duration, p-value — scores 0 on faithfulness and is logged as HALLUCINATION. This directly measures whether a model manufactures precision to sound authoritative."
+      }
+    }
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "task": "classification",
+  "version": "1.0",
+  "created": "2026-08-11",
+  "source_policy": "All source texts original, authored for this benchmark. See Test-Case-Design.md §1.",
+  "gold_form": "Exact expected label. `gold.expected` is the literal string the model should return, matching one member of that case's permitted label set character-for-character. Where a case is deliberately on a category boundary, `gold.expected` is null and `gold.expected_any` holds the list of labels accepted as correct — declared per case, never file-wide. `gold.notes` carries scoring guidance for the three rubric dimensions (label correctness, label validity, ambiguity handling).",
+  "conventions": {
+    "label_set": "Every `instruction` states the complete permitted label set inline. No case relies on a set defined elsewhere; the prompt sent to the model needs no external context.",
+    "label_sets_vary": "Five different label sets are used across the 20 cases — sentiment, support-ticket routing, intent, priority, content category — so a model cannot succeed by memorising one taxonomy. Label wording and casing differ between sets deliberately.",
+    "output_format": "Identical across all 20 cases: the label alone on the first line, copied exactly as written in the set, optionally followed by one line beginning 'Note:' if the model judges the input genuinely ambiguous between two labels.",
+    "why_the_note_line": "The 'Note:' affordance exists so the ambiguity-handling dimension (rubric §3.3) is measurable at all. Without a sanctioned channel for uncertainty, a model with correct calibration and a model with false confidence produce identical output, and the dimension measures nothing. It is offered on every case, not only the ambiguous ones — otherwise the prompt itself signals which cases are traps, and a model would be rewarded for reading the instruction rather than the input.",
+    "no_new_labels": "Emitting any string outside the permitted set — a hedge like 'Mostly Positive', a merged label, a severity the set does not contain — is a label-validity failure scored 0 on that dimension regardless of how reasonable the reading is. This is the integration-breaking failure the rubric separates out."
+  },
+  "cases": [
+    {
+      "case_id": "cls-t01",
+      "difficulty": "typical",
+      "probes": "baseline: sentiment, clearly positive product review",
+      "source": "Been using this for about five months now to keep track of stock across two shops. Setup took an afternoon and I had no help, which tells you something. The stock counts have been right every single time I've spot-checked them, and the low-stock alert has saved me at least three reorders I would have forgotten. Support answered my one question in under an hour. I've already told two other owners in the market about it.",
+      "instruction": "Classify the sentiment of the following text. The permitted labels are exactly: Positive, Negative, Neutral. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the text genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nText:\nBeen using this for about five months now to keep track of stock across two shops. Setup took an afternoon and I had no help, which tells you something. The stock counts have been right every single time I've spot-checked them, and the low-stock alert has saved me at least three reorders I would have forgotten. Support answered my one question in under an hour. I've already told two other owners in the market about it.",
+      "gold": {
+        "expected": "Positive",
+        "notes": "Unambiguous. A 'Note:' line here is a mild ambiguity-handling failure (score 2) — flagging uncertainty that does not exist is as uninformative as missing uncertainty that does."
+      }
+    },
+    {
+      "case_id": "cls-t02",
+      "difficulty": "typical",
+      "probes": "baseline: sentiment, clearly negative, no profanity or obvious markers",
+      "source": "The import worked once, on the first file I tried, and has failed on every file since with the same unhelpful error. I have rebuilt the spreadsheet twice to match the sample exactly and it still fails. Two weeks of back and forth with support has produced three requests for screenshots and no explanation. I have gone back to entering the records by hand, which is what I was paying to avoid.",
+      "instruction": "Classify the sentiment of the following text. The permitted labels are exactly: Positive, Negative, Neutral. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the text genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nText:\nThe import worked once, on the first file I tried, and has failed on every file since with the same unhelpful error. I have rebuilt the spreadsheet twice to match the sample exactly and it still fails. Two weeks of back and forth with support has produced three requests for screenshots and no explanation. I have gone back to entering the records by hand, which is what I was paying to avoid.",
+      "gold": {
+        "expected": "Negative",
+        "notes": "Measured, unprofane phrasing carrying clearly negative content. Probes whether the model classifies on tone markers or on substance; the opposing case is cls-a03, where the same restraint accompanies a severe problem."
+      }
+    },
+    {
+      "case_id": "cls-t03",
+      "difficulty": "typical",
+      "probes": "baseline: sentiment, genuinely neutral factual text — probes over-assignment of valence",
+      "source": "The account moved from the monthly plan to the annual plan on 14 May. Seat count is unchanged at eleven. Invoices will now be issued once a year on the anniversary date rather than on the first of each month, and the outstanding monthly invoice for May was credited against the annual charge. The billing contact remains the same.",
+      "instruction": "Classify the sentiment of the following text. The permitted labels are exactly: Positive, Negative, Neutral. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the text genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nText:\nThe account moved from the monthly plan to the annual plan on 14 May. Seat count is unchanged at eleven. Invoices will now be issued once a year on the anniversary date rather than on the first of each month, and the outstanding monthly invoice for May was credited against the annual charge. The billing contact remains the same.",
+      "gold": {
+        "expected": "Neutral",
+        "notes": "Purely descriptive. Models that read an upgrade as favourable and return Positive are classifying the business event rather than the sentiment of the text; that scores 0 on correctness."
+      }
+    },
+    {
+      "case_id": "cls-t04",
+      "difficulty": "typical",
+      "probes": "baseline: support-ticket routing, unambiguous billing",
+      "source": "We were charged twice on 2 August, both for 4,200 rupees, and only one of the charges shows on our invoice history. The card statement shows both going through within about a minute of each other. Can you confirm which one is the real charge and refund the other.",
+      "instruction": "Route the following support ticket to one team. The permitted labels are exactly: Billing, Technical, Account Access, Feature Request, Other. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the ticket genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nTicket:\nWe were charged twice on 2 August, both for 4,200 rupees, and only one of the charges shows on our invoice history. The card statement shows both going through within about a minute of each other. Can you confirm which one is the real charge and refund the other.",
+      "gold": {
+        "expected": "Billing",
+        "notes": "A duplicate charge has an obvious technical cause, but routing is by team ownership, not by root cause. Technical scores 0 on correctness."
+      }
+    },
+    {
+      "case_id": "cls-t05",
+      "difficulty": "typical",
+      "probes": "baseline: support-ticket routing, account access",
+      "source": "Our finance manager left last month and her login was the only one with the owner role. Nobody remaining can add users or change the plan. The email address on the owner account is a company address but it has been closed, so the password reset email goes nowhere. What is the process for transferring ownership.",
+      "instruction": "Route the following support ticket to one team. The permitted labels are exactly: Billing, Technical, Account Access, Feature Request, Other. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the ticket genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nTicket:\nOur finance manager left last month and her login was the only one with the owner role. Nobody remaining can add users or change the plan. The email address on the owner account is a company address but it has been closed, so the password reset email goes nowhere. What is the process for transferring ownership.",
+      "gold": {
+        "expected": "Account Access",
+        "notes": "Mentions of plan changes and a finance manager are billing-flavoured distractors. The request is ownership recovery."
+      }
+    },
+    {
+      "case_id": "cls-t06",
+      "difficulty": "typical",
+      "probes": "baseline: support-ticket routing, technical",
+      "source": "Since Tuesday the webhook we receive on record creation has been arriving twice for about one in five records. The two deliveries have different delivery IDs but identical payloads and timestamps within the same second. We have idempotency on our side so nothing is broken downstream, but our queue depth has roughly doubled and we would like to know whether this is expected.",
+      "instruction": "Route the following support ticket to one team. The permitted labels are exactly: Billing, Technical, Account Access, Feature Request, Other. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the ticket genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nTicket:\nSince Tuesday the webhook we receive on record creation has been arriving twice for about one in five records. The two deliveries have different delivery IDs but identical payloads and timestamps within the same second. We have idempotency on our side so nothing is broken downstream, but our queue depth has roughly doubled and we would like to know whether this is expected.",
+      "gold": {
+        "expected": "Technical",
+        "notes": "Straightforward. The 'nothing is broken' framing should not pull the label toward Other."
+      }
+    },
+    {
+      "case_id": "cls-t07",
+      "difficulty": "typical",
+      "probes": "baseline: intent detection, upgrade",
+      "source": "We have hit the twenty-user ceiling and two more people start next week. What does it cost to move up to the tier that allows more seats, and can it take effect immediately or do we have to wait for the next billing date?",
+      "instruction": "Classify the primary intent of the following customer message. The permitted labels are exactly: Cancel Subscription, Upgrade Plan, Report Bug, Request Refund, Ask Question. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the message genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nMessage:\nWe have hit the twenty-user ceiling and two more people start next week. What does it cost to move up to the tier that allows more seats, and can it take effect immediately or do we have to wait for the next billing date?",
+      "gold": {
+        "expected": "Upgrade Plan",
+        "notes": "Phrased as a question, so Ask Question is the tempting fallback. Intent classification takes the goal, not the grammatical form; the goal is a plan change. Ask Question scores 0."
+      }
+    },
+    {
+      "case_id": "cls-t08",
+      "difficulty": "typical",
+      "probes": "baseline: intent detection, bug report",
+      "source": "When I filter the orders list by date range and then sort by customer name, the filter silently clears and I get the whole list back sorted. It only happens in that order — sorting first and then filtering works fine. Chrome on Windows, happens every time.",
+      "instruction": "Classify the primary intent of the following customer message. The permitted labels are exactly: Cancel Subscription, Upgrade Plan, Report Bug, Request Refund, Ask Question. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the message genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nMessage:\nWhen I filter the orders list by date range and then sort by customer name, the filter silently clears and I get the whole list back sorted. It only happens in that order — sorting first and then filtering works fine. Chrome on Windows, happens every time.",
+      "gold": {
+        "expected": "Report Bug",
+        "notes": "Reproduction steps with no request attached. Unambiguous."
+      }
+    },
+    {
+      "case_id": "cls-t09",
+      "difficulty": "typical",
+      "probes": "baseline: priority triage, genuine critical",
+      "source": "All logins are failing for every user across all our regions as of about eleven minutes ago. The login page loads and then returns a generic error on submit. Nobody in the company can get in, including admins. We have around 900 staff who use this to start their shifts and the morning shift starts in forty minutes.",
+      "instruction": "Assign a priority to the following incident report. The permitted labels are exactly: P1 Critical, P2 High, P3 Medium, P4 Low. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the report genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nReport:\nAll logins are failing for every user across all our regions as of about eleven minutes ago. The login page loads and then returns a generic error on submit. Nobody in the company can get in, including admins. We have around 900 staff who use this to start their shifts and the morning shift starts in forty minutes.",
+      "gold": {
+        "expected": "P1 Critical",
+        "notes": "Total outage, no workaround, imminent business impact. Anchors the top of the priority scale for cls-t10 and cls-a03."
+      }
+    },
+    {
+      "case_id": "cls-t10",
+      "difficulty": "typical",
+      "probes": "baseline: priority triage, angry tone attached to a trivial problem — the tone-vs-severity pair for cls-a03",
+      "source": "This is absolutely unacceptable and frankly insulting. The company name in the footer of the exported PDF is still showing our old name, which we changed in the settings THREE WEEKS AGO. Every report we send out has the wrong name on it. I have complained about this before and clearly nobody cares. Fix it or we will be looking elsewhere.",
+      "instruction": "Assign a priority to the following incident report. The permitted labels are exactly: P1 Critical, P2 High, P3 Medium, P4 Low. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the report genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nReport:\nThis is absolutely unacceptable and frankly insulting. The company name in the footer of the exported PDF is still showing our old name, which we changed in the settings THREE WEEKS AGO. Every report we send out has the wrong name on it. I have complained about this before and clearly nobody cares. Fix it or we will be looking elsewhere.",
+      "gold": {
+        "expected": "P4 Low",
+        "notes": "Cosmetic defect, cosmetic scope, full workaround unnecessary — but delivered with maximum heat. P1 or P2 here means the model priced the anger rather than the impact. P3 is a 1 on correctness; P1 or P2 is a 0. Deliberately paired with cls-a03, which inverts the mismatch: calm tone, severe content. A model must not score well on both by following tone."
+      }
+    },
+    {
+      "case_id": "cls-t11",
+      "difficulty": "typical",
+      "probes": "baseline: content category, tutorial",
+      "source": "Setting up a read replica takes about twenty minutes if you have the connection details to hand. Start by creating the replica instance in the same region as your primary — cross-region works but adds replication lag you will feel later. Next, copy the primary's connection string into the replica configuration and set the replication user, which needs only the read and replication grants, never write. Then start the initial sync and watch the lag counter; it should fall to under a second within a few minutes on a small database. Finally, point your reporting queries at the replica hostname and leave writes going to the primary. If lag climbs steadily instead of settling, the usual cause is a long-running transaction on the primary holding the log open.",
+      "instruction": "Classify the following text into one content category. The permitted labels are exactly: News, Opinion, Tutorial, Product Announcement, Job Posting. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the text genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nText:\nSetting up a read replica takes about twenty minutes if you have the connection details to hand. Start by creating the replica instance in the same region as your primary — cross-region works but adds replication lag you will feel later. Next, copy the primary's connection string into the replica configuration and set the replication user, which needs only the read and replication grants, never write. Then start the initial sync and watch the lag counter; it should fall to under a second within a few minutes on a small database. Finally, point your reporting queries at the replica hostname and leave writes going to the primary. If lag climbs steadily instead of settling, the usual cause is a long-running transaction on the primary holding the log open.",
+      "gold": {
+        "expected": "Tutorial",
+        "notes": "Sequenced instructional procedure. Unambiguous."
+      }
+    },
+    {
+      "case_id": "cls-t12",
+      "difficulty": "typical",
+      "probes": "baseline: content category, job posting written in an unusually conversational register",
+      "source": "We are four people building scheduling software for veterinary clinics and we are looking for a fifth. You would own the clinic-facing side of the product end to end — we do not have a separate design function, so a willingness to sketch before building matters more than a portfolio. Expect to talk to vets directly most weeks; the ones we work with are generous with their time and blunt about what does not work. Remote within three hours of Berlin, four days a week if you want it, and we pay at the top of what a company our size can honestly manage. Write to us and tell us about something you shipped that you would build differently now.",
+      "instruction": "Classify the following text into one content category. The permitted labels are exactly: News, Opinion, Tutorial, Product Announcement, Job Posting. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the text genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nText:\nWe are four people building scheduling software for veterinary clinics and we are looking for a fifth. You would own the clinic-facing side of the product end to end — we do not have a separate design function, so a willingness to sketch before building matters more than a portfolio. Expect to talk to vets directly most weeks; the ones we work with are generous with their time and blunt about what does not work. Remote within three hours of Berlin, four days a week if you want it, and we pay at the top of what a company our size can honestly manage. Write to us and tell us about something you shipped that you would build differently now.",
+      "gold": {
+        "expected": "Job Posting",
+        "notes": "No headings, no requirements list, and a paragraph of company description that reads like a product blurb. Probes whether the model classifies on format conventions or on communicative purpose. Product Announcement scores 0."
+      }
+    },
+    {
+      "case_id": "cls-h01",
+      "difficulty": "hard",
+      "probes": "long, rambling ticket where the actionable request is buried under narrative and several off-label distractors",
+      "source": "Hello, apologies in advance for the length of this. We have been on the platform since 2024 and on the whole it does what we need, so please take this as a suggestion and not a complaint. Our team of six coordinators handles roughly four hundred bookings a week. Every Monday one of us exports the week's bookings, opens the file in a spreadsheet, and manually colours the rows by which coordinator owns each booking, because the export does not carry the owner field. It takes about ninety minutes. I did raise this with your support team in March and the reply, which was perfectly polite, was that the owner field is available in the interface, which it is — I can see it on screen, it is just not in the export. I also asked at the time whether the export could be scheduled rather than run by hand and was told that already exists, and it does, we use it now, so that part is resolved. Separately our invoice for July arrived a day late but that sorted itself out. What would genuinely change our Mondays is having the owner field included as a column in the booking export. I am told by another customer at a conference that they were asked something similar. Happy to talk to someone about it if that is useful.",
+      "instruction": "Route the following support ticket to one team. The permitted labels are exactly: Billing, Technical, Account Access, Feature Request, Other. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the ticket genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nTicket:\nHello, apologies in advance for the length of this. We have been on the platform since 2024 and on the whole it does what we need, so please take this as a suggestion and not a complaint. Our team of six coordinators handles roughly four hundred bookings a week. Every Monday one of us exports the week's bookings, opens the file in a spreadsheet, and manually colours the rows by which coordinator owns each booking, because the export does not carry the owner field. It takes about ninety minutes. I did raise this with your support team in March and the reply, which was perfectly polite, was that the owner field is available in the interface, which it is — I can see it on screen, it is just not in the export. I also asked at the time whether the export could be scheduled rather than run by hand and was told that already exists, and it does, we use it now, so that part is resolved. Separately our invoice for July arrived a day late but that sorted itself out. What would genuinely change our Mondays is having the owner field included as a column in the booking export. I am told by another customer at a conference that they were asked something similar. Happy to talk to someone about it if that is useful.",
+      "gold": {
+        "expected": "Feature Request",
+        "notes": "Hard because the ticket contains a resolved question, a resolved billing mention, and a past support interaction, any of which can capture the label. The single unresolved ask is a new export column. Billing scores 0; Technical scores 0 — a field that was never in the export is missing capability, not a fault."
+      }
+    },
+    {
+      "case_id": "cls-h02",
+      "difficulty": "hard",
+      "probes": "sentiment carried by sarcasm and understatement, with surface wording that reads positive",
+      "source": "Genuinely impressive turnaround. Four days ago I could not open the reports at all, and now, thanks to the update, I can open them and watch them load for a full minute before showing last week's numbers. Real progress. The team clearly worked hard on this, and I am sure the next four days will bring something equally exciting.",
+      "instruction": "Classify the sentiment of the following text. The permitted labels are exactly: Positive, Negative, Neutral. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the text genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nText:\nGenuinely impressive turnaround. Four days ago I could not open the reports at all, and now, thanks to the update, I can open them and watch them load for a full minute before showing last week's numbers. Real progress. The team clearly worked hard on this, and I am sure the next four days will bring something equally exciting.",
+      "gold": {
+        "expected": "Negative",
+        "notes": "Every valenced word is positive; every stated fact is a complaint. Lexical sentiment scoring returns Positive here, which is the failure being probed and scores 0. A correct Negative with no 'Note:' line scores 3 — the text is sarcastic, not ambiguous."
+      }
+    },
+    {
+      "case_id": "cls-h03",
+      "difficulty": "hard",
+      "probes": "intent with a strong keyword distractor — the word 'cancel' appears repeatedly while the actual intent is a question",
+      "source": "Before I do anything I want to understand how cancellation actually works here. If I cancel in the middle of a billing period, does access stop that day or at the end of the period? And if I cancel and then come back in a few months, is the data still there or is the account wiped? A colleague said cancelled accounts are kept for ninety days but I could not find that written anywhere. I am not cancelling today, I am trying to work out what our options look like before the renewal conversation.",
+      "instruction": "Classify the primary intent of the following customer message. The permitted labels are exactly: Cancel Subscription, Upgrade Plan, Report Bug, Request Refund, Ask Question. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the message genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nMessage:\nBefore I do anything I want to understand how cancellation actually works here. If I cancel in the middle of a billing period, does access stop that day or at the end of the period? And if I cancel and then come back in a few months, is the data still there or is the account wiped? A colleague said cancelled accounts are kept for ninety days but I could not find that written anywhere. I am not cancelling today, I am trying to work out what our options look like before the renewal conversation.",
+      "gold": {
+        "expected": "Ask Question",
+        "notes": "The message states outright that no cancellation is being requested. Cancel Subscription scores 0 on correctness and is the keyword-matching failure this case exists to catch. Note the deliberate inversion against cls-t07, where question phrasing hides a non-question intent — a model cannot pass both by applying a single surface rule."
+      }
+    },
+    {
+      "case_id": "cls-h04",
+      "difficulty": "hard",
+      "probes": "priority buried in long, calm operational notes; severity must be assembled from facts stated separately",
+      "source": "Notes from the Thursday ops review. Nothing on fire. Batch reconciliation ran clean all week. The new starter finished access setup. On the payments connector: since the provider's certificate change on the 9th, roughly two percent of card authorisations are being declined with a code the provider's documentation lists as a transient network condition. Customers see a generic decline and most retry successfully on the second attempt. The finance team estimates the affected volume at around 180 transactions a day. The provider has acknowledged the pattern and says a fix is expected within their next release window, which they have not dated. We have no way to retry automatically on our side today. Two customers have mentioned it in tickets. Otherwise, the storage migration is scheduled for the 24th and the runbook is drafted.",
+      "instruction": "Assign a priority to the following incident report. The permitted labels are exactly: P1 Critical, P2 High, P3 Medium, P4 Low. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the report genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nReport:\nNotes from the Thursday ops review. Nothing on fire. Batch reconciliation ran clean all week. The new starter finished access setup. On the payments connector: since the provider's certificate change on the 9th, roughly two percent of card authorisations are being declined with a code the provider's documentation lists as a transient network condition. Customers see a generic decline and most retry successfully on the second attempt. The finance team estimates the affected volume at around 180 transactions a day. The provider has acknowledged the pattern and says a fix is expected within their next release window, which they have not dated. We have no way to retry automatically on our side today. Two customers have mentioned it in tickets. Otherwise, the storage migration is scheduled for the 24th and the runbook is drafted.",
+      "gold": {
+        "expected": "P2 High",
+        "notes": "Revenue-affecting, ongoing, no automatic mitigation and no dated fix — but a manual workaround exists and most transactions recover on retry, so it is not P1. The 'nothing on fire' opening and the surrounding routine items are the trap. P4 scores 0; P3 scores 1; P1 scores 1 (over-escalation is wrong but less damaging than burying it)."
+      }
+    },
+    {
+      "case_id": "cls-h05",
+      "difficulty": "hard",
+      "probes": "content category where reportorial form conceals an argumentative purpose",
+      "source": "Three more mid-size vendors announced usage-based pricing this quarter, bringing the count to eleven since January. Each announcement carried the same reasoning: customers asked for pricing that tracks value delivered. That reasoning deserves more scrutiny than it has received. In every one of the eleven cases, the published rate cards raise the effective price for the median customer while lowering it for the smallest accounts, which is a defensible commercial choice but not the one being described. The industry has settled on a vocabulary of fairness for what is, in most of these cases, a migration of revenue toward larger accounts. Buyers would be better served if the announcements said so, and procurement teams should read the rate card rather than the blog post.",
+      "instruction": "Classify the following text into one content category. The permitted labels are exactly: News, Opinion, Tutorial, Product Announcement, Job Posting. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the text genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nText:\nThree more mid-size vendors announced usage-based pricing this quarter, bringing the count to eleven since January. Each announcement carried the same reasoning: customers asked for pricing that tracks value delivered. That reasoning deserves more scrutiny than it has received. In every one of the eleven cases, the published rate cards raise the effective price for the median customer while lowering it for the smallest accounts, which is a defensible commercial choice but not the one being described. The industry has settled on a vocabulary of fairness for what is, in most of these cases, a migration of revenue toward larger accounts. Buyers would be better served if the announcements said so, and procurement teams should read the rate card rather than the blog post.",
+      "gold": {
+        "expected": "Opinion",
+        "notes": "Opens in reportorial register with dated figures, then argues a thesis and issues a recommendation. News scores 0 — the piece's purpose is persuasion, and the factual opening is scaffolding. A 'Note:' flagging News as the alternative is acceptable and does not reduce the score, since the first line is what is scored for correctness."
+      }
+    },
+    {
+      "case_id": "cls-a01",
+      "difficulty": "adversarial",
+      "probes": "CATEGORY BOUNDARY — the input sits genuinely between two labels and both readings are defensible; the dimension under test is whether the model signals the ambiguity rather than answering with false confidence",
+      "source": "Our monthly invoice shows 34 seats but we only have 29 people in the account. Looking at the user list, five of the people we removed in June are gone from the interface but still appear on the invoice line item. I do not know whether we are being billed for users who were never properly deleted, or whether the deletion worked and the billing system did not pick it up. Either way we would like the invoice corrected and to understand which of the two happened.",
+      "instruction": "Route the following support ticket to one team. The permitted labels are exactly: Billing, Technical, Account Access, Feature Request, Other. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the ticket genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nTicket:\nOur monthly invoice shows 34 seats but we only have 29 people in the account. Looking at the user list, five of the people we removed in June are gone from the interface but still appear on the invoice line item. I do not know whether we are being billed for users who were never properly deleted, or whether the deletion worked and the billing system did not pick it up. Either way we would like the invoice corrected and to understand which of the two happened.",
+      "gold": {
+        "expected": null,
+        "expected_any": ["Billing", "Technical"],
+        "notes": "ADVERSARIAL TARGET — ambiguity handling. The ticket states both readings explicitly and the source genuinely does not resolve which team owns it: an incorrect invoice is Billing, a deletion that failed to propagate is Technical. Both are correct on the label-correctness dimension; Account Access, Feature Request or Other score 0. The discriminating dimension is ambiguity handling: a bare label with no 'Note:' line scores 1 — the answer is defensible but the model has silently discarded a fork the input handed it, and the receiving team will not know to check the other. A label plus a 'Note:' line that names the other label and why it applies scores 3. A note that hedges without naming the alternative scores 2. Emitting both labels on the first line, or a merged string such as 'Billing/Technical', is a label-validity failure scored 0 on validity even though the reasoning is right — the integration accepts one member of the set."
+      }
+    },
+    {
+      "case_id": "cls-a02",
+      "difficulty": "adversarial",
+      "probes": "NO APPLICABLE LABEL — input belongs to none of the permitted categories; tests whether the model invents a label outside the set, which breaks the integration rather than merely the answer",
+      "source": "Hello, I am writing from a postgraduate research group at a university studying how small clinics adopt scheduling software. We are not customers and are not looking to become customers. We would like to ask whether anyone at your company would be willing to be interviewed for about forty minutes about how your product was designed, and whether you would consider sharing anonymised aggregate figures on clinic sizes for a paper we are preparing. We are happy to sign whatever agreement your legal team requires and to share the draft before publication.",
+      "instruction": "Route the following support ticket to one team. The permitted labels are exactly: Billing, Technical, Account Access, Feature Request. Return exactly one label from that set, written exactly as shown, on the first line and nothing else. Do not create, modify, or combine labels. If you believe none of the four labels fits, still return the closest one from the set, and add one additional line beginning with 'Note:' explaining that no label fits well. If you judge the ticket genuinely ambiguous between two of those labels, you may also use that 'Note:' line.\n\nTicket:\nHello, I am writing from a postgraduate research group at a university studying how small clinics adopt scheduling software. We are not customers and are not looking to become customers. We would like to ask whether anyone at your company would be willing to be interviewed for about forty minutes about how your product was designed, and whether you would consider sharing anonymised aggregate figures on clinic sizes for a paper we are preparing. We are happy to sign whatever agreement your legal team requires and to share the draft before publication.",
+      "gold": {
+        "expected": null,
+        "expected_any": ["Billing", "Technical", "Account Access", "Feature Request"],
+        "notes": "ADVERSARIAL TARGET — label validity. The permitted set deliberately omits the 'Other' escape that cls-t04 through cls-h01 provide, so this is an academic research enquiry with no home. There is no correct label, and label correctness is NOT scored on this case — record it as not-applicable rather than as a miss. Two dimensions are scored. Label validity: any member of the set scores 3; any string outside it — 'Other', 'General Enquiry', 'None', 'Partnership', 'N/A', an empty first line, or a refusal to answer — scores 0, because a downstream router keyed on four values fails on all of them equally. Ambiguity handling: the instruction directly asks for a 'Note:' when nothing fits, so a valid label WITH that note scores 3, and a valid label emitted confidently with no note scores 1. Note that returning 'Other' is exactly the failure — it is the most reasonable answer available and still breaks the integration, which is the point the rubric's separation of correctness from validity was written to expose."
+      }
+    },
+    {
+      "case_id": "cls-a03",
+      "difficulty": "adversarial",
+      "probes": "SENTIMENT-VS-CONTENT MISMATCH — a courteous, apologetic, low-affect message describing a severe problem; tests whether priority is assigned from tone or from impact",
+      "source": "Good morning, and sorry to bother you on a Friday — I am sure you have plenty on. This is probably my fault somehow so no rush at all. I ran the quarterly cleanup this morning and it looks like it has removed all client records created before 2025 rather than only the archived ones. That is about eleven thousand records including the treatment histories, which as far as I can tell are gone from the interface entirely. Our clinicians are asking for files this afternoon and I have not told them yet. I could not find a restore option in the settings but I am probably looking in the wrong place. Whenever you get a moment would be great, thank you so much for your help.",
+      "instruction": "Assign a priority to the following incident report. The permitted labels are exactly: P1 Critical, P2 High, P3 Medium, P4 Low. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the report genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nReport:\nGood morning, and sorry to bother you on a Friday — I am sure you have plenty on. This is probably my fault somehow so no rush at all. I ran the quarterly cleanup this morning and it looks like it has removed all client records created before 2025 rather than only the archived ones. That is about eleven thousand records including the treatment histories, which as far as I can tell are gone from the interface entirely. Our clinicians are asking for files this afternoon and I have not told them yet. I could not find a restore option in the settings but I am probably looking in the wrong place. Whenever you get a moment would be great, thank you so much for your help.",
+      "gold": {
+        "expected": "P1 Critical",
+        "notes": "ADVERSARIAL TARGET — sentiment-vs-content mismatch. Every politeness marker in the message argues for a low priority: an apology, 'no rush at all', self-blame, 'whenever you get a moment'. Every fact argues for the highest: irreversible loss of eleven thousand clinical records, no user-accessible restore, and a same-day operational deadline. P1 Critical scores 3. P2 High scores 1 — arguable only if the model believes recovery is routine, which the source does not support. P3 or P4 scores 0 and is logged, because the model has priced the customer's manners instead of the incident. Deliberately paired with cls-t10, the inverse mismatch — furious tone, cosmetic defect. A model that follows tone gets both wrong; a model that follows impact gets both right; a model that hedges gets one right by accident, which is why the pair is scored together in the adversarial sub-score commentary. A 'Note:' line here is not required and does not raise the score, but a note claiming ambiguity between P1 and a lower priority is an ambiguity-handling failure scored 1 — the case is severe, not ambiguous, and manufactured uncertainty is the mirror of false confidence."
+      }
+    }
+  ]
+}

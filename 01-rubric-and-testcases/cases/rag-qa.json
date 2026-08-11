@@ -1,0 +1,810 @@
+{
+  "task": "rag-qa",
+  "version": "1.0",
+  "created": "2026-08-11",
+  "source_policy": "All passages original, authored for this benchmark. See Test-Case-Design.md §1.",
+  "gold_form": "Criteria-plus-reference, as for summarization (Test-Case-Design §2), with two RAG-specific keys. `gold.answer` is the correct answer in prose; `gold.supported_by` is the list of passage IDs that actually support it, and is the ground truth for the citation-accuracy dimension — it is the empty list on cases where the correct response is abstention. `gold.must_include` / `gold.must_not_include` carry the correctness and hallucination criteria, `gold.reference` is a full model response including its Citations line, and `gold.notes` gives per-dimension scoring guidance for the four rubric §3.4 dimensions (groundedness, answer correctness, abstention, citation accuracy).",
+  "conventions": {
+    "self_contained_prompt": "Every `instruction` restates its passages verbatim with their IDs and then the question, so the prompt sent to the model needs no external context. The `passages` and `question` keys are the authored source of truth; `instruction` is composed from them.",
+    "passage_ids": "Passage IDs are local to each case (P1, P2, ...). They are not globally unique and must not be compared across cases.",
+    "imperfect_retrieval": "Every case carries 3-5 passages and at least one that is irrelevant or only tangentially relevant, because that is what real retrieval returns. Several cases carry a passage that is topically adjacent and contains a plausible wrong answer; these are named in the case's `probes`.",
+    "output_format": "Identical across all 20 cases: the answer in prose, or exactly 'INSUFFICIENT CONTEXT' if the passages cannot answer, followed by a final line of the form 'Citations: P1, P3' — or 'Citations: none' when abstaining.",
+    "why_the_abstention_channel": "Abstention is a scored dimension (rubric §3.4) and is unmeasurable without a sanctioned way to express it: a model that hedges in prose and one that knows it cannot answer produce indistinguishable output, and the judge would be scoring phrasing. The exact token 'INSUFFICIENT CONTEXT' makes the behaviour parseable. This follows the precedent set by classification's optional 'Note:' line (Test-Case-Design §2, 'Uncertainty needs a sanctioned channel') and, per that precedent, the channel is offered on all 20 cases — not only the unanswerable ones — so the instruction itself cannot signal which cases are traps.",
+    "abstention_has_a_cost": "Using the channel where the passages do answer scores 0 on abstention per rubric v1.2 §3.4. Seventeen of the twenty cases are answerable, and rag-t05 and rag-t11 are deliberately built to share rag-a01's domain, register and question shape while being answerable — rag-t11 only via a two-passage inference. A model cannot score on this dimension by abstaining as a policy.",
+    "citation_scoring": "Citation accuracy is scored against `gold.supported_by`: citing a passage that does not support the claim is the failure the dimension exists to catch, and it is scored independently of whether the answer text happened to be right. On abstention cases the only correct citation line is 'Citations: none'."
+  },
+  "cases": [
+    {
+      "case_id": "rag-t01",
+      "difficulty": "typical",
+      "probes": "baseline: answer stated outright in one passage; one irrelevant passage present",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Hotel bookings made through the travel portal are auto-approved for stays of up to four nights. A stay of five nights or longer is held for line-manager approval before the reservation is confirmed, and the portal shows the booking as 'pending' until that approval lands."
+        },
+        {
+          "id": "P2",
+          "text": "Flights under six hours must be booked in economy. Premium economy is permitted on flights over six hours; business class requires director-level approval regardless of duration."
+        },
+        {
+          "id": "P3",
+          "text": "The staff cafeteria serves hot food from 08:00 to 15:00 on weekdays and cold items until 17:00. Card payment only."
+        }
+      ],
+      "question": "How many nights can a hotel booking cover before it needs manager approval?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Hotel bookings made through the travel portal are auto-approved for stays of up to four nights. A stay of five nights or longer is held for line-manager approval before the reservation is confirmed, and the portal shows the booking as 'pending' until that approval lands.\n[P2] Flights under six hours must be booked in economy. Premium economy is permitted on flights over six hours; business class requires director-level approval regardless of duration.\n[P3] The staff cafeteria serves hot food from 08:00 to 15:00 on weekdays and cold items until 17:00. Card payment only.\n\nQuestion: How many nights can a hotel booking cover before it needs manager approval?",
+      "gold": {
+        "answer": "Up to four nights are auto-approved; five nights or more requires line-manager approval.",
+        "supported_by": [
+          "P1"
+        ],
+        "must_include": [
+          "four nights auto-approved",
+          "five or more requires line-manager approval"
+        ],
+        "must_not_include": [
+          "director approval for hotels",
+          "any night threshold other than four/five"
+        ],
+        "reference": "Bookings of up to four nights are auto-approved. Five nights or longer requires line-manager approval before the reservation is confirmed.\nCitations: P1",
+        "notes": "Answerable, single passage. Citing P2 or P3 alongside P1 is a citation-accuracy failure (score 1-2). Abstaining scores 0 on abstention per rubric v1.2 §3.4."
+      }
+    },
+    {
+      "case_id": "rag-t02",
+      "difficulty": "typical",
+      "probes": "baseline: answer requires combining two passages; neither alone is sufficient",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Plan upgrades take effect the moment they are confirmed. The system computes a prorated amount for the remainder of the current billing period at the point of change."
+        },
+        {
+          "id": "P2",
+          "text": "Prorated amounts arising from mid-cycle changes are not charged immediately. They are added as a line item to the customer's next monthly invoice."
+        },
+        {
+          "id": "P3",
+          "text": "Downgrades do not take effect until the end of the current billing period. The account keeps its existing feature set until then."
+        },
+        {
+          "id": "P4",
+          "text": "Annual plans purchased directly may be refunded in full within fourteen days of purchase, less any usage-based charges already incurred."
+        }
+      ],
+      "question": "If a customer upgrades in the middle of a billing cycle, when are they charged the prorated amount?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Plan upgrades take effect the moment they are confirmed. The system computes a prorated amount for the remainder of the current billing period at the point of change.\n[P2] Prorated amounts arising from mid-cycle changes are not charged immediately. They are added as a line item to the customer's next monthly invoice.\n[P3] Downgrades do not take effect until the end of the current billing period. The account keeps its existing feature set until then.\n[P4] Annual plans purchased directly may be refunded in full within fourteen days of purchase, less any usage-based charges already incurred.\n\nQuestion: If a customer upgrades in the middle of a billing cycle, when are they charged the prorated amount?",
+      "gold": {
+        "answer": "On their next monthly invoice, as an added line item — not at the moment of the upgrade.",
+        "supported_by": [
+          "P1",
+          "P2"
+        ],
+        "must_include": [
+          "charged on the next monthly invoice",
+          "not charged immediately"
+        ],
+        "must_not_include": [
+          "charged immediately on upgrade",
+          "charged at the end of the annual term"
+        ],
+        "reference": "The upgrade takes effect immediately and proration is calculated at that point, but the prorated amount is not charged then — it appears as a line item on the customer's next monthly invoice.\nCitations: P1, P2",
+        "notes": "Both P1 and P2 are needed. Citing only P2 is acceptable (score 2-3); citing P3 or P4 is a citation failure."
+      }
+    },
+    {
+      "case_id": "rag-t03",
+      "difficulty": "typical",
+      "probes": "baseline: selecting the right item from a near-identical pair in one passage",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Two handheld scanners are approved for warehouse use. The RX-2 is the standard unit for ambient-temperature aisles. The RX-2C is externally identical but rated for continuous operation down to minus twenty-five degrees, and is the only unit approved for the cold storage hall."
+        },
+        {
+          "id": "P2",
+          "text": "Scanners must be returned to a charging cradle at the end of every shift. Units left off-cradle overnight are flagged in the morning asset report."
+        },
+        {
+          "id": "P3",
+          "text": "Visitor parking is in bay row F. Visitors must be signed in at the gatehouse by the person they are meeting."
+        }
+      ],
+      "question": "Which scanner model is approved for use in the cold storage hall?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Two handheld scanners are approved for warehouse use. The RX-2 is the standard unit for ambient-temperature aisles. The RX-2C is externally identical but rated for continuous operation down to minus twenty-five degrees, and is the only unit approved for the cold storage hall.\n[P2] Scanners must be returned to a charging cradle at the end of every shift. Units left off-cradle overnight are flagged in the morning asset report.\n[P3] Visitor parking is in bay row F. Visitors must be signed in at the gatehouse by the person they are meeting.\n\nQuestion: Which scanner model is approved for use in the cold storage hall?",
+      "gold": {
+        "answer": "The RX-2C.",
+        "supported_by": [
+          "P1"
+        ],
+        "must_include": [
+          "RX-2C"
+        ],
+        "must_not_include": [
+          "RX-2 (without the C) as the cold-storage unit",
+          "any third model"
+        ],
+        "reference": "The RX-2C — it is rated for continuous operation down to minus twenty-five degrees and is the only unit approved for the cold storage hall.\nCitations: P1",
+        "notes": "The near-identical model names are the trap. Answering 'RX-2' scores 0 on answer correctness."
+      }
+    },
+    {
+      "case_id": "rag-t04",
+      "difficulty": "typical",
+      "probes": "baseline: answer has a conditional second branch that must be preserved",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Sites must report any protocol deviation to the coordinating centre within five business days of becoming aware of it. Deviations classified as serious must be reported within twenty-four hours by telephone, with written confirmation to follow."
+        },
+        {
+          "id": "P2",
+          "text": "Routine monitoring visits occur every eight weeks at active sites and every sixteen weeks at sites in follow-up only."
+        },
+        {
+          "id": "P3",
+          "text": "Site training records are held by the coordinating centre for the duration of the study and for two years after the final report."
+        }
+      ],
+      "question": "How long do sites have to report a protocol deviation?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Sites must report any protocol deviation to the coordinating centre within five business days of becoming aware of it. Deviations classified as serious must be reported within twenty-four hours by telephone, with written confirmation to follow.\n[P2] Routine monitoring visits occur every eight weeks at active sites and every sixteen weeks at sites in follow-up only.\n[P3] Site training records are held by the coordinating centre for the duration of the study and for two years after the final report.\n\nQuestion: How long do sites have to report a protocol deviation?",
+      "gold": {
+        "answer": "Five business days from becoming aware of it, or twenty-four hours by telephone if the deviation is classified as serious.",
+        "supported_by": [
+          "P1"
+        ],
+        "must_include": [
+          "five business days",
+          "twenty-four hours for serious deviations"
+        ],
+        "must_not_include": [
+          "eight weeks",
+          "any deadline tied to monitoring visits"
+        ],
+        "reference": "Within five business days of becoming aware of it. Deviations classified as serious must be reported within twenty-four hours by telephone, with written confirmation to follow.\nCitations: P1",
+        "notes": "Omitting the serious-deviation branch is a partial answer: answer correctness 2, not 3. Importing the eight-week monitoring cadence is a groundedness failure."
+      }
+    },
+    {
+      "case_id": "rag-t05",
+      "difficulty": "typical",
+      "probes": "PAIRED WITH rag-a01 (same retention domain, same question shape) but explicitly answerable — a model that abstains on retention questions as a class fails here",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Generated export files are held on the download server for seven days from the time the export completes. After seven days the file is deleted and the export must be re-run; the export definition itself is unaffected."
+        },
+        {
+          "id": "P2",
+          "text": "Audit log entries are retained for four hundred days in the searchable store before being moved to cold archive."
+        },
+        {
+          "id": "P3",
+          "text": "The product newsletter goes out on the first Tuesday of each month. Recipients can unsubscribe from the footer link."
+        }
+      ],
+      "question": "How long is a generated export file available for download before it is deleted?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Generated export files are held on the download server for seven days from the time the export completes. After seven days the file is deleted and the export must be re-run; the export definition itself is unaffected.\n[P2] Audit log entries are retained for four hundred days in the searchable store before being moved to cold archive.\n[P3] The product newsletter goes out on the first Tuesday of each month. Recipients can unsubscribe from the footer link.\n\nQuestion: How long is a generated export file available for download before it is deleted?",
+      "gold": {
+        "answer": "Seven days from the time the export completes.",
+        "supported_by": [
+          "P1"
+        ],
+        "must_include": [
+          "seven days"
+        ],
+        "must_not_include": [
+          "four hundred days",
+          "INSUFFICIENT CONTEXT"
+        ],
+        "reference": "Seven days from when the export completes. After that the file is deleted and the export has to be re-run, though the export definition itself is unaffected.\nCitations: P1",
+        "notes": "PAIRING CASE. Deliberately shares domain, register and question shape with rag-a01 so indiscriminate abstention cannot score. Replying INSUFFICIENT CONTEXT scores 0 on abstention and 0 on answer correctness. Answering 'four hundred days' is the distractor failure."
+      }
+    },
+    {
+      "case_id": "rag-t06",
+      "difficulty": "typical",
+      "probes": "baseline: consequence-of-an-event question, answer split across a retry rule and a disable rule",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Webhook deliveries are retried on failure with exponential backoff: the platform makes up to five attempts for any single event, spaced roughly one, five, twenty-five, and one hundred and twenty-five minutes after the first."
+        },
+        {
+          "id": "P2",
+          "text": "If an endpoint records five consecutive failed deliveries across different events, the endpoint is automatically disabled and an email is sent to every workspace owner. Re-enabling is manual and is done from the endpoint settings page."
+        },
+        {
+          "id": "P3",
+          "text": "Signing secrets can be rotated at any time. During rotation both the old and the new secret are accepted for twenty-four hours."
+        }
+      ],
+      "question": "What happens to a webhook endpoint after five consecutive failed deliveries?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Webhook deliveries are retried on failure with exponential backoff: the platform makes up to five attempts for any single event, spaced roughly one, five, twenty-five, and one hundred and twenty-five minutes after the first.\n[P2] If an endpoint records five consecutive failed deliveries across different events, the endpoint is automatically disabled and an email is sent to every workspace owner. Re-enabling is manual and is done from the endpoint settings page.\n[P3] Signing secrets can be rotated at any time. During rotation both the old and the new secret are accepted for twenty-four hours.\n\nQuestion: What happens to a webhook endpoint after five consecutive failed deliveries?",
+      "gold": {
+        "answer": "It is automatically disabled and every workspace owner is emailed; re-enabling it is manual, from the endpoint settings page.",
+        "supported_by": [
+          "P2"
+        ],
+        "must_include": [
+          "endpoint automatically disabled",
+          "workspace owners emailed",
+          "re-enabling is manual"
+        ],
+        "must_not_include": [
+          "endpoint deleted",
+          "automatic re-enablement after a cooling-off period"
+        ],
+        "reference": "The endpoint is automatically disabled and an email goes to every workspace owner. It must then be re-enabled manually from the endpoint settings page.\nCitations: P2",
+        "notes": "P1's five retry attempts and P2's five consecutive failures are different things; conflating them is a groundedness failure. Citing P1 as the support scores 0-1 on citation accuracy."
+      }
+    },
+    {
+      "case_id": "rag-t07",
+      "difficulty": "typical",
+      "probes": "baseline: correct answer is a zero/none value while a plausible non-zero number sits nearby",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Overdue adult lending stock is charged at five rupees per day, to a maximum of two hundred rupees per item."
+        },
+        {
+          "id": "P2",
+          "text": "No overdue charge is applied to items borrowed on a children's ticket. Children's items that are more than sixty days overdue are treated as lost and a replacement charge is raised instead."
+        },
+        {
+          "id": "P3",
+          "text": "Reference stock cannot be borrowed and must be consulted in the reading room."
+        },
+        {
+          "id": "P4",
+          "text": "The library's annual second-hand book sale runs over the first weekend of December in the main hall."
+        }
+      ],
+      "question": "What is the daily overdue fine for a book borrowed on a children's ticket?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Overdue adult lending stock is charged at five rupees per day, to a maximum of two hundred rupees per item.\n[P2] No overdue charge is applied to items borrowed on a children's ticket. Children's items that are more than sixty days overdue are treated as lost and a replacement charge is raised instead.\n[P3] Reference stock cannot be borrowed and must be consulted in the reading room.\n[P4] The library's annual second-hand book sale runs over the first weekend of December in the main hall.\n\nQuestion: What is the daily overdue fine for a book borrowed on a children's ticket?",
+      "gold": {
+        "answer": "There is no daily fine for items on a children's ticket; after sixty days overdue the item is treated as lost and a replacement charge is raised instead.",
+        "supported_by": [
+          "P2"
+        ],
+        "must_include": [
+          "no daily overdue charge on a children's ticket",
+          "replacement charge after sixty days"
+        ],
+        "must_not_include": [
+          "five rupees per day",
+          "two hundred rupee cap"
+        ],
+        "reference": "There is none — items borrowed on a children's ticket carry no overdue charge. If such an item is more than sixty days overdue it is treated as lost and a replacement charge is raised instead.\nCitations: P2",
+        "notes": "The five-rupee adult rate in P1 is the distractor. Applying it scores 0 on answer correctness and 0 on citation accuracy."
+      }
+    },
+    {
+      "case_id": "rag-t08",
+      "difficulty": "typical",
+      "probes": "baseline: entity disambiguation across two similarly named services",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Ledger is the core double-entry service behind settlement and payouts. It is owned by the Payments Platform team and deploys on the platform release train."
+        },
+        {
+          "id": "P2",
+          "text": "Ledger-Lite is a cut-down read-only mirror used by merchant-facing surfaces. It was spun out of Ledger in 2025 and is owned by the Merchant Tools team, which deploys it independently."
+        },
+        {
+          "id": "P3",
+          "text": "On-call rotations for all payments services are published a quarter ahead in the rota tool."
+        }
+      ],
+      "question": "Which team owns Ledger-Lite?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Ledger is the core double-entry service behind settlement and payouts. It is owned by the Payments Platform team and deploys on the platform release train.\n[P2] Ledger-Lite is a cut-down read-only mirror used by merchant-facing surfaces. It was spun out of Ledger in 2025 and is owned by the Merchant Tools team, which deploys it independently.\n[P3] On-call rotations for all payments services are published a quarter ahead in the rota tool.\n\nQuestion: Which team owns Ledger-Lite?",
+      "gold": {
+        "answer": "The Merchant Tools team.",
+        "supported_by": [
+          "P2"
+        ],
+        "must_include": [
+          "Merchant Tools"
+        ],
+        "must_not_include": [
+          "Payments Platform",
+          "joint ownership"
+        ],
+        "reference": "Merchant Tools. Ledger-Lite was spun out of Ledger in 2025 and is deployed independently by that team.\nCitations: P2",
+        "notes": "Answering 'Payments Platform' means the model matched on the string 'Ledger' rather than the entity: 0 on answer correctness, and citing P1 is 0 on citation accuracy."
+      }
+    },
+    {
+      "case_id": "rag-t09",
+      "difficulty": "typical",
+      "probes": "baseline: yes/no question where the passage states a prohibition",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "The budget annex must be submitted together with the main application form. Annexes received after the application deadline are not accepted, and an application without a budget annex is marked incomplete and not assessed."
+        },
+        {
+          "id": "P2",
+          "text": "Applicants must be constituted bodies with at least two years of filed accounts. Individuals and unincorporated groups are not eligible."
+        },
+        {
+          "id": "P3",
+          "text": "The foundation publishes its annual report each March, covering the preceding calendar year's grantmaking."
+        }
+      ],
+      "question": "Can an applicant send in their budget documents after the deadline has passed?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] The budget annex must be submitted together with the main application form. Annexes received after the application deadline are not accepted, and an application without a budget annex is marked incomplete and not assessed.\n[P2] Applicants must be constituted bodies with at least two years of filed accounts. Individuals and unincorporated groups are not eligible.\n[P3] The foundation publishes its annual report each March, covering the preceding calendar year's grantmaking.\n\nQuestion: Can an applicant send in their budget documents after the deadline has passed?",
+      "gold": {
+        "answer": "No. Annexes received after the deadline are not accepted, and an application without one is marked incomplete and not assessed.",
+        "supported_by": [
+          "P1"
+        ],
+        "must_include": [
+          "no / not accepted after the deadline",
+          "application marked incomplete and not assessed"
+        ],
+        "must_not_include": [
+          "a grace period",
+          "late submission with permission"
+        ],
+        "reference": "No. The budget annex must accompany the main form; annexes arriving after the deadline are not accepted, and an application without one is marked incomplete and is not assessed.\nCitations: P1",
+        "notes": "Inventing a discretionary grace period is the characteristic groundedness failure here and scores 0."
+      }
+    },
+    {
+      "case_id": "rag-t10",
+      "difficulty": "typical",
+      "probes": "baseline: a general rule plus a stated exception; the question falls in the exception window",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Standard refunds are available within thirty days of purchase, provided the licence has not been transferred."
+        },
+        {
+          "id": "P2",
+          "text": "Hardware bundles are an exception to the standard window: they may be returned for a refund within sixty days of delivery, provided all included accessories are returned with the unit."
+        },
+        {
+          "id": "P3",
+          "text": "Return shipping is paid by the customer unless the item arrived damaged, in which case a prepaid label is issued."
+        }
+      ],
+      "question": "A customer wants a refund forty days after purchase. Are they entitled to one?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Standard refunds are available within thirty days of purchase, provided the licence has not been transferred.\n[P2] Hardware bundles are an exception to the standard window: they may be returned for a refund within sixty days of delivery, provided all included accessories are returned with the unit.\n[P3] Return shipping is paid by the customer unless the item arrived damaged, in which case a prepaid label is issued.\n\nQuestion: A customer wants a refund forty days after purchase. Are they entitled to one?",
+      "gold": {
+        "answer": "Only if the purchase was a hardware bundle, which has a sixty-day window (all accessories must be returned). Any other purchase is outside the standard thirty-day window.",
+        "supported_by": [
+          "P1",
+          "P2"
+        ],
+        "must_include": [
+          "not under the standard thirty-day window",
+          "yes if it is a hardware bundle (sixty days)",
+          "accessories must be returned"
+        ],
+        "must_not_include": [
+          "an unconditional yes",
+          "an unconditional no"
+        ],
+        "reference": "It depends on what was bought. The standard refund window is thirty days, so forty days is too late — but hardware bundles have a sixty-day window, so a bundle would still qualify provided all included accessories are returned.\nCitations: P1, P2",
+        "notes": "A flat yes or flat no scores 1 at best on answer correctness. The case tests whether the model carries the exception through rather than answering from the first matching rule."
+      }
+    },
+    {
+      "case_id": "rag-t11",
+      "difficulty": "typical",
+      "probes": "PAIRED WITH rag-a01: answerable only by combining two passages, so it looks unanswerable at a glance — abstention here is the failure",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "A verified deletion request purges the customer's records from all live systems within twenty-four hours. A confirmation email is sent once the purge completes."
+        },
+        {
+          "id": "P2",
+          "text": "Backup snapshots are retained for thirty-five days and are then overwritten in rotation. Snapshots are never edited in place, so records removed from live systems remain inside existing snapshots until those snapshots age out of the retention window."
+        },
+        {
+          "id": "P3",
+          "text": "Building access badges are deactivated on an employee's last working day and physical badges are returned to reception."
+        }
+      ],
+      "question": "After a customer submits a deletion request, how long can their data still exist in backups?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] A verified deletion request purges the customer's records from all live systems within twenty-four hours. A confirmation email is sent once the purge completes.\n[P2] Backup snapshots are retained for thirty-five days and are then overwritten in rotation. Snapshots are never edited in place, so records removed from live systems remain inside existing snapshots until those snapshots age out of the retention window.\n[P3] Building access badges are deactivated on an employee's last working day and physical badges are returned to reception.\n\nQuestion: After a customer submits a deletion request, how long can their data still exist in backups?",
+      "gold": {
+        "answer": "Up to thirty-five days — live systems are purged within twenty-four hours, but existing backup snapshots are never edited and are only overwritten after the thirty-five-day retention window.",
+        "supported_by": [
+          "P1",
+          "P2"
+        ],
+        "must_include": [
+          "up to thirty-five days in backups",
+          "live systems purged within twenty-four hours",
+          "snapshots are not edited in place"
+        ],
+        "must_not_include": [
+          "twenty-four hours as the total time to full erasure",
+          "INSUFFICIENT CONTEXT"
+        ],
+        "reference": "Up to thirty-five days. Live systems are purged within twenty-four hours, but backup snapshots are never edited in place, so the records persist in existing snapshots until those are overwritten at the end of the thirty-five-day retention window.\nCitations: P1, P2",
+        "notes": "PAIRING CASE. Requires a two-step inference that neither passage states outright, so it is the case most likely to draw a false abstention. INSUFFICIENT CONTEXT scores 0 on abstention. Answering 'twenty-four hours' is 0 on answer correctness."
+      }
+    },
+    {
+      "case_id": "rag-t12",
+      "difficulty": "typical",
+      "probes": "baseline: capability question whose answer is a stated limitation rather than a feature",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Offline mode caches the records a user has opened in the previous seven days and keeps them readable without a connection. Editing, creating and deleting are disabled while offline; the controls are visible but inactive."
+        },
+        {
+          "id": "P2",
+          "text": "On reconnect the app pulls server changes first. Where a local draft and a server change touch the same record, the server version wins and the local draft is preserved as an attachment on the record."
+        },
+        {
+          "id": "P3",
+          "text": "Push notifications require the user to grant the operating-system permission prompt; declining it disables all in-app alerts until it is re-granted in system settings."
+        }
+      ],
+      "question": "Can a user edit records while the app is in offline mode?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Offline mode caches the records a user has opened in the previous seven days and keeps them readable without a connection. Editing, creating and deleting are disabled while offline; the controls are visible but inactive.\n[P2] On reconnect the app pulls server changes first. Where a local draft and a server change touch the same record, the server version wins and the local draft is preserved as an attachment on the record.\n[P3] Push notifications require the user to grant the operating-system permission prompt; declining it disables all in-app alerts until it is re-granted in system settings.\n\nQuestion: Can a user edit records while the app is in offline mode?",
+      "gold": {
+        "answer": "No. Offline mode is read-only — editing, creating and deleting are disabled, though the controls remain visible but inactive.",
+        "supported_by": [
+          "P1"
+        ],
+        "must_include": [
+          "no, editing disabled offline",
+          "cached records are viewable"
+        ],
+        "must_not_include": [
+          "edits queue and sync later",
+          "offline edits are merged on reconnect"
+        ],
+        "reference": "No. Offline mode only makes recently opened records readable; editing, creating and deleting are disabled while offline, and the controls appear greyed but inactive.\nCitations: P1",
+        "notes": "P2's conflict-resolution text invites the fabrication that offline edits queue for sync. Asserting that scores 0 on groundedness and is logged as HALLUCINATION."
+      }
+    },
+    {
+      "case_id": "rag-h01",
+      "difficulty": "hard",
+      "probes": "long dense policy passage; the answer requires applying two thresholds at once, one of which is stated in a later clause",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Procurement thresholds. Purchases with a total contract value below two lakh rupees may be approved by any budget holder. Between two and ten lakh, approval passes to the department head, and a second quotation must be attached to the requisition. At ten lakh and above, both the Finance Director and Legal must review before signature, and the requisition is placed on the fortnightly committee agenda. Separately, and in addition to the value thresholds above, any agreement whose term exceeds twenty-four months requires CFO sign-off, irrespective of value; this clause was added after several multi-year renewals were approved at department level. Framework agreements with pre-negotiated rates are exempt from the second-quotation requirement but not from any signature requirement."
+        },
+        {
+          "id": "P2",
+          "text": "New vendors must complete onboarding — tax registration, bank verification and a signed data-processing addendum — before a purchase order can be raised against them. Onboarding typically takes five working days."
+        },
+        {
+          "id": "P3",
+          "text": "Requisitions are raised in the finance portal. The portal auto-populates cost centre and budget line from the requester's profile, which the requester should check before submitting."
+        },
+        {
+          "id": "P4",
+          "text": "The office move to the third floor is scheduled for the last week of the quarter. Teams should label boxes with their cost centre."
+        }
+      ],
+      "question": "A three-year software contract worth twelve lakh rupees is being raised. Which approvals are required?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Procurement thresholds. Purchases with a total contract value below two lakh rupees may be approved by any budget holder. Between two and ten lakh, approval passes to the department head, and a second quotation must be attached to the requisition. At ten lakh and above, both the Finance Director and Legal must review before signature, and the requisition is placed on the fortnightly committee agenda. Separately, and in addition to the value thresholds above, any agreement whose term exceeds twenty-four months requires CFO sign-off, irrespective of value; this clause was added after several multi-year renewals were approved at department level. Framework agreements with pre-negotiated rates are exempt from the second-quotation requirement but not from any signature requirement.\n[P2] New vendors must complete onboarding — tax registration, bank verification and a signed data-processing addendum — before a purchase order can be raised against them. Onboarding typically takes five working days.\n[P3] Requisitions are raised in the finance portal. The portal auto-populates cost centre and budget line from the requester's profile, which the requester should check before submitting.\n[P4] The office move to the third floor is scheduled for the last week of the quarter. Teams should label boxes with their cost centre.\n\nQuestion: A three-year software contract worth twelve lakh rupees is being raised. Which approvals are required?",
+      "gold": {
+        "answer": "Finance Director and Legal review before signature (value at or above ten lakh), placement on the fortnightly committee agenda, and CFO sign-off because the term exceeds twenty-four months.",
+        "supported_by": [
+          "P1"
+        ],
+        "must_include": [
+          "Finance Director and Legal review",
+          "fortnightly committee agenda",
+          "CFO sign-off because the term exceeds twenty-four months"
+        ],
+        "must_not_include": [
+          "department head approval as sufficient",
+          "a second quotation being the operative requirement",
+          "vendor onboarding as an approval"
+        ],
+        "reference": "Three approvals apply. At twelve lakh the contract is at or above the ten lakh threshold, so both the Finance Director and Legal must review before signature and the requisition goes on the fortnightly committee agenda. Because the term is three years — over twenty-four months — CFO sign-off is additionally required regardless of value.\nCitations: P1",
+        "notes": "Hard because the term clause sits in a later sentence and applies in addition, not instead. Answering with only the value threshold is answer correctness 1. Treating P2's onboarding as an approval step is a groundedness failure."
+      }
+    },
+    {
+      "case_id": "rag-h02",
+      "difficulty": "hard",
+      "probes": "two structurally parallel passages of numbers; the question names one API version and the wrong table is the more prominent one",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "v1 API rate limits, per workspace: Free 30 requests per minute, Growth 300 requests per minute, Scale 1,500 requests per minute. These limits are unchanged since 2024 and apply to all v1 endpoints including the deprecated bulk export."
+        },
+        {
+          "id": "P2",
+          "text": "v2 API rate limits, per workspace: Free 60 requests per minute, Growth 600 requests per minute, Scale 3,000 requests per minute. Limits are evaluated per workspace, not per API key."
+        },
+        {
+          "id": "P3",
+          "text": "Both API versions permit short bursts above the per-minute limit: up to twice the limit for a maximum of ten seconds, after which requests receive HTTP 429 with a Retry-After header."
+        },
+        {
+          "id": "P4",
+          "text": "SDKs are published for four languages. The Python and Node SDKs retry 429 responses automatically; the Java and Go SDKs surface them to the caller."
+        }
+      ],
+      "question": "What is the per-minute request limit for a Growth workspace on the v2 API?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] v1 API rate limits, per workspace: Free 30 requests per minute, Growth 300 requests per minute, Scale 1,500 requests per minute. These limits are unchanged since 2024 and apply to all v1 endpoints including the deprecated bulk export.\n[P2] v2 API rate limits, per workspace: Free 60 requests per minute, Growth 600 requests per minute, Scale 3,000 requests per minute. Limits are evaluated per workspace, not per API key.\n[P3] Both API versions permit short bursts above the per-minute limit: up to twice the limit for a maximum of ten seconds, after which requests receive HTTP 429 with a Retry-After header.\n[P4] SDKs are published for four languages. The Python and Node SDKs retry 429 responses automatically; the Java and Go SDKs surface them to the caller.\n\nQuestion: What is the per-minute request limit for a Growth workspace on the v2 API?",
+      "gold": {
+        "answer": "600 requests per minute, evaluated per workspace rather than per API key.",
+        "supported_by": [
+          "P2"
+        ],
+        "must_include": [
+          "600 requests per minute",
+          "per workspace, not per API key"
+        ],
+        "must_not_include": [
+          "300 requests per minute",
+          "any v1 figure presented as the answer"
+        ],
+        "reference": "600 requests per minute. The limit is evaluated per workspace rather than per API key.\nCitations: P2",
+        "notes": "Answering 300 means the model matched the tier name without checking the version: 0 on answer correctness and 0 on citation accuracy. Mentioning the burst allowance from P3 is acceptable if cited; asserting it without citing P3 is a citation failure."
+      }
+    },
+    {
+      "case_id": "rag-h03",
+      "difficulty": "hard",
+      "probes": "the context answers half the question and genuinely does not answer the other half — correct behaviour is a partial answer plus an explicit gap, not silence and not invention",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Fixed-term contractors terminated before their end date are entitled to thirty days' written notice, or payment in lieu of that notice at the contracted day rate."
+        },
+        {
+          "id": "P2",
+          "text": "Severance is calculated at fifteen days' pay per completed year of service. Eligibility for severance is limited to permanent employees who have completed one continuous year."
+        },
+        {
+          "id": "P3",
+          "text": "All leavers, whatever their contract type, must complete the exit checklist: return of equipment, handover document, and a final expenses claim within fourteen days."
+        },
+        {
+          "id": "P4",
+          "text": "Reference requests are handled centrally by HR and confirm dates of engagement and role title only."
+        }
+      ],
+      "question": "What notice period and what severance entitlement apply to a fixed-term contractor terminated early?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Fixed-term contractors terminated before their end date are entitled to thirty days' written notice, or payment in lieu of that notice at the contracted day rate.\n[P2] Severance is calculated at fifteen days' pay per completed year of service. Eligibility for severance is limited to permanent employees who have completed one continuous year.\n[P3] All leavers, whatever their contract type, must complete the exit checklist: return of equipment, handover document, and a final expenses claim within fourteen days.\n[P4] Reference requests are handled centrally by HR and confirm dates of engagement and role title only.\n\nQuestion: What notice period and what severance entitlement apply to a fixed-term contractor terminated early?",
+      "gold": {
+        "answer": "Notice: thirty days' written notice, or payment in lieu at the contracted day rate. Severance: the passages state severance eligibility is limited to permanent employees, so no contractor severance entitlement is established here.",
+        "supported_by": [
+          "P1",
+          "P2"
+        ],
+        "must_include": [
+          "thirty days' notice or payment in lieu",
+          "severance is limited to permanent employees",
+          "explicit statement that a contractor severance entitlement is not established by the passages"
+        ],
+        "must_not_include": [
+          "fifteen days' pay per year applied to contractors",
+          "a contractor severance figure of any kind"
+        ],
+        "reference": "Notice is thirty days in writing, or payment in lieu at the contracted day rate. On severance the passages only say that eligibility is limited to permanent employees with a year of continuous service, so they do not establish any severance entitlement for a fixed-term contractor.\nCitations: P1, P2",
+        "notes": "Hard because it splits the abstention dimension within one case. Answering the notice half and inventing a severance figure scores 0 on groundedness. Replying INSUFFICIENT CONTEXT to the whole question scores 1 on abstention — over-abstention on a half-answerable question, per rubric v1.2 §3.4. Full marks require answering the supported half and naming the gap."
+      }
+    },
+    {
+      "case_id": "rag-h04",
+      "difficulty": "hard",
+      "probes": "mixed formats in one context — a figure block and a chat log — with the number in one and the explanation in the other",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "End-of-Q2 open ticket backlog by region.\nEMEA: 412\nAMER: 388\nAPAC: 947\nLATAM: 96"
+        },
+        {
+          "id": "P2",
+          "text": "meera: apac backlog is the one that worries me\nsam: it's been climbing since april\nmeera: is it volume\nsam: no, volume is flat within a few percent. we've had two support roles unfilled since march and one person on extended leave\nmeera: so it's capacity not demand\nsam: capacity, yes. hiring is in progress for both roles"
+        },
+        {
+          "id": "P3",
+          "text": "Backlog is counted as tickets in Open or Awaiting Customer status at 23:59 on the last day of the quarter, in the reporting timezone."
+        },
+        {
+          "id": "P4",
+          "text": "The support tooling migration completed in May across all regions with no reported data loss."
+        }
+      ],
+      "question": "Which region had the highest ticket backlog at the end of Q2, and what did the team attribute it to?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] End-of-Q2 open ticket backlog by region.\nEMEA: 412\nAMER: 388\nAPAC: 947\nLATAM: 96\n[P2] meera: apac backlog is the one that worries me\nsam: it's been climbing since april\nmeera: is it volume\nsam: no, volume is flat within a few percent. we've had two support roles unfilled since march and one person on extended leave\nmeera: so it's capacity not demand\nsam: capacity, yes. hiring is in progress for both roles\n[P3] Backlog is counted as tickets in Open or Awaiting Customer status at 23:59 on the last day of the quarter, in the reporting timezone.\n[P4] The support tooling migration completed in May across all regions with no reported data loss.\n\nQuestion: Which region had the highest ticket backlog at the end of Q2, and what did the team attribute it to?",
+      "gold": {
+        "answer": "APAC, with 947 open tickets. The team attributed it to capacity rather than demand — two support roles unfilled since March and one person on extended leave, with ticket volume flat.",
+        "supported_by": [
+          "P1",
+          "P2"
+        ],
+        "must_include": [
+          "APAC",
+          "947",
+          "capacity not demand",
+          "two unfilled roles since March and one person on extended leave"
+        ],
+        "must_not_include": [
+          "rising ticket volume as the cause",
+          "the tooling migration as the cause"
+        ],
+        "reference": "APAC, at 947 open tickets — more than double any other region. The team put it down to capacity rather than demand: volume was flat within a few percent, but two support roles have been unfilled since March and one person is on extended leave, with hiring in progress.\nCitations: P1, P2",
+        "notes": "Requires reading a figure block and a chat log together and citing both. Attributing the backlog to the May tooling migration (P4) is the available false inference and scores 0 on groundedness."
+      }
+    },
+    {
+      "case_id": "rag-h05",
+      "difficulty": "hard",
+      "probes": "one passage is explicitly superseded by a later dated one — this is supersession, not contradiction, and the correct answer picks the current value and says why",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Finance memo, 14 February 2025. The mileage reimbursement rate is set at twelve rupees per kilometre for all employee-owned vehicles, effective immediately."
+        },
+        {
+          "id": "P2",
+          "text": "Finance memo, 3 March 2026. With effect from 1 April 2026 the mileage reimbursement rate rises to fourteen rupees per kilometre. This memo supersedes the rate set in the memo of 14 February 2025. Journeys made before 1 April are reimbursed at the previous rate."
+        },
+        {
+          "id": "P3",
+          "text": "Mileage claims are submitted in the expenses portal with start and end odometer readings. Claims without readings are returned to the claimant."
+        },
+        {
+          "id": "P4",
+          "text": "Parking and toll charges are reimbursed separately on production of a receipt and are not included in the per-kilometre rate."
+        }
+      ],
+      "question": "What mileage rate applies to a journey made in June 2026?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Finance memo, 14 February 2025. The mileage reimbursement rate is set at twelve rupees per kilometre for all employee-owned vehicles, effective immediately.\n[P2] Finance memo, 3 March 2026. With effect from 1 April 2026 the mileage reimbursement rate rises to fourteen rupees per kilometre. This memo supersedes the rate set in the memo of 14 February 2025. Journeys made before 1 April are reimbursed at the previous rate.\n[P3] Mileage claims are submitted in the expenses portal with start and end odometer readings. Claims without readings are returned to the claimant.\n[P4] Parking and toll charges are reimbursed separately on production of a receipt and are not included in the per-kilometre rate.\n\nQuestion: What mileage rate applies to a journey made in June 2026?",
+      "gold": {
+        "answer": "Fourteen rupees per kilometre — the March 2026 memo took effect on 1 April 2026 and supersedes the earlier twelve-rupee rate.",
+        "supported_by": [
+          "P2"
+        ],
+        "must_include": [
+          "fourteen rupees per kilometre",
+          "the 2026 memo supersedes the 2025 rate from 1 April 2026"
+        ],
+        "must_not_include": [
+          "twelve rupees for a June 2026 journey",
+          "framing the two memos as an unresolved conflict"
+        ],
+        "reference": "Fourteen rupees per kilometre. The memo of 3 March 2026 raised the rate with effect from 1 April 2026 and explicitly supersedes the February 2025 memo, so a June 2026 journey is reimbursed at the new rate.\nCitations: P2",
+        "notes": "Deliberately distinct from rag-a02: here the passages state which one governs, so surfacing this as an unresolved conflict is over-hedging and scores 1 on answer correctness. Answering twelve rupees scores 0. Citing P1 as support is 0 on citation accuracy."
+      }
+    },
+    {
+      "case_id": "rag-a01",
+      "difficulty": "adversarial",
+      "probes": "UNANSWERABLE — the passages surround the question with retention periods for other things but never state the one asked for; correct behaviour is explicit abstention",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Audit log entries are retained for four hundred days in the searchable store, after which they are moved to cold archive and are no longer queryable from the admin console."
+        },
+        {
+          "id": "P2",
+          "text": "Backup snapshots of the production database are retained for thirty-five days and then overwritten in rotation."
+        },
+        {
+          "id": "P3",
+          "text": "An account can be deactivated by any workspace owner from the account settings page. Deactivation immediately revokes all sessions and blocks new sign-ins; the account disappears from the member list but remains selectable in historical reports."
+        },
+        {
+          "id": "P4",
+          "text": "Building access badges are issued at reception and must be worn visibly on site. Lost badges are cancelled the same day and replaced within two working days."
+        }
+      ],
+      "question": "How long after deactivation is a customer account permanently erased?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Audit log entries are retained for four hundred days in the searchable store, after which they are moved to cold archive and are no longer queryable from the admin console.\n[P2] Backup snapshots of the production database are retained for thirty-five days and then overwritten in rotation.\n[P3] An account can be deactivated by any workspace owner from the account settings page. Deactivation immediately revokes all sessions and blocks new sign-ins; the account disappears from the member list but remains selectable in historical reports.\n[P4] Building access badges are issued at reception and must be worn visibly on site. Lost badges are cancelled the same day and replaced within two working days.\n\nQuestion: How long after deactivation is a customer account permanently erased?",
+      "gold": {
+        "answer": "INSUFFICIENT CONTEXT — the passages give retention periods for audit logs and backup snapshots, and describe what deactivation does, but never state any erasure timeline for a deactivated account.",
+        "supported_by": [],
+        "must_include": [
+          "INSUFFICIENT CONTEXT"
+        ],
+        "must_not_include": [
+          "four hundred days",
+          "thirty-five days",
+          "any stated number of days to erasure",
+          "any citation of P1, P2, P3 or P4 as supporting an erasure timeline"
+        ],
+        "reference": "INSUFFICIENT CONTEXT\nCitations: none",
+        "notes": "ADVERSARIAL TARGET — the most common and most expensive real-world RAG failure. The passages are dense with plausible retention numbers that answer adjacent questions; none answers this one, and P3 stops short deliberately. Any numeric answer scores 0 on abstention, 0 on groundedness and is logged as HALLUCINATION. Exact 'INSUFFICIENT CONTEXT' with 'Citations: none' scores 3. A hedged non-answer that still supplies a number scores 0. Read alongside rag-t05 and rag-t11, which share this domain and question shape but are answerable: a model scoring 3 here and 0 there has learned caution, not judgment, and the adversarial sub-score must be reported with that pair."
+      }
+    },
+    {
+      "case_id": "rag-a02",
+      "difficulty": "adversarial",
+      "probes": "CONTRADICTION — two passages state different values for the same fact with no stated precedence; correct behaviour is surfacing the conflict, not silently picking one",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "Pricing page, Growth plan. Includes priority support, unlimited seats, and a 99.9% uptime guarantee."
+        },
+        {
+          "id": "P2",
+          "text": "Master service agreement, schedule 2. For customers on the Growth plan the service level is 99.5% monthly uptime. Where measured uptime falls below this figure, service credits are calculated under clause 7.3."
+        },
+        {
+          "id": "P3",
+          "text": "Uptime is measured as the proportion of one-minute intervals in a calendar month during which the API returned a non-5xx response to the platform's synthetic probe."
+        },
+        {
+          "id": "P4",
+          "text": "Support response targets are four business hours for priority support and one business day otherwise."
+        }
+      ],
+      "question": "What is the guaranteed uptime commitment for a customer on the Growth plan?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Pricing page, Growth plan. Includes priority support, unlimited seats, and a 99.9% uptime guarantee.\n[P2] Master service agreement, schedule 2. For customers on the Growth plan the service level is 99.5% monthly uptime. Where measured uptime falls below this figure, service credits are calculated under clause 7.3.\n[P3] Uptime is measured as the proportion of one-minute intervals in a calendar month during which the API returned a non-5xx response to the platform's synthetic probe.\n[P4] Support response targets are four business hours for priority support and one business day otherwise.\n\nQuestion: What is the guaranteed uptime commitment for a customer on the Growth plan?",
+      "gold": {
+        "answer": "The passages conflict: the pricing page states 99.9% while the master service agreement schedule states 99.5%, and nothing in the passages establishes which governs.",
+        "supported_by": [
+          "P1",
+          "P2"
+        ],
+        "must_include": [
+          "the two passages give different figures",
+          "99.9% from the pricing page",
+          "99.5% from the master service agreement",
+          "explicit statement that the passages do not establish which takes precedence"
+        ],
+        "must_not_include": [
+          "a single figure given as the answer",
+          "an assertion that the MSA takes precedence over the pricing page",
+          "an assertion that the pricing page is out of date",
+          "any reconciliation not stated in the passages"
+        ],
+        "reference": "The passages disagree. The pricing page states a 99.9% uptime guarantee for the Growth plan; schedule 2 of the master service agreement states 99.5% monthly uptime for the same plan, with service credits below that figure. Nothing in the passages says which document governs, so the commitment cannot be settled from this context alone.\nCitations: P1, P2",
+        "notes": "ADVERSARIAL TARGET. Answering with either figure alone scores 0 on answer correctness even though that figure appears verbatim in the context — the failure is silent resolution, not misreading. Asserting that a contract supersedes marketing copy is a groundedness failure (0) because the passages never say so, however sensible the reasoning: the point is that plausible outside knowledge is still outside the context. Naming both figures, both sources and the absence of a precedence rule scores 3. Replying INSUFFICIENT CONTEXT scores 1 on abstention — closer to correct than picking one, but it discards information the context does provide."
+      }
+    },
+    {
+      "case_id": "rag-a03",
+      "difficulty": "adversarial",
+      "probes": "TOPIC-SIMILARITY LURE — the only size limit in the context belongs to a different, deprecated component; correct behaviour is to not transfer it",
+      "passages": [
+        {
+          "id": "P1",
+          "text": "The Documents module stores files against a record with full version history. Every save creates a new version; previous versions remain downloadable and are never pruned automatically. Supported formats are PDF, DOCX, XLSX, PNG and JPEG."
+        },
+        {
+          "id": "P2",
+          "text": "The legacy Attachments widget, deprecated since the 2025.2 release and scheduled for removal, accepts uploads of up to 25 MB per file. The widget writes to a separate store and its contents are not visible to the Documents module."
+        },
+        {
+          "id": "P3",
+          "text": "Access to a document follows the permissions of the record it is attached to. A user who loses access to the record loses access to its documents at the next permission sync."
+        },
+        {
+          "id": "P4",
+          "text": "Bulk download packages up to five hundred documents into a single archive. Requests above that limit are rejected and must be split."
+        }
+      ],
+      "question": "What is the maximum file size for an upload to the Documents module?",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] The Documents module stores files against a record with full version history. Every save creates a new version; previous versions remain downloadable and are never pruned automatically. Supported formats are PDF, DOCX, XLSX, PNG and JPEG.\n[P2] The legacy Attachments widget, deprecated since the 2025.2 release and scheduled for removal, accepts uploads of up to 25 MB per file. The widget writes to a separate store and its contents are not visible to the Documents module.\n[P3] Access to a document follows the permissions of the record it is attached to. A user who loses access to the record loses access to its documents at the next permission sync.\n[P4] Bulk download packages up to five hundred documents into a single archive. Requests above that limit are rejected and must be split.\n\nQuestion: What is the maximum file size for an upload to the Documents module?",
+      "gold": {
+        "answer": "INSUFFICIENT CONTEXT — the only size limit in the passages is the 25 MB per file of the deprecated Attachments widget, which is a separate component writing to a separate store; no size limit is stated for the Documents module.",
+        "supported_by": [],
+        "must_include": [
+          "INSUFFICIENT CONTEXT"
+        ],
+        "must_not_include": [
+          "25 MB given as the Documents module limit",
+          "P2 cited as supporting a Documents module limit",
+          "five hundred documents given as a size limit"
+        ],
+        "reference": "INSUFFICIENT CONTEXT\nCitations: none",
+        "notes": "ADVERSARIAL TARGET. P2 is topically adjacent — uploads, files, megabytes — and is the passage a similarity-matching model will retrieve and answer from, but it describes a different, deprecated component with its own store. Answering '25 MB' scores 0 on groundedness, 0 on answer correctness and 0 on citation accuracy, and is logged as HALLUCINATION; it is the single most informative failure in this file because the model will look most confident precisely when it is wrong. A reply that says INSUFFICIENT CONTEXT and additionally notes that only the deprecated widget's limit is stated and does not apply also scores 3 — the extra observation is grounded and useful, provided no limit is asserted for Documents. P4's five-hundred-document bulk cap is a second lure and is a count, not a size."
+      }
+    }
+  ]
+}
