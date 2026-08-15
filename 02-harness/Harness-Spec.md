@@ -97,6 +97,16 @@ Before each call, the runner checks whether `(case_id, model_id, run_index)` alr
 
 This makes the run **idempotent and interruptible**: re-running the command after a crash, an account lockout, or an overnight stop picks up exactly where it stopped. With ~1,500 calls against free tiers spread over days, interruption is the expected case, not the exception.
 
+**Run identity — clarified 2026-08-13.** §2 says each run appends to a new dated file; §4 says resumption checks "the current run's output." Read together these were ambiguous, and a date-derived default resolves them wrongly: **a run spanning midnight would start a second file and silently re-execute every completed call**, burning the scarcest resource in the project. Since a 1,500-call run across rate-limited free tiers is *expected* to span days, that is the normal case, not an edge case.
+
+**A run is identified by its `run_id`, not by the calendar.** Resolution order:
+
+1. `--run-id X` given → use it.
+2. `--new-run` given → create a fresh id (date, disambiguated if one already exists).
+3. Neither → **resume the most recent existing run file.** Starting fresh is the explicit action; resuming is the default, because the cost of a wrong resume is one duplicate-suppressed call and the cost of a wrong fresh start is ~1,500 wasted calls.
+
+On startup the runner prints the resolved `run_id`, the count already complete, and the count remaining. Silent resumption of the wrong run is the failure this line exists to prevent.
+
 ---
 
 ## 5. Rate-limit probing mode

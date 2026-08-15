@@ -40,6 +40,8 @@ A decision without a stated "what would change my mind" is a belief, not a judgm
   → I don't generalise. I publish per-model results with n stated, and the advisor routes across measured options only. No claim is made about unmeasured models.
 - **M:** Provider set is re-opened every quarterly refresh; it's explicitly a living list.
 
+**Resolved 2026-08-13:** OpenRouter's terms state credit purchase is required to make API calls (minimum $5), which would have disqualified it — the zero-budget constraint is the thesis, and spending $5 to test it would invalidate the premise rather than bend it. Verified empirically instead: a `:free` model returns a successful completion on a zero balance. **OpenRouter stays; model set is five.** The documented-vs-actual gap is published in its model profile, flagged as undocumented behaviour that can be withdrawn without notice, and re-verified each refresh.
+
 ### A4. No overall "best model" leaderboard
 
 - **D:** Publish per-task, per-dimension results; refuse a single composite ranking.
@@ -111,6 +113,10 @@ A decision without a stated "what would change my mind" is a belief, not a judgm
 - **C:** *"Isn't probing limits abusive, or a ToS problem?"*
   → It's the single most legally sensitive part of the project and it's handled deliberately: ToS reviewed per provider before any probing, probing done with backoff and stopped at first sustained limit rather than hammered, one account per provider, no circumvention, and results published as measurements rather than as a bypass guide. If a provider's terms forbid publishing benchmarks, that provider is excluded and the exclusion is disclosed.
 - **M:** Any provider objection removes that provider from the index immediately.
+
+**Amended 2026-08-13 after the terms review (`ToS-Review.md`).** Probing is now **per-provider, not uniform**. Groq's AUP prohibits use "beyond published parameters, rate limits, or use limitations," which is the plainest description of what deliberate probing does — so **Groq is never actively probed**; its ceiling is published as documented, plus any rejections encountered incidentally during the normal run. Every published ceiling is labelled by how it was obtained: `measured`, `documented`, or `documented + incidental`.
+
+*This is a better design than the original uniform policy, not merely a compliant one. A provider whose terms forbid independent measurement of its own limits is itself information a builder wants, and the label column surfaces it instead of hiding an asymmetry behind a single number.*
 
 ---
 

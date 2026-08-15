@@ -1,0 +1,107 @@
+# Harness configuration — Zero-Budget Model Advisor
+# The only file that changes to add a provider (Harness-Spec §6).
+# TOML rather than the spec's config.yaml: tomllib is stdlib on Python 3.11,
+# so this stays a zero-dependency harness. Logged as a deviation.
+
+[paths]
+cases_dir = "01-rubric-and-testcases/cases"
+results_dir = "03-results"
+
+# Identical across every model — the proof that conditions were equal (§2 Request).
+[params]
+temperature = 0.0
+max_tokens = 1024
+# Empty by design, not by omission: no case file supplies one. Clients must
+# omit the system message entirely when this is empty rather than send an
+# empty one — an empty system message is not the same as no system message,
+# and the difference varies by provider (Decision B4, identical conditions).
+system_prompt = ""
+
+# Whether the case file's `source` is already restated inside `instruction`
+# varies by task file, so the runner appends `source` only when the full
+# string is absent from `instruction`. Recorded here as the intended rule,
+# not as a per-task switch, so a case file edit cannot silently change it
+# without this line becoming false.
+[prompt]
+append_source_when_absent = true
+
+# API keys are read from the environment by name. The key itself must never
+# appear in this file — it is committed. runner.py loads .env at startup.
+#
+# `min_interval_s` is DERIVED from each provider's documented limit with margin,
+# never guessed: floor = 60 / documented_rpm, rounded up. Running slow costs
+# hours; tripping abuse detection costs an account, and there is exactly one
+# per provider (ToS-Review standing rule 1).
+#
+# `documented_*` and `documented_source` are recorded because the published
+# results table prints documented vs measured side by side — this is data, not
+# commentary. `probe_allowed` gates probe.py; see ToS-Review R-1.
+
+[[models]]
+id = "ollama-llama3.2-3b"
+provider = "ollama"
+model = "llama3.2:3b"
+base_url = "http://localhost:11434"
+min_interval_s = 0.0      # local; pacing exists to protect free tiers, not this
+timeout_s = 120
+max_retries = 3           # 5xx only; see Harness-Spec §3
+probe_allowed = false     # no service, no ceiling to measure
+documented_rpm = 0
+documented_rpd = 0
+documented_source = "local — no service terms; weights licence recorded separately (ToS-Review)"
+
+[[models]]
+id = "groq-llama-3.3-70b"
+provider = "groq"
+model = "llama-3.3-70b-versatile"
+base_url = "https://api.groq.com/openai/v1"
+api_key_env = "GROQ_API_KEY"
+min_interval_s = 3.0      # 30 rpm -> 2.0s floor, +50% margin
+timeout_s = 60
+max_retries = 3
+probe_allowed = false     # AUP forbids use beyond published rate limits (ToS-Review R-1)
+documented_rpm = 30
+documented_rpd = 1000
+documented_source = "https://console.groq.com/docs/rate-limits (2026-08-15)"
+
+[[models]]
+id = "gemini-2.5-flash-lite"
+provider = "gemini"
+model = "gemini-2.5-flash-lite"
+base_url = "https://generativelanguage.googleapis.com/v1beta"
+api_key_env = "GEMINI_API_KEY"
+min_interval_s = 5.0      # 15 rpm -> 4.0s floor, rounded up
+timeout_s = 60
+max_retries = 3
+probe_allowed = true
+documented_rpm = 15
+documented_rpd = 1000
+documented_source = "AI Studio rate-limit page — CONFIRM per-project figures, docs page does not print them"
+
+[[models]]
+id = "mistral-small-2603"
+provider = "mistral"
+model = "mistral-small-2603"
+base_url = "https://api.mistral.ai/v1"
+api_key_env = "MISTRAL_API_KEY"
+min_interval_s = 2.0      # 1 rps -> 1.0s floor, doubled
+timeout_s = 60
+max_retries = 3
+probe_allowed = true
+documented_rpm = 60
+documented_rpd = 0        # not published as a daily cap; 1B tokens/month
+documented_source = "https://help.mistral.ai/en/articles/225174-what-are-the-limits-of-the-free-tier (2026-08-15)"
+
+[[models]]
+id = "openrouter-gpt-oss-20b"
+provider = "openrouter"
+model = "openai/gpt-oss-20b:free"
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+min_interval_s = 4.0      # 20 rpm -> 3.0s floor, rounded up
+timeout_s = 60
+max_retries = 3
+probe_allowed = true
+documented_rpm = 20
+documented_rpd = 50       # BINDING: 50/day at zero balance -> 300 calls needs 6 days
+documented_source = "https://openrouter.ai/docs/api-reference/limits (2026-08-15)"
