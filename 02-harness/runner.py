@@ -16,6 +16,8 @@ import sys
 import tomllib
 import uuid
 
+import clients.base
+
 HARNESS_VERSION = "1.0"
 
 
@@ -151,6 +153,9 @@ def _record(case, model, params, prompt, run_index, result, run_id, git_commit):
         "system_prompt": params["system_prompt"],
         "temperature": params["temperature"],
         "max_tokens": params["max_tokens"],
+        # Effective retry policy for this call. Standard unless overridden;
+        # recorded so an accidental override is visible in the raw data.
+        "retry_attempts_allowed": clients.base.attempts_allowed(params),
         "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "response_text": result.response_text,
         "finish_reason": result.finish_reason,

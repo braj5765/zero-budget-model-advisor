@@ -44,7 +44,7 @@ def call(prompt, system_prompt, params):
             # Gemini signals free-tier exhaustion as RESOURCE_EXHAUSTED, which
             # arrives as 429 but is worth matching on the body too.
             if error.code == 429 or "RESOURCE_EXHAUSTED" in error_raw:
-                if rate_limit_attempts < len(base.BACKOFF_S):
+                if rate_limit_attempts < base.attempts_allowed(params):
                     queue_wait_ms += base.sleep(
                         base.retry_after(error, rate_limit_attempts))
                     rate_limit_attempts += 1

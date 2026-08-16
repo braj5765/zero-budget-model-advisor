@@ -56,7 +56,7 @@ def send(url, prompt, system_prompt, params, extra_headers=None):
         except urllib.error.HTTPError as error:
             error_raw = error.read().decode(errors="replace")
             if error.code == 429 or "quota" in error_raw.lower():
-                if rate_limit_attempts < len(base.BACKOFF_S):
+                if rate_limit_attempts < base.attempts_allowed(params):
                     # Backoff is harness-side waiting, so it belongs in
                     # queue_wait_ms, never folded into latency_ms — a limited
                     # model and a slow model are different findings (§2).

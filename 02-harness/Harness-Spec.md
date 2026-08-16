@@ -113,6 +113,10 @@ On startup the runner prints the resolved `run_id`, the count already complete, 
 
 A separate command, run **after** the main benchmark — never before, and never concurrently. It measures the ceiling the docs don't tell you.
 
+**Scheduling — clarified 2026-08-13.** Probing runs after the benchmark *and after quota has recovered*, i.e. on a later day. The prober skips any provider with a `RATE_LIMIT` row in the last 24 hours, which is both ToS-conservative and methodologically necessary: a ceiling measured against a partly-exhausted quota is a measurement of the benchmark's leftovers, not of the tier. Run the benchmark and the probe on separate days, or every provider will be skipped and no ceiling will ever be measured.
+
+**Retries are disabled during probing.** With the standard policy active, a 429 triggers up to five backoff-and-retry attempts — meaning the prober would keep requesting for ~60 seconds *after* being told no, and would record the exhaustion point rather than the first rejection. Disabling retries is simultaneously more accurate and more conservative. The effective retry setting is recorded on every probe row so a reader can tell which policy produced the number.
+
 - Sends a fixed trivial prompt at a slowly increasing rate.
 - Stops at the **first sustained limit** (2 consecutive rejections), then stops entirely. Does not hammer, does not attempt to characterise the recovery curve, does not probe again for 24 hours.
 - Records: requests before first rejection, requests-per-minute at rejection, error message, whether the limit appears to be per-minute / per-day / token-based, and the wall-clock time to recovery.

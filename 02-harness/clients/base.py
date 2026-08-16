@@ -65,6 +65,23 @@ MAX_5XX_RETRIES = 3
 USER_AGENT = "zero-budget-model-advisor/1.0 (benchmark harness)"
 
 
+def attempts_allowed(params):
+    """How many 429 backoff-and-retry attempts this call may make.
+
+    Defaults to the standard policy and only moves when a caller explicitly
+    overrides it. probe.py sets 0 so the first rejection returns immediately:
+    with retries active a prober keeps requesting for roughly a minute after
+    the provider has already said no, which is both less accurate and the
+    behaviour most likely to look like abuse.
+
+    runner.py records the effective value on every row, so an override used by
+    accident during a benchmark run — silently turning transient 429s into
+    permanent RATE_LIMIT failures — is detectable at analysis time rather than
+    invisible.
+    """
+    return params.get("max_rate_limit_attempts", len(BACKOFF_S))
+
+
 def pace(min_interval_s):
     """Unconditional inter-request delay from config. Returns queue_wait_ms."""
     if min_interval_s <= 0:
