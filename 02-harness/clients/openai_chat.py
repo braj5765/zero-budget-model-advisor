@@ -119,7 +119,9 @@ def _read_stream(url, body, headers, params, started, queue_wait_ms, retry_count
     if tokens_estimated:
         # Spec §2: a missing token count must be estimated and flagged, never
         # left at zero — cost projection and breakeven depend on it.
-        tokens_in = _estimate(body["messages"])
+        # Floored at 1: a request that was sent had input, so tokens_in: 0
+        # would be factually false in the raw record.
+        tokens_in = max(1, sum(len(m["content"]) for m in body["messages"]) // 4)
         tokens_out = max(1, len(text) // 4)
 
     failure_code = ""
