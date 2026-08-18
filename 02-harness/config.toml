@@ -80,7 +80,11 @@ max_retries = 3
 probe_allowed = true
 documented_rpm = 15
 documented_rpd = 1000
-documented_source = "AI Studio rate-limit page — CONFIRM per-project figures, docs page does not print them"
+# CONFIRMED 2026-08-17 from the provider's own 429 body, which is a better
+# source than the docs page (which no longer prints free-tier figures):
+# "Quota exceeded for metric: generate_content_free_tier_requests, limit: 15,
+# model: gemini-3.5-flash-lite". Measured ceiling 16.6 rpm. rpd still unverified.
+documented_source = "Gemini 429 response body, 2026-08-17 (limit: 15 rpm, stated by the API)"
 
 [[models]]
 id = "mistral-small-2603"
