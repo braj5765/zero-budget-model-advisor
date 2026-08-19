@@ -42,6 +42,22 @@ A decision without a stated "what would change my mind" is a belief, not a judgm
 
 **Resolved 2026-08-13:** OpenRouter's terms state credit purchase is required to make API calls (minimum $5), which would have disqualified it — the zero-budget constraint is the thesis, and spending $5 to test it would invalidate the premise rather than bend it. Verified empirically instead: a `:free` model returns a successful completion on a zero balance. **OpenRouter stays; model set is five.** The documented-vs-actual gap is published in its model profile, flagged as undocumented behaviour that can be withdrawn without notice, and re-verified each refresh.
 
+### A5. OpenRouter cut from scoring after the run, its failure data published
+
+- **D:** After the benchmark returned **96 successes in 300 attempts (68% `RATE_LIMIT`) over 19.4 hours**, OpenRouter was removed from quality scoring. The index scores four models. Its 204 `RATE_LIMIT` rows stay in `/03-results` and feed the failure-rate table, the rate-limit findings, and its model profile.
+- **A:** (i) Keep it and score on 96 responses — but median-of-three over 100 cases is impossible at that coverage and the 12/5/3 stratification collapses, so the scores would be uncomparable to the other four while *looking* comparable. (ii) Spend six days re-running to fill coverage — the documented 50/day cap makes 300 calls a six-day job, against a two-week total budget. (iii) Delete it and say nothing.
+- **R:** Pre-registered in §7: *if the timeline slips, cut models before cutting the calibration set.* This is that rule firing, not an improvisation. Option (i) publishes a number the method can't support; option (iii) hides the single most useful thing measured about OpenRouter.
+- **C:** *"Isn't dropping a provider that performed badly exactly the bias your rubric is supposed to prevent?"*
+  → It would be, if quality had been the reason. It wasn't — OpenRouter was cut for **insufficient coverage to score fairly**, and the cut is *adverse to it*: the failure rate, the daily cap, and the shared-pool ceiling are all published in full. The decision rule was written before the data existed, and the raw rows are in an append-only file anyone can check.
+- **M:** If a later refresh achieves ≥95% coverage within the run window, OpenRouter returns to quality scoring. Nothing about it is permanently excluded.
+
+**Two findings retained and published:**
+
+1. **Two distinct ceilings, and the second is the real story.** Benchmark 429s carried `limit_source: openrouter_free_tier_daily` (`X-RateLimit-Limit: 50`) — the account's own documented cap, which proved accurate. The probe, on a fresh daily quota, was rejected after **two requests** with `limit_source: upstream_provider_shared_pool`. That is not the builder's quota at all; it is contention across every free-tier user, and it is undocumented, unpredictable, and outside the builder's control. It explains the 68% failure rate better than the daily cap does. **A free tier whose availability depends on other people's traffic** is the finding, and it is more useful to the audience than any quality score would have been.
+2. **O-1 stands:** `:free` models are callable at a zero credit balance despite terms stating credits are required.
+
+**Correction, logged rather than quietly fixed (2026-08-16):** an earlier version of this entry claimed OpenRouter's documented 50/day was "contradicted in both directions," citing 241 calls on 15 Aug. That conflated *attempts* with *successes* — 241 attempts, 194 rejected, 47 served. Successes per day were 47 and 49 against a documented 50. **OpenRouter's documented limit is accurate**, and the corrected finding is narrower: a 50/day cap makes a 300-call benchmark a six-day job, which is what forced the cut. *Attempts vs successes must be distinguished everywhere in the analysis.* The correction is recorded here because a decision log that only contains conclusions its author still likes is not evidence of judgment.
+
 ### A4. No overall "best model" leaderboard
 
 - **D:** Publish per-task, per-dimension results; refuse a single composite ranking.
