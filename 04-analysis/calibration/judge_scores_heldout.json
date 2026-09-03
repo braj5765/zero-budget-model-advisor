@@ -1,0 +1,524 @@
+{
+  "schema_version": "1.0",
+  "judge_model": "minimax/minimax-m3:free",
+  "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+  "judge_provider": "GMICloud",
+  "judge_prompt_version": "1.3",
+  "rubric_version": "1.7",
+  "judged_at": "2026-08-31",
+  "sample": "04-analysis/calibration/sample_heldout.json",
+  "scores": [
+    {
+      "item_id": "cal-h01",
+      "case_id": "jsn-t04",
+      "task": "json-output",
+      "difficulty": "typical",
+      "scores": {
+        "parseability": 0,
+        "schema_conformance": "n/a",
+        "constraint_conformance": "n/a",
+        "content_correctness": "n/a"
+      },
+      "justifications": {
+        "parseability": "The response is wrapped in markdown code fences (```json ... ```), so the raw response does not parse as JSON.",
+        "schema_conformance": "Not applicable because parseability is 0, per the not-applicable rule.",
+        "constraint_conformance": "Not applicable because parseability is 0, per the not-applicable rule.",
+        "content_correctness": "Not applicable because parseability is 0, per the not-applicable rule."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h02",
+      "case_id": "rag-t08",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": 3,
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "The only assertion ('Merchant Tools team owns Ledger-Lite') is directly supported by P2.",
+        "answer_correctness": "The response correctly identifies the Merchant Tools team as the owner, matching the gold answer exactly.",
+        "abstention_calibration": "This is an ANSWERABLE case, and the response provides the correct answer rather than abstaining.",
+        "citation_accuracy": "P2 is the passage that actually supports the claim about Ledger-Lite's ownership."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h03",
+      "case_id": "jsn-t10",
+      "task": "json-output",
+      "difficulty": "typical",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The response is a bare JSON object with no wrapper prose or fences, parsing on first attempt.",
+        "schema_conformance": "All four required keys are present with correct boolean types and no extra keys.",
+        "constraint_conformance": "All four values are JSON true or false, matching the permitted set.",
+        "content_correctness": "rate_limited and requires_api_key are true while publicly_documented and supports_pagination are false, correctly handling the prose negations."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h04",
+      "case_id": "cls-t04",
+      "task": "classification",
+      "difficulty": "typical",
+      "scores": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "justifications": {
+        "label_correctness": "The first line is 'Billing', which matches the gold label exactly.",
+        "label_validity": "'Billing' is a member of the permitted label set and appears alone on the first line.",
+        "ambiguity_handling": "The ticket is an unambiguous billing issue and the model correctly routes it to Billing without adding an unnecessary 'Note:' line."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h05",
+      "case_id": "ext-a02",
+      "task": "extraction",
+      "difficulty": "adversarial",
+      "scores": {
+        "precision": 0,
+        "recall": 2,
+        "normalisation": 0,
+        "null_handling": 0
+      },
+      "justifications": {
+        "precision": "Both first_payment_date and both currency fields contain values not determined by the source: the date is committed to a specific interpretation and both currencies are set to USD despite the document providing no such disambiguation, which constitutes fabricated/hallucinated content in those fields.",
+        "recall": "All fields required by the instruction are present in the response, so nothing was missed from the schema.",
+        "normalisation": "The ambiguous date 04/07/2026 was resolved to 2026-07-04 rather than nulled with a _raw companion, and the $ symbol was committed to USD; the probe explicitly scores committing to either interpretation without signalling ambiguity as 0 on normalisation.",
+        "null_handling": "The model fabricated specific values for three fields that the source does not unambiguously determine (first_payment_date and both currencies), silently misleading the user instead of returning null plus a _raw key."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h06",
+      "case_id": "sum-h01",
+      "task": "summarization",
+      "difficulty": "hard",
+      "scores": {
+        "faithfulness": 2,
+        "coverage": 3,
+        "concision": 2,
+        "instruction_adherence": 2
+      },
+      "justifications": {
+        "faithfulness": "All claims traceable to the source, but the closing editorial line ('must address regional inefficiencies and financial tracking to sustain growth') editorializes beyond what the source supports, which is a minor faithfulness stretch.",
+        "coverage": "All five must-include points are present (expansion, attrition/training, installation time/training+routing, maintenance workload shift driving 2026 headcount, unmeasured revenue gap flagged by finance), and it avoids the must-not-include errors.",
+        "concision": "At roughly seven sentences plus a headline and closing editorial line, it exceeds the requested 4-5 sentences, constituting mild padding.",
+        "instruction_adherence": "Targeted at executives with appropriate tone, but it exceeds the specified 4-5 sentence length and adds an unsolicited forward-looking recommendation."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h07",
+      "case_id": "ext-t01",
+      "task": "extraction",
+      "difficulty": "typical",
+      "scores": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "Every extracted field matches the gold reference exactly in value (e.g., invoice_number MSC-2291, dates 2026-03-04 and 2026-04-03, amounts 1840/92/1932, currency AED).",
+        "recall": "All nine required fields present in the source were extracted, with none missing.",
+        "normalisation": "Dates are in ISO 8601 YYYY-MM-DD form, amounts are plain numbers without symbols or separators, and currency is the three-letter ISO 4217 code AED as required.",
+        "null_handling": "No fields were nulled since all were determinable from the source, and no fabricated values were introduced."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h08",
+      "case_id": "cls-t09",
+      "task": "classification",
+      "difficulty": "typical",
+      "scores": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "justifications": {
+        "label_correctness": "The first line is 'P1 Critical', which matches the gold reference exactly.",
+        "label_validity": "The label 'P1 Critical' is a member of the permitted set {P1 Critical, P2 High, P3 Medium, P4 Low}.",
+        "ambiguity_handling": "The case is not genuinely ambiguous (it is a clear total outage), but the model still appropriately confined itself to a single confident label without misusing the optional Note channel beyond a brief justification, which is acceptable."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h09",
+      "case_id": "cls-t11",
+      "task": "classification",
+      "difficulty": "typical",
+      "scores": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "justifications": {
+        "label_correctness": "The first line is 'Tutorial', which matches the gold label exactly.",
+        "label_validity": "The first line 'Tutorial' is a member of the permitted label set {News, Opinion, Tutorial, Product Announcement, Job Posting}.",
+        "ambiguity_handling": "The text is an unambiguous instructional procedure and the model correctly classified it as Tutorial without invoking an unnecessary Note line."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h10",
+      "case_id": "jsn-t06",
+      "task": "json-output",
+      "difficulty": "typical",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The response is a single valid JSON object with no wrapper prose or fences, parsing on first attempt.",
+        "schema_conformance": "All three required keys (ticket_id, summary, severity) are present with correct string types and no extra keys.",
+        "constraint_conformance": "The severity value 'high' is exactly one of the three permitted lowercase enum values.",
+        "content_correctness": "ticket_id '8841' is correct, severity 'high' is a defensible mapping for a complete login failure, and the summary faithfully paraphrases the source content."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h11",
+      "case_id": "ext-h05",
+      "task": "extraction",
+      "difficulty": "hard",
+      "scores": {
+        "precision": 2,
+        "recall": 1,
+        "normalisation": 2,
+        "null_handling": 0
+      },
+      "justifications": {
+        "precision": "The recipient is incorrectly nulled despite being clearly stated ('Santerre \u00c9picerie'), and item descriptions embed quantities ('4 crates of mixed citrus', '2 sacks of arborio rice') rather than separating the count into the quantity field as the gold requires; all other extracted fields are correct.",
+        "recall": "The model missed the recipient ('Santerre \u00c9picerie') by nulling it and produced item descriptions that conflate quantity with description instead of cleanly extracting them, so two fields are materially mishandled.",
+        "normalisation": "Item descriptions should be 'Mixed citrus' and 'Arborio rice' per the gold (not '4 crates of mixed citrus'), and delivery_location casing differs ('rear service door' vs 'Rear service door'); the timestamp, date, and currency formatting issues are not applicable since all are null.",
+        "null_handling": "The model fabricated no values, but it nulled the determinable recipient ('Santerre \u00c9picerie') when the source plainly states it, which is over-abstention on a clearly resolvable field, and item descriptions redundantly include quantity that should have been separated; missing the recipient is a determinable-field miss."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h12",
+      "case_id": "sum-a02",
+      "task": "summarization",
+      "difficulty": "adversarial",
+      "scores": {
+        "faithfulness": 3,
+        "coverage": 1,
+        "concision": 2,
+        "instruction_adherence": 2
+      },
+      "justifications": {
+        "faithfulness": "Every claim in the response is traceable to the source; no invented facts or contradictions.",
+        "coverage": "The search defect is mentioned but buried as the last item among routine details (e.g., flaky test fix and dependency upgrades), failing to foreground it as the most significant finding as required by the rubric's adversarial target.",
+        "concision": "The response is four sentences but includes a meta-sentence (\"Here is a summary...\") and filler listing routine items like the flaky test and dependency upgrades, slightly inflating the summary beyond what the 3-4 sentence target could efficiently carry.",
+        "instruction_adherence": "The response follows the 3-4 sentence format but opens with a meta-line (\"Here is a summary of...\") which is unnecessary padding, and it fails the deeper instruction implicit in the task to prioritize the buried lede."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h13",
+      "case_id": "sum-t01",
+      "task": "summarization",
+      "difficulty": "typical",
+      "scores": {
+        "faithfulness": 3,
+        "coverage": 2,
+        "concision": 2,
+        "instruction_adherence": 2
+      },
+      "justifications": {
+        "faithfulness": "Every claim is traceable to the source and no fabricated decisions (e.g., hiring) are asserted.",
+        "coverage": "Hits the migration, on-call sustainability, retry change, and storage cost points, but omits the specific detail that retries now cap at five attempts and that Riya will notify consuming teams by Friday.",
+        "concision": "Five sentences plus a framing line, slightly exceeding the requested 3-4 sentences, with mild padding like the mention of the next meeting.",
+        "instruction_adherence": "Mostly follows the 3-4 sentence instruction for someone who missed the meeting, but exceeds the sentence count and adds the next-meeting detail not needed for a catch-up summary."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h14",
+      "case_id": "ext-t07",
+      "task": "extraction",
+      "difficulty": "typical",
+      "scores": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 2,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "All extracted values (po_number, buyer, supplier, dates, line item details, order_total, currency) match the gold reference exactly with no fabricated content.",
+        "recall": "All three line items are present with all four sub-keys each, and no fields present in the source are omitted.",
+        "normalisation": "Dates and currency are correctly canonicalised, and amounts lack thousands separators, but unit_price and line_total values use decimal notation (3150.0 instead of 3150), a minor canonical form deviation from the requested plain numbers.",
+        "null_handling": "No fields are nulled; all determinable fields were resolved from the source with no fabrication of absent values."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h15",
+      "case_id": "rag-t10",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "scores": {
+        "groundedness": 2,
+        "answer_correctness": 1,
+        "abstention_calibration": 3,
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "The claim that the customer is not entitled to a refund is supported by P1, but the response ignores P2's exception for hardware bundles, making the answer incomplete though not fabricated.",
+        "answer_correctness": "A flat 'No' misses the hardware bundle exception outlined in P2; the scoring notes specify that a flat yes or flat no scores at best 1 on answer correctness.",
+        "abstention_calibration": "The gold answer is ANSWERABLE and the model provides an answer rather than abstaining, which is the correct branch behavior.",
+        "citation_accuracy": "The response cites P1 and P2, which are the passages that actually support the relevant claims about refund windows."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h16",
+      "case_id": "jsn-h01",
+      "task": "json-output",
+      "difficulty": "hard",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The response is a clean JSON object with no wrapper prose or markdown fences, parsing on first attempt.",
+        "schema_conformance": "All required keys are present with correct types, including both nested objects and the four-element rooms array with the aspect sub-key.",
+        "constraint_conformance": "Currency is the three-letter ISO code GBP, all numbers are valid JSON numbers without separators, and booleans/strings are correctly typed.",
+        "content_correctness": "Every value matches the source material and gold reference exactly, including 'second floor' as 2, both C values, all four rooms with correct areas and aspects, and the agent details."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h17",
+      "case_id": "cls-h03",
+      "task": "classification",
+      "difficulty": "hard",
+      "scores": {
+        "label_correctness": 0,
+        "label_validity": 3,
+        "ambiguity_handling": 0
+      },
+      "justifications": {
+        "label_correctness": "The gold label is 'Ask Question' but the model output 'Cancel Subscription', which is the keyword-matching failure this case was designed to catch.",
+        "label_validity": "'Cancel Subscription' is a member of the permitted label set, so the output is a valid label.",
+        "ambiguity_handling": "The message is not genuinely ambiguous - it explicitly states 'I am not cancelling today' and the intent is clearly a question - yet the model picked the keyword-distractor label without any uncertainty signal that would warrant a Note: line, failing to flag the misread."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h18",
+      "case_id": "rag-h03",
+      "task": "rag-qa",
+      "difficulty": "hard",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": 3,
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "Every assertion is supported by the supplied passages: the notice claim comes from P1 and the lack of severance information is acknowledged from P2.",
+        "answer_correctness": "The response correctly states the thirty days' notice/payment in lieu from P1 and explicitly notes that the passages do not establish a severance entitlement for contractors, matching the gold answer's required elements.",
+        "abstention_calibration": "The gold branch is ANSWERABLE with a partial answer plus explicit gap; the response does exactly this\u2014answering the notice half and naming the gap\u2014rather than abstaining or inventing a severance figure.",
+        "citation_accuracy": "P1 supports the notice claim and P2 is the passage relevant to the severance gap (where contractor severance is not established), so both citations point to passages that actually support the respective claims."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h19",
+      "case_id": "sum-t12",
+      "task": "summarization",
+      "difficulty": "typical",
+      "scores": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "justifications": {
+        "faithfulness": "Every claim in the response is directly traceable to the source, including the 54% to 67% completion, 19 to 11 minutes, unchanged day-30 retention, segment divergence, and ship recommendation.",
+        "coverage": "All key points from the gold reference are present: completion lift, time-to-action drop, unchanged retention, partner-referral segment stagnation, and the recommendation to ship to 100% while treating retention separately.",
+        "concision": "Exactly four bullet points with no padding or restatement, fitting naturally within the requested length.",
+        "instruction_adherence": "The response is delivered as exactly 4 bullet points in a clean format, fully honoring the instruction."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    },
+    {
+      "item_id": "cal-h20",
+      "case_id": "rag-a03",
+      "task": "rag-qa",
+      "difficulty": "adversarial",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": 3,
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "The response makes no assertions beyond the supported claim that the context is insufficient, which is accurate given the passages.",
+        "answer_correctness": "The response correctly states INSUFFICIENT CONTEXT, matching the gold answer that no Documents module size limit is stated in the passages.",
+        "abstention_calibration": "This is an UNANSWERABLE case (gold answer is INSUFFICIENT CONTEXT), and the response correctly states INSUFFICIENT CONTEXT.",
+        "citation_accuracy": "The response lists 'Citations: none', which is correct since no passage supports a Documents module size limit."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.3",
+      "rubric_version": "1.7"
+    }
+  ]
+}

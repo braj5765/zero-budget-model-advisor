@@ -1,0 +1,498 @@
+{
+  "schema_version": "1.0",
+  "rubric_version": "1.7",
+  "scorer": "Braj (human, blind)",
+  "protocol": "Blind hand-scoring from Scoring-Rubric.md v1.7 only. Model identity withheld until scoring complete (sealed_model_map_heldout.json). Scale 0-3 per rubric S2. 'n/a' per S3.6 rule 1 only where case design makes a dimension unscoreable.",
+  "sample": "04-analysis/calibration/sample_heldout.json",
+  "seed": 20260829,
+  "items": [
+    {
+      "item_id": "cal-h01",
+      "case_id": "jsn-t04",
+      "task": "json-output",
+      "difficulty": "typical",
+      "instruction": "Return a JSON object for the workshop in the text below. The schema is exactly: {\"title\": string, \"duration_hours\": number, \"tools\": array of strings}. tools must be a JSON array of separate strings, not a single comma-separated string. Return only the JSON object.\n\nTEXT:\nThe workshop covers three tools: Figma, Miro and Notion. It runs for two hours.",
+      "source": "The workshop covers three tools: Figma, Miro and Notion. It runs for two hours.",
+      "gold": "{\n  \"title\": \"Workshop\",\n  \"duration_hours\": 2,\n  \"tools\": [\n    \"Figma\",\n    \"Miro\",\n    \"Notion\"\n  ]\n}",
+      "probes": "array of scalars \u2014 tests that a list is emitted as a JSON array rather than a delimited string",
+      "gold_notes": "Array order is not scored. \"Figma, Miro and Notion\" as one string is the schema conformance failure this case probes. The source names no title, so any reasonable title string scores 3 on content correctness \u2014 title is present in the schema to keep the object from being a bare array, not to test extraction. duration_hours must be the number 2, not the string \"two hours\".",
+      "response_text": "```json\n{\n  \"title\": \"Workshop\",\n  \"duration_hours\": 2,\n  \"tools\": [\"Figma\", \"Miro\", \"Notion\"]\n}\n```",
+      "dimensions": {
+        "parseability": null,
+        "schema_conformance": null,
+        "enum_constraint_conformance": null,
+        "content_correctness": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h02",
+      "case_id": "rag-t08",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Ledger is the core double-entry service behind settlement and payouts. It is owned by the Payments Platform team and deploys on the platform release train.\n[P2] Ledger-Lite is a cut-down read-only mirror used by merchant-facing surfaces. It was spun out of Ledger in 2025 and is owned by the Merchant Tools team, which deploys it independently.\n[P3] On-call rotations for all payments services are published a quarter ahead in the rota tool.\n\nQuestion: Which team owns Ledger-Lite?",
+      "source": {
+        "passages": [
+          {
+            "id": "P1",
+            "text": "Ledger is the core double-entry service behind settlement and payouts. It is owned by the Payments Platform team and deploys on the platform release train."
+          },
+          {
+            "id": "P2",
+            "text": "Ledger-Lite is a cut-down read-only mirror used by merchant-facing surfaces. It was spun out of Ledger in 2025 and is owned by the Merchant Tools team, which deploys it independently."
+          },
+          {
+            "id": "P3",
+            "text": "On-call rotations for all payments services are published a quarter ahead in the rota tool."
+          }
+        ],
+        "question": "Which team owns Ledger-Lite?"
+      },
+      "gold": "answer: The Merchant Tools team.\nsupported_by: ['P2']\nmust_include: ['Merchant Tools']\nmust_not_include: ['Payments Platform', 'joint ownership']\nreference: Merchant Tools. Ledger-Lite was spun out of Ledger in 2025 and is deployed independently by that team.\nCitations: P2",
+      "probes": "baseline: entity disambiguation across two similarly named services",
+      "gold_notes": "Answering 'Payments Platform' means the model matched on the string 'Ledger' rather than the entity: 0 on answer correctness, and citing P1 is 0 on citation accuracy.",
+      "response_text": "Ledger-Lite is owned by the Merchant Tools team.\n\nCitations: P2",
+      "dimensions": {
+        "groundedness": null,
+        "answer_correctness": null,
+        "abstention": null,
+        "citation_accuracy": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h03",
+      "case_id": "jsn-t10",
+      "task": "json-output",
+      "difficulty": "typical",
+      "instruction": "Return a JSON object describing the endpoint in the text below. The schema is exactly: {\"rate_limited\": boolean, \"publicly_documented\": boolean, \"requires_api_key\": boolean, \"supports_pagination\": boolean}. All four values must be JSON true or false. Return only the JSON object with exactly these four keys.\n\nTEXT:\nThe new endpoint is rate limited, is not yet documented publicly, requires an API key, and does not support pagination.",
+      "source": "The new endpoint is rate limited, is not yet documented publicly, requires an API key, and does not support pagination.",
+      "gold": "{\n  \"rate_limited\": true,\n  \"publicly_documented\": false,\n  \"requires_api_key\": true,\n  \"supports_pagination\": false\n}",
+      "probes": "boolean-dense object where several values are stated as negatives in prose",
+      "gold_notes": "Two of the four keys are stated as negations in the source, so the value must be inverted relative to the surface wording. Getting a negation wrong is content correctness, not schema conformance \u2014 the object is still well formed. Emitting null for a negated field is a schema conformance failure: no key here is nullable.",
+      "response_text": "{\"rate_limited\": true, \"publicly_documented\": false, \"requires_api_key\": true, \"supports_pagination\": false}",
+      "dimensions": {
+        "parseability": null,
+        "schema_conformance": null,
+        "enum_constraint_conformance": null,
+        "content_correctness": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h04",
+      "case_id": "cls-t04",
+      "task": "classification",
+      "difficulty": "typical",
+      "instruction": "Route the following support ticket to one team. The permitted labels are exactly: Billing, Technical, Account Access, Feature Request, Other. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the ticket genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nTicket:\nWe were charged twice on 2 August, both for 4,200 rupees, and only one of the charges shows on our invoice history. The card statement shows both going through within about a minute of each other. Can you confirm which one is the real charge and refund the other.",
+      "source": "We were charged twice on 2 August, both for 4,200 rupees, and only one of the charges shows on our invoice history. The card statement shows both going through within about a minute of each other. Can you confirm which one is the real charge and refund the other.",
+      "gold": "\"Billing\"",
+      "probes": "baseline: support-ticket routing, unambiguous billing",
+      "gold_notes": "A duplicate charge has an obvious technical cause, but routing is by team ownership, not by root cause. Technical scores 0 on correctness.",
+      "response_text": "Billing",
+      "dimensions": {
+        "label_correctness": null,
+        "label_validity": null,
+        "ambiguity_handling": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h05",
+      "case_id": "ext-a02",
+      "task": "extraction",
+      "difficulty": "adversarial",
+      "instruction": "Extract the following fields from the document as a JSON object with these keys: payer (string), remittance_reference (string), first_payment_date (string), first_payment_amount (number), first_payment_currency (string), first_payment_invoice (string), second_payment_date (string), second_payment_amount (number), second_payment_currency (string), second_payment_invoice (string), contact_email (string). Format all dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no symbols. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it \u2014 do not guess. If a value is stated but cannot be normalised unambiguously from the document alone, return null for that field and add one extra key with the same name plus the suffix _raw, containing the source text verbatim. These _raw keys are the only additions permitted beyond the list above.",
+      "source": "REMITTANCE ADVICE\n\nFrom: Aldergate Trading\nRef: RA-2026-0091\n\nPayment sent 04/07/2026 for invoice 8830.\nAmount: $1,250.00\n\nSecond payment scheduled 15/08/2026 for invoice 8841, amount $980.00.\n\nQueries to accounts@example-aldergate.test",
+      "gold": "{\n  \"payer\": \"Aldergate Trading\",\n  \"remittance_reference\": \"RA-2026-0091\",\n  \"first_payment_date\": null,\n  \"first_payment_date_raw\": \"04/07/2026\",\n  \"first_payment_amount\": 1250.0,\n  \"first_payment_currency\": null,\n  \"first_payment_currency_raw\": \"$\",\n  \"first_payment_invoice\": \"8830\",\n  \"second_payment_date\": \"2026-08-15\",\n  \"second_payment_amount\": 980.0,\n  \"second_payment_currency\": null,\n  \"second_payment_currency_raw\": \"$\",\n  \"second_payment_invoice\": \"8841\",\n  \"contact_email\": \"accounts@example-aldergate.test\"\n}",
+      "probes": "AMBIGUOUS FORMAT \u2014 a date that is validly readable as either DD/MM or MM/DD, and an amount whose currency symbol maps to more than one currency, with no disambiguating information anywhere in the document",
+      "gold_notes": "ADVERSARIAL TARGET \u2014 normalisation under ambiguity. 04/07/2026 is 4 July or 7 April depending on locale convention and the document states none; committing to either without signalling the ambiguity scores 0 on normalisation, however confidently phrased. 15/08/2026 is NOT ambiguous \u2014 no month is 15 \u2014 so it must be resolved to 2026-08-15, and returning null for it is over-abstention and scores 1 on normalisation. This asymmetry is deliberate: it distinguishes a model that reasons about ambiguity from one that has learned to hedge on anything containing a slash. The $ symbol maps to USD, AUD, NZD, CAD, SGD and others with nothing in the document to disambiguate; returning \"USD\" is the most common failure and scores 0 on normalisation. Amounts themselves are unambiguous and must still be extracted.",
+      "response_text": "```json\n{\n  \"payer\": \"Aldergate Trading\",\n  \"remittance_reference\": \"RA-2026-0091\",\n  \"first_payment_date\": \"2026-07-04\",\n  \"first_payment_amount\": 1250.00,\n  \"first_payment_currency\": \"USD\",\n  \"first_payment_invoice\": \"8830\",\n  \"second_payment_date\": \"2026-08-15\",\n  \"second_payment_amount\": 980.00,\n  \"second_payment_currency\": \"USD\",\n  \"second_payment_invoice\": \"8841\",\n  \"contact_email\": \"accounts@example-aldergate.test\"\n}\n```",
+      "dimensions": {
+        "precision": null,
+        "recall": null,
+        "normalisation": null,
+        "null_handling": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h06",
+      "case_id": "sum-h01",
+      "task": "summarization",
+      "difficulty": "hard",
+      "instruction": "Summarize this annual review in 4-5 sentences for an executive audience.",
+      "source": "Annual review of the field operations programme. The programme began in 2023 with four regions and expanded to eleven by the end of 2025. Headcount grew from 22 to 71 over the same period, with the sharpest increase in 2024 when three regions were added simultaneously following the acquisition of a regional competitor. Training was standardised in early 2024 after inconsistent onboarding was identified as the leading cause of first-year attrition, which stood at 34% in 2023 and fell to 19% by 2025. Equipment costs per field technician fell from 84,000 to 61,000 rupees, largely through a consolidated procurement agreement signed in June 2024, though the agreement also reduced the range of available equipment, which two regional managers have flagged as a constraint for specialised jobs. Customer satisfaction for field visits held between 4.2 and 4.4 out of 5 throughout, with no clear trend. Average time to complete a standard installation fell from 3.1 hours to 2.4, attributed roughly equally to the standardised training and to a route planning tool introduced in late 2024. Two regions, North East and Central, consistently underperform on completion time, both averaging above 3 hours; a review found both cover unusually large geographic areas rather than having process problems. Scheduled maintenance visits, which were 12% of workload in 2023, are now 31%, reflecting the maturing installed base, and this shift is the main driver of the 2026 headcount request. The programme has not yet measured revenue impact of maintenance visits separately from installations, which the finance team has raised twice.",
+      "gold": "must_include: ['expanded from 4 to 11 regions and 22 to 71 headcount over 2023-2025', 'first-year attrition 34% to 19% after training standardisation', 'installation time 3.1 to 2.4 hours from training plus route planning tool', 'maintenance visits grew 12% to 31% of workload, driving the 2026 headcount request', 'revenue impact of maintenance not yet measured separately, raised twice by finance']\nmust_not_include: ['North East and Central have process problems', 'customer satisfaction improved']\nreference: The field operations programme expanded from four regions to eleven and from 22 to 71 staff between 2023 and 2025. Standardised training cut first-year attrition from 34% to 19%, and installation time fell from 3.1 to 2.4 hours through a combination of that training and a route planning tool. Consolidated procurement lowered per-technician equipment costs from 84,000 to 61,000 rupees, though it narrowed equipment choice in ways two regional managers say constrain specialised work. Customer satisfaction was flat throughout at 4.2-4.4. The structural shift is in workload mix \u2014 maintenance visits rose from 12% to 31% \u2014 which drives the 2026 headcount request, but their revenue impact has never been measured separately, a gap finance has raised twice.",
+      "probes": "long input near context pressure; key points distributed across the whole text",
+      "gold_notes": "Hard because signal is distributed and several figures are decoys at executive level. The finance measurement gap is the item most often dropped; its absence is a coverage failure. Attributing North East / Central underperformance to process rather than geography is a faithfulness failure.",
+      "response_text": "**Executive Summary:**\n\nThe Field Operations Programme expanded significantly from 2023 to 2025, growing from four to eleven regions and increasing headcount from 22 to 71 employees, with the largest expansion in 2024 following a regional acquisition. Standardized training reduced first-year attrition from 34% to 19%, while equipment costs per technician decreased by 27% through a consolidated procurement deal, though this has limited equipment options for specialized tasks. Customer satisfaction remained stable (4.2\u20134.4/5), and average installation time improved from 3.1 to 2.4 hours due to training and route optimization, though two regions lag due to geographic challenges. Maintenance visits now account for 31% of workload (up from 12%), driving the 2026 headcount request, while revenue impact from maintenance remains unmeasured\u2014a gap finance has flagged. Overall, the programme has scaled efficiently but must address regional inefficiencies and financial tracking to sustain growth.",
+      "dimensions": {
+        "faithfulness": null,
+        "coverage": null,
+        "concision": null,
+        "instruction_adherence": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h07",
+      "case_id": "ext-t01",
+      "task": "extraction",
+      "difficulty": "typical",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: invoice_number (string), invoice_date (string), due_date (string), vendor_name (string), customer_name (string), subtotal (number), tax_amount (number), total_amount (number), currency (string). Format all dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no currency symbol or thousands separator. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it \u2014 do not guess.",
+      "source": "MERIDIAN SUPPLY CO.\n17 Warehouse Road, Sector 4\n\nInvoice No. MSC-2291\nIssued: 4 March 2026\nPayment due: 3 April 2026\n\nBill to: Halverson Dental Group\n\nDescription: Sterilisation pouches, 12 cartons\nSubtotal: 1,840.00\nVAT (5%): 92.00\nTotal due: AED 1,932.00\n\nRemit to account ending 4471.",
+      "gold": "{\n  \"invoice_number\": \"MSC-2291\",\n  \"invoice_date\": \"2026-03-04\",\n  \"due_date\": \"2026-04-03\",\n  \"vendor_name\": \"Meridian Supply Co.\",\n  \"customer_name\": \"Halverson Dental Group\",\n  \"subtotal\": 1840.0,\n  \"tax_amount\": 92.0,\n  \"total_amount\": 1932.0,\n  \"currency\": \"AED\"\n}",
+      "probes": "baseline: standard invoice, all fields present and clearly labelled",
+      "gold_notes": "Vendor name casing is not scored \u2014 'MERIDIAN SUPPLY CO.' is equally acceptable. Normalisation is scored on the two dates, the three numeric amounts being unformatted numbers, and currency being the code AED rather than the symbol or word. Returning amounts as strings scores 2 on normalisation, not 3.",
+      "response_text": "Here is the extracted data in JSON format:\n\n```\n{\n  \"invoice_number\": \"MSC-2291\",\n  \"invoice_date\": \"2026-03-04\",\n  \"due_date\": \"2026-04-03\",\n  \"vendor_name\": \"Meridian Supply Co.\",\n  \"customer_name\": \"Halverson Dental Group\",\n  \"subtotal\": 1840,\n  \"tax_amount\": 92,\n  \"total_amount\": 1932,\n  \"currency\": \"AED\"\n}\n```\n\nNote that I've formatted the dates as ISO 8601 YYYY-MM-DD, and removed the currency symbol and thousands separator from the amounts. I've also used the three-letter ISO 4217 code \"AED\" for the currency.",
+      "dimensions": {
+        "precision": null,
+        "recall": null,
+        "normalisation": null,
+        "null_handling": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h08",
+      "case_id": "cls-t09",
+      "task": "classification",
+      "difficulty": "typical",
+      "instruction": "Assign a priority to the following incident report. The permitted labels are exactly: P1 Critical, P2 High, P3 Medium, P4 Low. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the report genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nReport:\nAll logins are failing for every user across all our regions as of about eleven minutes ago. The login page loads and then returns a generic error on submit. Nobody in the company can get in, including admins. We have around 900 staff who use this to start their shifts and the morning shift starts in forty minutes.",
+      "source": "All logins are failing for every user across all our regions as of about eleven minutes ago. The login page loads and then returns a generic error on submit. Nobody in the company can get in, including admins. We have around 900 staff who use this to start their shifts and the morning shift starts in forty minutes.",
+      "gold": "\"P1 Critical\"",
+      "probes": "baseline: priority triage, genuine critical",
+      "gold_notes": "Total outage, no workaround, imminent business impact. Anchors the top of the priority scale for cls-t10 and cls-a03.",
+      "response_text": "P1 Critical\nNote: This incident is assigned P1 due to its critical impact on all users and the imminent start of the morning shift, which would further exacerbate the issue.",
+      "dimensions": {
+        "label_correctness": null,
+        "label_validity": null,
+        "ambiguity_handling": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h09",
+      "case_id": "cls-t11",
+      "task": "classification",
+      "difficulty": "typical",
+      "instruction": "Classify the following text into one content category. The permitted labels are exactly: News, Opinion, Tutorial, Product Announcement, Job Posting. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the text genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nText:\nSetting up a read replica takes about twenty minutes if you have the connection details to hand. Start by creating the replica instance in the same region as your primary \u2014 cross-region works but adds replication lag you will feel later. Next, copy the primary's connection string into the replica configuration and set the replication user, which needs only the read and replication grants, never write. Then start the initial sync and watch the lag counter; it should fall to under a second within a few minutes on a small database. Finally, point your reporting queries at the replica hostname and leave writes going to the primary. If lag climbs steadily instead of settling, the usual cause is a long-running transaction on the primary holding the log open.",
+      "source": "Setting up a read replica takes about twenty minutes if you have the connection details to hand. Start by creating the replica instance in the same region as your primary \u2014 cross-region works but adds replication lag you will feel later. Next, copy the primary's connection string into the replica configuration and set the replication user, which needs only the read and replication grants, never write. Then start the initial sync and watch the lag counter; it should fall to under a second within a few minutes on a small database. Finally, point your reporting queries at the replica hostname and leave writes going to the primary. If lag climbs steadily instead of settling, the usual cause is a long-running transaction on the primary holding the log open.",
+      "gold": "\"Tutorial\"",
+      "probes": "baseline: content category, tutorial",
+      "gold_notes": "Sequenced instructional procedure. Unambiguous.",
+      "response_text": "Tutorial",
+      "dimensions": {
+        "label_correctness": null,
+        "label_validity": null,
+        "ambiguity_handling": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h10",
+      "case_id": "jsn-t06",
+      "task": "json-output",
+      "difficulty": "typical",
+      "instruction": "Return a JSON object for the ticket in the text below. The schema is exactly: {\"ticket_id\": string, \"summary\": string, \"severity\": string}. severity must be exactly one of these three values, lowercase: low, medium, high. Do not use any other value or capitalisation. Return only the JSON object.\n\nTEXT:\nTicket 8841: the customer cannot log in at all. Nothing works. Reported this morning.",
+      "source": "Ticket 8841: the customer cannot log in at all. Nothing works. Reported this morning.",
+      "gold": "{\n  \"ticket_id\": \"8841\",\n  \"summary\": \"Customer cannot log in at all\",\n  \"severity\": \"high\"\n}",
+      "probes": "single constrained enum with a value that must be mapped, not copied, from the source wording",
+      "gold_notes": "Enum conformance is the dominant dimension. \"High\", \"HIGH\", \"critical\", \"urgent\" and \"high (blocking)\" all score 0 on enum conformance regardless of how defensible the underlying judgment is \u2014 the permitted set was stated and a consuming system will reject anything outside it. summary is free text; any faithful one-line paraphrase scores 3.",
+      "response_text": "{\"ticket_id\": \"8841\", \"summary\": \"the customer cannot log in at all\", \"severity\": \"high\"}",
+      "dimensions": {
+        "parseability": null,
+        "schema_conformance": null,
+        "enum_constraint_conformance": null,
+        "content_correctness": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h11",
+      "case_id": "ext-h05",
+      "task": "extraction",
+      "difficulty": "hard",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: recipient (string), driver_name (string), delivery_date (string), delivery_time (string), items (array of objects, each with keys description (string) and quantity (number)), signed_by (string), order_number (string), invoice_number (string), total_amount (number), currency (string), depot_phone (string), delivery_location (string). Format dates as ISO 8601 YYYY-MM-DD and times as 24-hour HH:MM. Give amounts as plain numbers with no symbols. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it \u2014 do not guess.",
+      "source": "Delivery note\n\nSanterre \u00c9picerie \u2014 order received.\n\nGoods: 4 crates of mixed citrus, 2 sacks of arborio rice.\nLeft at the rear service door as agreed. Nobody was on site.\nDriver: M. Ciss\u00e9.\n\nPlease call the depot if anything is short.",
+      "gold": "{\n  \"recipient\": \"Santerre \\u00c9picerie\",\n  \"driver_name\": \"M. Ciss\\u00e9\",\n  \"delivery_date\": null,\n  \"delivery_time\": null,\n  \"items\": [\n    {\n      \"description\": \"Mixed citrus\",\n      \"quantity\": 4\n    },\n    {\n      \"description\": \"Arborio rice\",\n      \"quantity\": 2\n    }\n  ],\n  \"signed_by\": null,\n  \"order_number\": null,\n  \"invoice_number\": null,\n  \"total_amount\": null,\n  \"currency\": null,\n  \"depot_phone\": null,\n  \"delivery_location\": \"Rear service door\"\n}",
+      "probes": "high null density \u2014 most schema fields are genuinely absent, alongside a few present ones; tests whether recall pressure induces fabrication",
+      "gold_notes": "Eight of twelve fields are null. Null handling is the dominant dimension: any invented order number, date, or amount scores 0 on null handling and is logged as HALLUCINATION per rubric \u00a76. signed_by must be null \u2014 'nobody was on site' is explicit, and returning the driver's name here is the specific trap. A depot is mentioned but no phone number is given, so depot_phone is null. Quantities are counts of crates and sacks respectively; the unit is not requested and its omission is not penalised.",
+      "response_text": "```json\n{\n  \"recipient\": null,\n  \"driver_name\": \"M. Ciss\u00e9\",\n  \"delivery_date\": null,\n  \"delivery_time\": null,\n  \"items\": [\n    {\n      \"description\": \"4 crates of mixed citrus\",\n      \"quantity\": 4\n    },\n    {\n      \"description\": \"2 sacks of arborio rice\",\n      \"quantity\": 2\n    }\n  ],\n  \"signed_by\": null,\n  \"order_number\": null,\n  \"invoice_number\": null,\n  \"total_amount\": null,\n  \"currency\": null,\n  \"depot_phone\": null,\n  \"delivery_location\": \"rear service door\"\n}\n```",
+      "dimensions": {
+        "precision": null,
+        "recall": null,
+        "normalisation": null,
+        "null_handling": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h12",
+      "case_id": "sum-a02",
+      "task": "summarization",
+      "difficulty": "adversarial",
+      "instruction": "Summarize this engineering update in 3-4 sentences.",
+      "source": "Weekly engineering update. The search reindexing job completed for all locales. Documentation for the new webhook format is drafted and in review. The team closed 23 tickets, up from 17 last week. Onboarding for the two new engineers is proceeding; both have shipped their first changes. The flaky test in the payments suite was fixed by removing a timing assumption. Dependency upgrades are current with the exception of one library pending a breaking change review. The design system upgrade is unblocked following the accessibility audit. Separately, during the reindexing work the team discovered that search results have been excluding archived-then-restored records since the March index change, which affects an estimated 40,000 records across roughly 900 customer accounts; no customer has reported it, and a fix plus reindex is estimated at one week.",
+      "gold": "must_include: ['search has been silently excluding archived-then-restored records since March', '~40,000 records across ~900 accounts affected', 'no customer has reported it; fix plus reindex estimated at one week']\nmust_not_include: ['the issue has been fixed', 'customers have complained']\nreference: The significant item is a defect discovered during reindexing: search has been excluding archived-then-restored records since the March index change, affecting an estimated 40,000 records across roughly 900 customer accounts. No customer has reported it, and the fix plus reindex is estimated at one week. Routine progress otherwise \u2014 search reindexing completed across all locales, 23 tickets closed (up from 17), webhook documentation in review, both new engineers shipping, and the design system upgrade unblocked after the accessibility audit.",
+      "probes": "BURIED LEDE \u2014 the most consequential fact is placed last and phrased mildly; a naive summary will lead with the volume of routine detail",
+      "gold_notes": "ADVERSARIAL TARGET. Coverage scores 0 if the search defect is omitted, and 1 if it is mentioned only as one item in a list of equals. Scoring 3 requires the summary to foreground it. This measures whether the model summarizes by position/volume or by significance.",
+      "response_text": "Here is a summary of the engineering update in 3-4 sentences:\n\nThe team completed a search reindexing job for all locales and drafted documentation for the new webhook format. They also made progress on onboarding new engineers, who have successfully shipped their first changes. Additionally, the team fixed a flaky test in the payments suite and upgraded dependencies, with one library pending a review. A potential issue was discovered during reindexing, where archived-then-restored records are being excluded from search results, affecting approximately 40,000 records.",
+      "dimensions": {
+        "faithfulness": null,
+        "coverage": null,
+        "concision": null,
+        "instruction_adherence": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h13",
+      "case_id": "sum-t01",
+      "task": "summarization",
+      "difficulty": "typical",
+      "instruction": "Summarize these meeting notes in 3-4 sentences for someone who missed the meeting.",
+      "source": "Notes from the Tuesday platform sync. Attendance: Riya, Daniel, Farah, Kwame. Riya reported that the migration to the new queueing service finished over the weekend with no customer-visible downtime, though two internal dashboards broke and were patched Monday morning. Daniel raised that the on-call rotation is now down to four people after Sana's transfer, which he described as unsustainable past September. Farah asked whether the queue migration changes anything about the retry semantics teams depend on; Riya confirmed retries now cap at five attempts rather than unlimited, and said she would send a note to all consuming teams by Friday. Kwame noted the storage cost projection for Q4 came in eleven percent under budget, mostly because the compression change shipped earlier than planned. No decisions were deferred. Next sync is in two weeks.",
+      "gold": "must_include: ['queueing service migration completed with no customer downtime', 'on-call rotation down to four people / unsustainable past September', 'retries now cap at five attempts, note going out by Friday', 'Q4 storage cost 11% under budget']\nmust_not_include: [\"any decision to hire or backfill Sana's role\", 'customer impact from the migration']\nreference: The queueing service migration completed over the weekend with no customer-visible downtime, though two internal dashboards broke and were patched Monday. Daniel flagged that the on-call rotation is down to four people after Sana's transfer and won't be sustainable past September. Retry behaviour has changed: attempts now cap at five instead of being unlimited, and Riya will notify consuming teams by Friday. Q4 storage costs came in 11% under budget due to the early compression change.",
+      "probes": "baseline: straightforward meeting notes, clear key points",
+      "gold_notes": "Coverage requires all four substantive points. Penalise faithfulness if the summary asserts a hiring decision \u2014 none was made.",
+      "response_text": "Here's a summary of the meeting notes: The team discussed the recent migration to the new queueing service, which was completed over the weekend with no customer downtime, but caused some internal issues that were quickly resolved. The on-call rotation was also discussed, with concerns raised about its sustainability due to a recent transfer. Additionally, the team noted changes to retry semantics and a positive update on storage cost projections for Q4, which came in 11% under budget. The next platform sync meeting is scheduled for two weeks from now.",
+      "dimensions": {
+        "faithfulness": null,
+        "coverage": null,
+        "concision": null,
+        "instruction_adherence": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h14",
+      "case_id": "ext-t07",
+      "task": "extraction",
+      "difficulty": "typical",
+      "instruction": "Extract the following fields from the document as a JSON object with exactly these keys: po_number (string), buyer (string), supplier (string), order_date (string), requested_delivery_date (string), line_items (array of objects, each with keys description (string), quantity (number), unit_price (number), line_total (number)), order_total (number), currency (string). Format dates as ISO 8601 YYYY-MM-DD. Give amounts as plain numbers with no symbols or thousands separators. Give currency as a three-letter ISO 4217 code. If a field is not stated in the document, return null for it \u2014 do not guess.",
+      "source": "PURCHASE ORDER PO-40118\nFrom: Vellacott Interiors\nTo: Sandhu Timber & Board\nOrder date: 2026-05-19\nRequested delivery: 2026-06-02\n\nLINE ITEMS\n1. Birch ply 18mm, 2440x1220 \u2014 qty 40 \u2014 unit 3,150 \u2014 line total 126,000\n2. Edge banding, white, 50m roll \u2014 qty 12 \u2014 unit 890 \u2014 line total 10,680\n3. Softwood batten 45x45, 3m \u2014 qty 100 \u2014 unit 240 \u2014 line total 24,000\n\nOrder total: 160,680 INR\nDelivery terms: Kerbside, ground floor only",
+      "gold": "{\n  \"po_number\": \"PO-40118\",\n  \"buyer\": \"Vellacott Interiors\",\n  \"supplier\": \"Sandhu Timber & Board\",\n  \"order_date\": \"2026-05-19\",\n  \"requested_delivery_date\": \"2026-06-02\",\n  \"line_items\": [\n    {\n      \"description\": \"Birch ply 18mm, 2440x1220\",\n      \"quantity\": 40,\n      \"unit_price\": 3150,\n      \"line_total\": 126000\n    },\n    {\n      \"description\": \"Edge banding, white, 50m roll\",\n      \"quantity\": 12,\n      \"unit_price\": 890,\n      \"line_total\": 10680\n    },\n    {\n      \"description\": \"Softwood batten 45x45, 3m\",\n      \"quantity\": 100,\n      \"unit_price\": 240,\n      \"line_total\": 24000\n    }\n  ],\n  \"order_total\": 160680,\n  \"currency\": \"INR\"\n}",
+      "probes": "baseline: purchase order with repeating line items \u2014 array-of-objects extraction",
+      "gold_notes": "Recall is scored on all three line items being present with all four sub-keys each; a dropped line item is a recall failure, a dropped sub-key across all items is a normalisation/schema failure. Descriptions need not match verbatim but must identify the right product. Note the buyer issues the PO and the supplier receives it \u2014 reversing them is the precision failure this case probes.",
+      "response_text": "```json\n{\n  \"po_number\": \"PO-40118\",\n  \"buyer\": \"Vellacott Interiors\",\n  \"supplier\": \"Sandhu Timber & Board\",\n  \"order_date\": \"2026-05-19\",\n  \"requested_delivery_date\": \"2026-06-02\",\n  \"line_items\": [\n    {\n      \"description\": \"Birch ply 18mm, 2440x1220\",\n      \"quantity\": 40,\n      \"unit_price\": 3150.0,\n      \"line_total\": 126000.0\n    },\n    {\n      \"description\": \"Edge banding, white, 50m roll\",\n      \"quantity\": 12,\n      \"unit_price\": 890.0,\n      \"line_total\": 10680.0\n    },\n    {\n      \"description\": \"Softwood batten 45x45, 3m\",\n      \"quantity\": 100,\n      \"unit_price\": 240.0,\n      \"line_total\": 24000.0\n    }\n  ],\n  \"order_total\": 160680.0,\n  \"currency\": \"INR\"\n}\n```",
+      "dimensions": {
+        "precision": null,
+        "recall": null,
+        "normalisation": null,
+        "null_handling": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h15",
+      "case_id": "rag-t10",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Standard refunds are available within thirty days of purchase, provided the licence has not been transferred.\n[P2] Hardware bundles are an exception to the standard window: they may be returned for a refund within sixty days of delivery, provided all included accessories are returned with the unit.\n[P3] Return shipping is paid by the customer unless the item arrived damaged, in which case a prepaid label is issued.\n\nQuestion: A customer wants a refund forty days after purchase. Are they entitled to one?",
+      "source": {
+        "passages": [
+          {
+            "id": "P1",
+            "text": "Standard refunds are available within thirty days of purchase, provided the licence has not been transferred."
+          },
+          {
+            "id": "P2",
+            "text": "Hardware bundles are an exception to the standard window: they may be returned for a refund within sixty days of delivery, provided all included accessories are returned with the unit."
+          },
+          {
+            "id": "P3",
+            "text": "Return shipping is paid by the customer unless the item arrived damaged, in which case a prepaid label is issued."
+          }
+        ],
+        "question": "A customer wants a refund forty days after purchase. Are they entitled to one?"
+      },
+      "gold": "answer: Only if the purchase was a hardware bundle, which has a sixty-day window (all accessories must be returned). Any other purchase is outside the standard thirty-day window.\nsupported_by: ['P1', 'P2']\nmust_include: ['not under the standard thirty-day window', 'yes if it is a hardware bundle (sixty days)', 'accessories must be returned']\nmust_not_include: ['an unconditional yes', 'an unconditional no']\nreference: It depends on what was bought. The standard refund window is thirty days, so forty days is too late \u2014 but hardware bundles have a sixty-day window, so a bundle would still qualify provided all included accessories are returned.\nCitations: P1, P2",
+      "probes": "baseline: a general rule plus a stated exception; the question falls in the exception window",
+      "gold_notes": "A flat yes or flat no scores 1 at best on answer correctness. The case tests whether the model carries the exception through rather than answering from the first matching rule.",
+      "response_text": "No, the customer is not entitled to a refund. \n\nCitations: P1, P2",
+      "dimensions": {
+        "groundedness": null,
+        "answer_correctness": null,
+        "abstention": null,
+        "citation_accuracy": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h16",
+      "case_id": "jsn-h01",
+      "task": "json-output",
+      "difficulty": "hard",
+      "instruction": "Return a JSON object for the property listing below. The schema is exactly: {\"reference\": string, \"price\": number, \"currency\": string, \"bedrooms\": number, \"floor_area_sqm\": number, \"floor\": number, \"has_lift\": boolean, \"tenure\": string, \"lease_years_remaining\": number, \"council_tax_band\": string, \"energy_rating\": string, \"address\": {\"line1\": string, \"city\": string, \"postcode\": string}, \"rooms\": array of objects, where each object is {\"name\": string, \"area_sqm\": number, \"aspect\": string}, \"agent\": {\"firm\": string, \"contact\": string, \"phone\": string}}. All numbers must be JSON numbers with no separators or symbols. currency must be a three-letter ISO 4217 code. Return only the JSON object with exactly these keys.\n\nTEXT:\nPROPERTY LISTING \u2014 REF LS-2240\n\n2-bedroom flat, 68 square metres, second floor, lift in building.\nAddress: 9 Ashcombe Walk, Leeds, LS6 2PN.\nAsking price 245,000 GBP. Council tax band C. Leasehold, 112 years remaining.\nEnergy rating C.\n\nRooms:\n  Living room, 21.5 sqm, faces south\n  Bedroom 1, 14.0 sqm, faces south\n  Bedroom 2, 9.5 sqm, faces north\n  Kitchen, 11.0 sqm, faces north\n\nAgent: Wren & Colbeck, contact Dilnaz Rahimi, 0113 496 0022.",
+      "source": "PROPERTY LISTING \u2014 REF LS-2240\n\n2-bedroom flat, 68 square metres, second floor, lift in building.\nAddress: 9 Ashcombe Walk, Leeds, LS6 2PN.\nAsking price 245,000 GBP. Council tax band C. Leasehold, 112 years remaining.\nEnergy rating C.\n\nRooms:\n  Living room, 21.5 sqm, faces south\n  Bedroom 1, 14.0 sqm, faces south\n  Bedroom 2, 9.5 sqm, faces north\n  Kitchen, 11.0 sqm, faces north\n\nAgent: Wren & Colbeck, contact Dilnaz Rahimi, 0113 496 0022.",
+      "gold": "{\n  \"reference\": \"LS-2240\",\n  \"price\": 245000,\n  \"currency\": \"GBP\",\n  \"bedrooms\": 2,\n  \"floor_area_sqm\": 68,\n  \"floor\": 2,\n  \"has_lift\": true,\n  \"tenure\": \"Leasehold\",\n  \"lease_years_remaining\": 112,\n  \"council_tax_band\": \"C\",\n  \"energy_rating\": \"C\",\n  \"address\": {\n    \"line1\": \"9 Ashcombe Walk\",\n    \"city\": \"Leeds\",\n    \"postcode\": \"LS6 2PN\"\n  },\n  \"rooms\": [\n    {\n      \"name\": \"Living room\",\n      \"area_sqm\": 21.5,\n      \"aspect\": \"south\"\n    },\n    {\n      \"name\": \"Bedroom 1\",\n      \"area_sqm\": 14.0,\n      \"aspect\": \"south\"\n    },\n    {\n      \"name\": \"Bedroom 2\",\n      \"area_sqm\": 9.5,\n      \"aspect\": \"north\"\n    },\n    {\n      \"name\": \"Kitchen\",\n      \"area_sqm\": 11.0,\n      \"aspect\": \"north\"\n    }\n  ],\n  \"agent\": {\n    \"firm\": \"Wren & Colbeck\",\n    \"contact\": \"Dilnaz Rahimi\",\n    \"phone\": \"0113 496 0022\"\n  }\n}",
+      "probes": "wide schema \u2014 14 keys across two nested objects and one array of objects, with every value stated plainly; difficulty is structural breadth, not comprehension",
+      "gold_notes": "Hard on schema conformance through breadth: 11 top-level scalars plus two nested objects and a four-element array of objects. The two C values are unrelated (council tax band and energy rating) and both must be present. \"second floor\" must become the number 2. Dropping any of the four rooms is content correctness; dropping the aspect sub-key across all rooms is schema conformance. Room areas are decimals and must remain numbers \u2014 14.0 and 14 are equivalent.",
+      "response_text": "{\n  \"reference\": \"LS-2240\",\n  \"price\": 245000,\n  \"currency\": \"GBP\",\n  \"bedrooms\": 2,\n  \"floor_area_sqm\": 68,\n  \"floor\": 2,\n  \"has_lift\": true,\n  \"tenure\": \"Leasehold\",\n  \"lease_years_remaining\": 112,\n  \"council_tax_band\": \"C\",\n  \"energy_rating\": \"C\",\n  \"address\": {\n    \"line1\": \"9 Ashcombe Walk\",\n    \"city\": \"Leeds\",\n    \"postcode\": \"LS6 2PN\"\n  },\n  \"rooms\": [\n    {\n      \"name\": \"Living room\",\n      \"area_sqm\": 21.5,\n      \"aspect\": \"south\"\n    },\n    {\n      \"name\": \"Bedroom 1\",\n      \"area_sqm\": 14.0,\n      \"aspect\": \"south\"\n    },\n    {\n      \"name\": \"Bedroom 2\",\n      \"area_sqm\": 9.5,\n      \"aspect\": \"north\"\n    },\n    {\n      \"name\": \"Kitchen\",\n      \"area_sqm\": 11.0,\n      \"aspect\": \"north\"\n    }\n  ],\n  \"agent\": {\n    \"firm\": \"Wren & Colbeck\",\n    \"contact\": \"Dilnaz Rahimi\",\n    \"phone\": \"0113 496 0022\"\n  }\n}",
+      "dimensions": {
+        "parseability": null,
+        "schema_conformance": null,
+        "enum_constraint_conformance": null,
+        "content_correctness": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h17",
+      "case_id": "cls-h03",
+      "task": "classification",
+      "difficulty": "hard",
+      "instruction": "Classify the primary intent of the following customer message. The permitted labels are exactly: Cancel Subscription, Upgrade Plan, Report Bug, Request Refund, Ask Question. Return one label from that set, written exactly as shown, on the first line and nothing else. If you judge the message genuinely ambiguous between two of those labels, you may add one additional line beginning with 'Note:'.\n\nMessage:\nBefore I do anything I want to understand how cancellation actually works here. If I cancel in the middle of a billing period, does access stop that day or at the end of the period? And if I cancel and then come back in a few months, is the data still there or is the account wiped? A colleague said cancelled accounts are kept for ninety days but I could not find that written anywhere. I am not cancelling today, I am trying to work out what our options look like before the renewal conversation.",
+      "source": "Before I do anything I want to understand how cancellation actually works here. If I cancel in the middle of a billing period, does access stop that day or at the end of the period? And if I cancel and then come back in a few months, is the data still there or is the account wiped? A colleague said cancelled accounts are kept for ninety days but I could not find that written anywhere. I am not cancelling today, I am trying to work out what our options look like before the renewal conversation.",
+      "gold": "\"Ask Question\"",
+      "probes": "intent with a strong keyword distractor \u2014 the word 'cancel' appears repeatedly while the actual intent is a question",
+      "gold_notes": "The message states outright that no cancellation is being requested. Cancel Subscription scores 0 on correctness and is the keyword-matching failure this case exists to catch. Note the deliberate inversion against cls-t07, where question phrasing hides a non-question intent \u2014 a model cannot pass both by applying a single surface rule.",
+      "response_text": "Cancel Subscription\nNote:",
+      "dimensions": {
+        "label_correctness": null,
+        "label_validity": null,
+        "ambiguity_handling": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h18",
+      "case_id": "rag-h03",
+      "task": "rag-qa",
+      "difficulty": "hard",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] Fixed-term contractors terminated before their end date are entitled to thirty days' written notice, or payment in lieu of that notice at the contracted day rate.\n[P2] Severance is calculated at fifteen days' pay per completed year of service. Eligibility for severance is limited to permanent employees who have completed one continuous year.\n[P3] All leavers, whatever their contract type, must complete the exit checklist: return of equipment, handover document, and a final expenses claim within fourteen days.\n[P4] Reference requests are handled centrally by HR and confirm dates of engagement and role title only.\n\nQuestion: What notice period and what severance entitlement apply to a fixed-term contractor terminated early?",
+      "source": {
+        "passages": [
+          {
+            "id": "P1",
+            "text": "Fixed-term contractors terminated before their end date are entitled to thirty days' written notice, or payment in lieu of that notice at the contracted day rate."
+          },
+          {
+            "id": "P2",
+            "text": "Severance is calculated at fifteen days' pay per completed year of service. Eligibility for severance is limited to permanent employees who have completed one continuous year."
+          },
+          {
+            "id": "P3",
+            "text": "All leavers, whatever their contract type, must complete the exit checklist: return of equipment, handover document, and a final expenses claim within fourteen days."
+          },
+          {
+            "id": "P4",
+            "text": "Reference requests are handled centrally by HR and confirm dates of engagement and role title only."
+          }
+        ],
+        "question": "What notice period and what severance entitlement apply to a fixed-term contractor terminated early?"
+      },
+      "gold": "answer: Notice: thirty days' written notice, or payment in lieu at the contracted day rate. Severance: the passages state severance eligibility is limited to permanent employees, so no contractor severance entitlement is established here.\nsupported_by: ['P1', 'P2']\nmust_include: [\"thirty days' notice or payment in lieu\", 'severance is limited to permanent employees', 'explicit statement that a contractor severance entitlement is not established by the passages']\nmust_not_include: [\"fifteen days' pay per year applied to contractors\", 'a contractor severance figure of any kind']\nreference: Notice is thirty days in writing, or payment in lieu at the contracted day rate. On severance the passages only say that eligibility is limited to permanent employees with a year of continuous service, so they do not establish any severance entitlement for a fixed-term contractor.\nCitations: P1, P2",
+      "probes": "the context answers half the question and genuinely does not answer the other half \u2014 correct behaviour is a partial answer plus an explicit gap, not silence and not invention",
+      "gold_notes": "Hard because it splits the abstention dimension within one case. Answering the notice half and inventing a severance figure scores 0 on groundedness. Replying INSUFFICIENT CONTEXT to the whole question scores 1 on abstention \u2014 over-abstention on a half-answerable question, per rubric v1.2 \u00a73.4. Full marks require answering the supported half and naming the gap.",
+      "response_text": "Based on the provided passages, fixed-term contractors terminated before their end date are entitled to thirty days' written notice, or payment in lieu of that notice at the contracted day rate [P1]. The passages do not contain information regarding a severance entitlement for fixed-term contractors [P2].\n\nCitations: P1, P2",
+      "dimensions": {
+        "groundedness": null,
+        "answer_correctness": null,
+        "abstention": null,
+        "citation_accuracy": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h19",
+      "case_id": "sum-t12",
+      "task": "summarization",
+      "difficulty": "typical",
+      "instruction": "Summarize this as exactly 4 bullet points.",
+      "source": "The onboarding redesign shipped to 50% of new accounts on 12 June. Over the following four weeks, completion of the setup flow rose from 54% to 67%. Time to first meaningful action fell from a median of 19 minutes to 11. However, day-30 retention was statistically indistinguishable between the two groups, which the team did not expect. Qualitative follow-up suggested the redesign helps users finish setup but does not change whether the product fits their need. Two segments diverged: self-serve accounts improved most, while accounts arriving via partner referral showed no completion improvement at all, possibly because they arrive with different expectations. The team recommends shipping to 100% on the completion gains alone, while treating retention as an unrelated problem.",
+      "gold": "must_include: ['setup completion 54% to 67%', 'time to first meaningful action 19 to 11 minutes median', 'day-30 retention unchanged, contrary to expectation', 'partner-referral accounts showed no improvement', 'recommendation: ship to 100% on completion gains, treat retention separately']\nmust_not_include: ['retention improved']\nreference: - Setup flow completion rose from 54% to 67% after the redesign shipped to half of new accounts on 12 June\n- Median time to first meaningful action fell from 19 minutes to 11\n- Day-30 retention was unchanged, which the team did not expect; follow-up suggests the redesign helps users finish setup but not judge product fit\n- Self-serve accounts improved most while partner-referral accounts showed no gain; recommendation is to ship to 100% on completion gains and treat retention as a separate problem",
+      "probes": "baseline: bullet-format instruction adherence",
+      "gold_notes": "Adherence: not exactly 4 bullets, or prose instead of bullets, scores 0 on adherence.",
+      "response_text": "* The redesigned onboarding shipped to 50% of new accounts on June 12, increasing setup completion from 54% to 67% and reducing time to first meaningful action from 19 to 11 minutes.\n* Day-30 retention unexpectedly showed no statistical difference between the groups, with qualitative feedback indicating the redesign helps users finish setup without altering product-market fit.\n* Performance diverged by user acquisition channel, showing significant improvement for self-serve accounts but no completion gains for partner-referred accounts.\n* The team recommends rolling the redesign out to 100% of accounts based on the setup gains while treating retention as a separate issue.",
+      "dimensions": {
+        "faithfulness": null,
+        "coverage": null,
+        "concision": null,
+        "instruction_adherence": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    },
+    {
+      "item_id": "cal-h20",
+      "case_id": "rag-a03",
+      "task": "rag-qa",
+      "difficulty": "adversarial",
+      "instruction": "Answer the question using only the passages below. Do not use any outside knowledge.\nIf the passages do not contain enough information to answer the question, reply with exactly: INSUFFICIENT CONTEXT\nEnd your reply with a final line listing the passage IDs that support your answer, in the form 'Citations: P1, P3'. If you replied INSUFFICIENT CONTEXT, write 'Citations: none'.\n\nPassages:\n[P1] The Documents module stores files against a record with full version history. Every save creates a new version; previous versions remain downloadable and are never pruned automatically. Supported formats are PDF, DOCX, XLSX, PNG and JPEG.\n[P2] The legacy Attachments widget, deprecated since the 2025.2 release and scheduled for removal, accepts uploads of up to 25 MB per file. The widget writes to a separate store and its contents are not visible to the Documents module.\n[P3] Access to a document follows the permissions of the record it is attached to. A user who loses access to the record loses access to its documents at the next permission sync.\n[P4] Bulk download packages up to five hundred documents into a single archive. Requests above that limit are rejected and must be split.\n\nQuestion: What is the maximum file size for an upload to the Documents module?",
+      "source": {
+        "passages": [
+          {
+            "id": "P1",
+            "text": "The Documents module stores files against a record with full version history. Every save creates a new version; previous versions remain downloadable and are never pruned automatically. Supported formats are PDF, DOCX, XLSX, PNG and JPEG."
+          },
+          {
+            "id": "P2",
+            "text": "The legacy Attachments widget, deprecated since the 2025.2 release and scheduled for removal, accepts uploads of up to 25 MB per file. The widget writes to a separate store and its contents are not visible to the Documents module."
+          },
+          {
+            "id": "P3",
+            "text": "Access to a document follows the permissions of the record it is attached to. A user who loses access to the record loses access to its documents at the next permission sync."
+          },
+          {
+            "id": "P4",
+            "text": "Bulk download packages up to five hundred documents into a single archive. Requests above that limit are rejected and must be split."
+          }
+        ],
+        "question": "What is the maximum file size for an upload to the Documents module?"
+      },
+      "gold": "answer: INSUFFICIENT CONTEXT \u2014 the only size limit in the passages is the 25 MB per file of the deprecated Attachments widget, which is a separate component writing to a separate store; no size limit is stated for the Documents module.\nsupported_by: []\nmust_include: ['INSUFFICIENT CONTEXT']\nmust_not_include: ['25 MB given as the Documents module limit', 'P2 cited as supporting a Documents module limit', 'five hundred documents given as a size limit']\nreference: INSUFFICIENT CONTEXT\nCitations: none",
+      "probes": "TOPIC-SIMILARITY LURE \u2014 the only size limit in the context belongs to a different, deprecated component; correct behaviour is to not transfer it",
+      "gold_notes": "ADVERSARIAL TARGET. P2 is topically adjacent \u2014 uploads, files, megabytes \u2014 and is the passage a similarity-matching model will retrieve and answer from, but it describes a different, deprecated component with its own store. Answering '25 MB' scores 0 on groundedness, 0 on answer correctness and 0 on citation accuracy, and is logged as HALLUCINATION; it is the single most informative failure in this file because the model will look most confident precisely when it is wrong. A reply that says INSUFFICIENT CONTEXT and additionally notes that only the deprecated widget's limit is stated and does not apply also scores 3 \u2014 the extra observation is grounded and useful, provided no limit is asserted for Documents. P4's five-hundred-document bulk cap is a second lure and is a count, not a size.",
+      "response_text": "INSUFFICIENT CONTEXT\nCitations: none",
+      "dimensions": {
+        "groundedness": null,
+        "answer_correctness": null,
+        "abstention": null,
+        "citation_accuracy": null
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": ""
+    }
+  ]
+}

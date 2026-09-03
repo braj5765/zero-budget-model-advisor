@@ -1,0 +1,187 @@
+{
+  "seed": 20260829,
+  "source_run": "03-results/run-2026-08-15T114622Z.jsonl",
+  "warning": "SEALED. Do not open until human_scores_heldout.json is complete.",
+  "map": [
+    {
+      "item_id": "cal-h01",
+      "case_id": "jsn-t04",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "37f5f965-7764-4285-9551-d96a6d887805",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h02",
+      "case_id": "rag-t08",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "8072ad39-175f-4773-b6bb-8ba548805956",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h03",
+      "case_id": "jsn-t10",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "aa66ec97-dcdd-4160-ad2f-0edd11063b32",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h04",
+      "case_id": "cls-t04",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "9e4b7469-dc16-4e37-9cfe-b8388cbe116c",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h05",
+      "case_id": "ext-a02",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "ef2da453-0db7-40b4-9538-b235b1573479",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h06",
+      "case_id": "sum-h01",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "bb6b3977-2886-4419-8569-2143a4612dae",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h07",
+      "case_id": "ext-t01",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "d9057689-e3d2-4471-bd9b-0dc0aa423dc4",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h08",
+      "case_id": "cls-t09",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "a2e25935-94e7-4bd5-9ec2-082d3069eff0",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h09",
+      "case_id": "cls-t11",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "300a282f-35b5-46fa-a405-185bc2953899",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h10",
+      "case_id": "jsn-t06",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "75f3a6ad-cee0-4635-87ed-d29831c54d44",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h11",
+      "case_id": "ext-h05",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "3b408c3a-ebc2-4294-a5af-666ab515e59a",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h12",
+      "case_id": "sum-a02",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "9f156897-e801-47ed-aeed-f891ef1ddb92",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h13",
+      "case_id": "sum-t01",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "b19c4661-d8ab-49c6-9714-68daec3c6c33",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h14",
+      "case_id": "ext-t07",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "e73d7157-bffd-41a0-ae3d-48d81cadaa0d",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h15",
+      "case_id": "rag-t10",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "53e798a5-8b09-4b4b-9adc-fda0247207d4",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h16",
+      "case_id": "jsn-h01",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "578f2c47-a6b7-47d3-b7ec-4f573894c53f",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h17",
+      "case_id": "cls-h03",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "e159728b-3876-4a31-9d22-a13f5ed8ea85",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h18",
+      "case_id": "rag-h03",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "72900a8c-5d42-4ccd-a63c-8386aa701ba6",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h19",
+      "case_id": "sum-t12",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "6db5383e-2f13-421b-b2c1-9c00840ebbda",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-h20",
+      "case_id": "rag-a03",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "52f34cf2-5757-43b2-a29e-788a0b8ca040",
+      "run_index": 1
+    }
+  ]
+}

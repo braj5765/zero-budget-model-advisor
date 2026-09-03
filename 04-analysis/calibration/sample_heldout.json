@@ -1,0 +1,191 @@
+{
+  "sample_version": "1.0",
+  "drawn": "2026-08-29",
+  "purpose": "Held-out calibration set measuring whether kappa=0.650 generalises (PROJECT-STATE S2 item 1, JUDGE-RUN-PLAN S6)",
+  "seed": 20260829,
+  "rng": "python random.Random(seed), stdlib Mersenne Twister",
+  "source_run": "03-results/run-2026-08-15T114622Z.jsonl",
+  "run_index_fixed": 1,
+  "eligibility": "status=='success' and provider!='openrouter' and run_index==1, case_id not in calibration/sample.json",
+  "excluded_case_ids_source": "04-analysis/calibration/sample.json",
+  "n_case_ids_excluded": 20,
+  "n_case_ids_available": 80,
+  "stratification": {
+    "cells": "one item per (task x model) cell = 5 tasks x 4 scored models = 20",
+    "difficulty_totals": {
+      "typical": 12,
+      "hard": 5,
+      "adversarial": 3
+    },
+    "row_rule": "each task contributes exactly 1 hard; 3 of 5 tasks contribute 1 adversarial",
+    "col_rule": "each model contributes exactly 3 typical and 2 non-typical",
+    "adversarial_tasks": [
+      "extraction",
+      "rag-qa",
+      "summarization"
+    ]
+  },
+  "blinding": "model_id, provider, model_version and call_id are withheld here; the mapping lives in sealed_model_map_heldout.json",
+  "items": [
+    {
+      "item_id": "cal-h01",
+      "case_id": "jsn-t04",
+      "task": "json-output",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "f1d23b37e6b250b58d5a69d7935e2343cdb7f52d1c973c51e51cc33c7de924cf"
+    },
+    {
+      "item_id": "cal-h02",
+      "case_id": "rag-t08",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "0d0062ba9152e2b5ed3ce42073ed1982942fff4cc274222a2420cf2e154e3cca"
+    },
+    {
+      "item_id": "cal-h03",
+      "case_id": "jsn-t10",
+      "task": "json-output",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "ebec894ac6e5564d4b6396c462971e84d4c11204ed973b089b8ac0244959efb5"
+    },
+    {
+      "item_id": "cal-h04",
+      "case_id": "cls-t04",
+      "task": "classification",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "3ac8bbca9a74cfbd627307e9d650a132610e64f42f984817a488daf5f2f3d750"
+    },
+    {
+      "item_id": "cal-h05",
+      "case_id": "ext-a02",
+      "task": "extraction",
+      "difficulty": "adversarial",
+      "run_index": 1,
+      "response_sha256": "67abe243fbf68160df85b016d98d3df9d22998f6f2eb1735d6af129eefae9c27"
+    },
+    {
+      "item_id": "cal-h06",
+      "case_id": "sum-h01",
+      "task": "summarization",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "6a7c08d9b5b27e441403d1d857a8d6ecd7ab849ef37e98a0295acc930131139b"
+    },
+    {
+      "item_id": "cal-h07",
+      "case_id": "ext-t01",
+      "task": "extraction",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "64088c645b0f8617bf20e124c98ebe9f2abffbc8c46a4cc54172acda7387ce64"
+    },
+    {
+      "item_id": "cal-h08",
+      "case_id": "cls-t09",
+      "task": "classification",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "dfffe96a378d30e0fbee4892e99b11117d54d418601d0ac1c4c6de53f91476c1"
+    },
+    {
+      "item_id": "cal-h09",
+      "case_id": "cls-t11",
+      "task": "classification",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "c26982b1425da26a9637dd69da684a036c8b67a1ddf2c3d09b915a96e4b58037"
+    },
+    {
+      "item_id": "cal-h10",
+      "case_id": "jsn-t06",
+      "task": "json-output",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "55a1ee02c3a326286d3bda0daf0cec2db6455ab6f71423de00eed0cfef768473"
+    },
+    {
+      "item_id": "cal-h11",
+      "case_id": "ext-h05",
+      "task": "extraction",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "55df5a4ce9becef8092a816e15451482de866a3e0fd8be8e59c4d0f41a4fca10"
+    },
+    {
+      "item_id": "cal-h12",
+      "case_id": "sum-a02",
+      "task": "summarization",
+      "difficulty": "adversarial",
+      "run_index": 1,
+      "response_sha256": "4d011272ad9c5a276138836298a66ad74acabd365714d3c354529429bb935a5d"
+    },
+    {
+      "item_id": "cal-h13",
+      "case_id": "sum-t01",
+      "task": "summarization",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "2c87b1f73b99c7890f82e82c2822e49bb7761f146df30f38e9a5e23439c44a42"
+    },
+    {
+      "item_id": "cal-h14",
+      "case_id": "ext-t07",
+      "task": "extraction",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "8c01299e860c49e2e3917ea6e177d72ccd7287bded48ec889e17f5d05026ead6"
+    },
+    {
+      "item_id": "cal-h15",
+      "case_id": "rag-t10",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "6b7dd1c31b0713cc54adf86984382ebb79d4ef42bec6c2ab6a295ca555159a08"
+    },
+    {
+      "item_id": "cal-h16",
+      "case_id": "jsn-h01",
+      "task": "json-output",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "a08b26728c26ffee0635d58b15de910cd51c5d26dcb2893f67068fa52d3a6e7d"
+    },
+    {
+      "item_id": "cal-h17",
+      "case_id": "cls-h03",
+      "task": "classification",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "6c913c8eae4d3e4db67df6e1df03e8293528730770c242ed167abb499387c0c6"
+    },
+    {
+      "item_id": "cal-h18",
+      "case_id": "rag-h03",
+      "task": "rag-qa",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "51e210f46b1206f5f275cabb301f163e11ab294b0255de659feca3a4ae2fe5b3"
+    },
+    {
+      "item_id": "cal-h19",
+      "case_id": "sum-t12",
+      "task": "summarization",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "aa075157366ac982cefb96d069df20eb50364112606cc92a92528e1fae4f95d0"
+    },
+    {
+      "item_id": "cal-h20",
+      "case_id": "rag-a03",
+      "task": "rag-qa",
+      "difficulty": "adversarial",
+      "run_index": 1,
+      "response_sha256": "5f47b44762a1351e8be3c13f46abf2ae47cdf8f13f30a277af46edb6f040f195"
+    }
+  ]
+}

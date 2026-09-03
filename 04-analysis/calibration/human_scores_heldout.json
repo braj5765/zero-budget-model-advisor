@@ -1,0 +1,306 @@
+{
+  "schema_version": "1.0",
+  "rubric_version": "1.7",
+  "scorer": "Braj (human, blind)",
+  "protocol": "Blind hand-scoring from Scoring-Rubric.md v1.7 only. Model identity withheld until scoring complete (sealed_model_map_heldout.json). Scale 0-3 per rubric S2. 'n/a' per S3.6 rule 1 only where case design makes a dimension unscoreable.",
+  "sample": "04-analysis/calibration/sample_heldout.json",
+  "seed": 20260829,
+  "scores": [
+    {
+      "item_id": "cal-h01",
+      "case_id": "jsn-t04",
+      "task": "json-output",
+      "difficulty": "typical",
+      "dimensions": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "enum_constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h02",
+      "case_id": "rag-t08",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "dimensions": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention": 3,
+        "citation_accuracy": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h03",
+      "case_id": "jsn-t10",
+      "task": "json-output",
+      "difficulty": "typical",
+      "dimensions": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "enum_constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h04",
+      "case_id": "cls-t04",
+      "task": "classification",
+      "difficulty": "typical",
+      "dimensions": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h05",
+      "case_id": "ext-a02",
+      "task": "extraction",
+      "difficulty": "adversarial",
+      "dimensions": {
+        "precision": 3,
+        "recall": 2,
+        "normalisation": 2,
+        "null_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h06",
+      "case_id": "sum-h01",
+      "task": "summarization",
+      "difficulty": "hard",
+      "dimensions": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h07",
+      "case_id": "ext-t01",
+      "task": "extraction",
+      "difficulty": "typical",
+      "dimensions": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h08",
+      "case_id": "cls-t09",
+      "task": "classification",
+      "difficulty": "typical",
+      "dimensions": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h09",
+      "case_id": "cls-t11",
+      "task": "classification",
+      "difficulty": "typical",
+      "dimensions": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h10",
+      "case_id": "jsn-t06",
+      "task": "json-output",
+      "difficulty": "typical",
+      "dimensions": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "enum_constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h11",
+      "case_id": "ext-h05",
+      "task": "extraction",
+      "difficulty": "hard",
+      "dimensions": {
+        "precision": 2,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h12",
+      "case_id": "sum-a02",
+      "task": "summarization",
+      "difficulty": "adversarial",
+      "dimensions": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h13",
+      "case_id": "sum-t01",
+      "task": "summarization",
+      "difficulty": "typical",
+      "dimensions": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 2
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h14",
+      "case_id": "ext-t07",
+      "task": "extraction",
+      "difficulty": "typical",
+      "dimensions": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h15",
+      "case_id": "rag-t10",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "dimensions": {
+        "groundedness": 3,
+        "answer_correctness": 2,
+        "abstention": 2,
+        "citation_accuracy": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h16",
+      "case_id": "jsn-h01",
+      "task": "json-output",
+      "difficulty": "hard",
+      "dimensions": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "enum_constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h17",
+      "case_id": "cls-h03",
+      "task": "classification",
+      "difficulty": "hard",
+      "dimensions": {
+        "label_correctness": 0,
+        "label_validity": 3,
+        "ambiguity_handling": 1
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h18",
+      "case_id": "rag-h03",
+      "task": "rag-qa",
+      "difficulty": "hard",
+      "dimensions": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention": 3,
+        "citation_accuracy": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h19",
+      "case_id": "sum-t12",
+      "task": "summarization",
+      "difficulty": "typical",
+      "dimensions": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    },
+    {
+      "item_id": "cal-h20",
+      "case_id": "rag-a03",
+      "task": "rag-qa",
+      "difficulty": "adversarial",
+      "dimensions": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention": 3,
+        "citation_accuracy": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-30"
+    }
+  ]
+}
