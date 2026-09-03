@@ -1,6 +1,6 @@
 # Scoring Rubric — Zero-Budget Model Advisor
 
-**Version 1.7 · Frozen 2026-08-10 · Amended 2026-08-11, 2026-08-19, 2026-08-20 and 2026-08-28 (×3, one reverting another) and 2026-08-28 pre-aggregation · Author: Braj**
+**Version 1.8 · Frozen 2026-08-10 · Amended 2026-08-11, 2026-08-19, 2026-08-20, 2026-08-28 (×3, one reverting another), 2026-08-28 pre-aggregation, and 2026-09-03 (documentation only) · Author: Braj**
 
 This rubric was written and frozen **before any model was run**. That ordering is deliberate: a rubric authored after seeing results can be shaped, consciously or not, to fit them. Any change after freeze is recorded in the changelog at the end, with a reason, and any affected results are re-scored — not patched.
 
@@ -71,16 +71,20 @@ Each task is scored on 3–4 dimensions. Task score = **unweighted mean of its d
 
 *Correctness and validity are separated because a model that returns "Somewhat Positive" when the set is {Positive, Negative, Neutral} has broken the integration, not just the answer.*
 
+***Output format — v1.8, documenting a rule operative since the case files were authored and since `judge_prompt.md` v1.2, never previously written here.*** *The label is the first line of the response, and only the first line: label correctness and label validity are checked against that line alone. An optional second line beginning "Note:" is the sanctioned channel for uncertainty — it is never itself the label, must not be read as an alternate answer, and its content must not be checked against the permitted label set. A label outside the permitted set scores 0 on label validity regardless of how defensible the reading is. Using the "Note:" line where no genuine ambiguity exists costs a point on ambiguity handling.*
+
 ### 3.4 RAG Q&A
 
 | Dimension | 3 | 0 |
 | :---- | :---- | :---- |
 | **Groundedness** | Every assertion supported by the supplied context | Asserts facts not in the context |
 | **Answer correctness** | Factually answers the question asked | Wrong answer |
-| **Abstention** | Says so when the context cannot answer, **and answers when it can** | Confidently answers a question the context cannot support — **or refuses a question the context does support** |
+| **Abstention calibration** | Says so when the context cannot answer, **and answers when it can** | Confidently answers a question the context cannot support — **or refuses a question the context does support** |
 | **Citation accuracy** | Points to the passage that actually supports the claim | Cites a passage that does not support it |
 
 *Abstention has its own dimension and its own test cases (§4). A model that never says "I don't know" is a specific, common, and expensive failure — it must be visible in the score, not averaged away. **The mirror failure is scored on the same dimension:** a model that abstains on answerable questions would otherwise game this dimension by refusing everything. Test sets must therefore pair each unanswerable case with answerable cases that look superficially similar, or the dimension measures caution rather than judgment.*
+
+***Abstention calibration mechanics and citation format — v1.8, documenting rules operative since `judge_prompt.md` v1.2, never previously written here.*** *Renamed from "Abstention" to "Abstention calibration" to match the name every judge score has carried since v1.2 — this rubric had not been updated to match. Scoring proceeds in two steps: first decide, from the gold answer alone, whether the case is UNANSWERABLE or ANSWERABLE; then apply only that branch's rule. Answering an ANSWERABLE question correctly is the 3 case on this dimension, never a deduction, regardless of what answer correctness separately scores. The sanctioned abstention signal is the literal string INSUFFICIENT CONTEXT; citations appear on a final line of the form "Citations: P1, P3", or "Citations: none" when abstaining. Where a case's supporting-passage list is empty, no answer should have been given, and citing any passage is a citation-accuracy failure regardless of what it says. See §3.8.3 for a branch this two-way split does not represent.*
 
 ### 3.5 Structured JSON output reliability
 
@@ -92,6 +96,8 @@ Each task is scored on 3–4 dimensions. Task score = **unweighted mean of its d
 | **Content correctness** | Values are factually right | Values wrong |
 
 *Parseability is scored before content: an unparseable response scores 0 on parseability and its content dimensions are not scored, since a broken response has no content to judge. This is recorded so the failure is attributed correctly.*
+
+***Key order and nullable-key handling — v1.8, documenting rules operative since the case files were authored, never previously written here.*** *Key order is never scored — JSON objects are unordered, and scoring order would measure a serialisation incidental, not correctness. Where a key is declared nullable, it must be present with a JSON null value; omitting the key entirely is a schema conformance failure, not a null-handling matter — this task carries no null-handling dimension.*
 
 ### 3.6 Not-applicable dimensions, and how scores aggregate
 
@@ -117,6 +123,16 @@ Pinned 2026-08-28, **before any aggregation was computed**. v1.6 restored median
 *Rule 3 recovers the one thing the withdrawn v1.5 amendment was going to give us. Median-of-three alone hides variance; median plus published spread reports it.*
 
 *Rule 6 exists because `n/a` is the one mechanism here that could quietly flatter a bad model — excluding a dimension raises the mean. Publishing the count is what keeps the exclusion honest.*
+
+### 3.8 Open scoring boundaries — declared, not resolved (v1.8)
+
+Three boundaries between dimensions are not fully specified by this rubric. They are declared here rather than left to be resolved by accident by whoever scores next, per the same discipline that governs everything else in §3: a boundary this rubric doesn't decide should not quietly get decided anyway.
+
+**3.8.1 Precision / Normalisation (extraction).** The precision anchor (§3.2) says a canonical-form-only defect belongs to normalisation and must not be charged twice. It does not fully specify, for a field carrying both extra content and a canonical-form deviation, which dimension owns which part of the defect. **Open.**
+
+**3.8.2 Recall / Normalisation / Null handling (extraction).** Where a field is present and determinable in the source but the response returns `null` for it instead of extracting it, null handling (§3.2) scores this 1 (over-abstention). Whether the same miss should also reduce recall, or whether a related formatting complaint on an adjacent field belongs to normalisation rather than recall, is not addressed anywhere in §3.2. **Open.**
+
+**3.8.3 Conditional answerability (RAG Q&A).** The abstention-calibration branch (§3.4) is binary — UNANSWERABLE or ANSWERABLE — and has no representation for a question the context answers only conditionally (e.g. "yes, if it's a hardware bundle; no otherwise"). A response that lands on the majority case without resolving the condition scores 3 under the binary branch as currently specified. Disputed on adjudication (`04-analysis/calibration/divergence_adjudication.md`, item 3): the human scorer holds this does not demonstrate the model resolved anything, and declined to accept the binary reading over his own recorded score. Unlike §3.8.1 and §3.8.2, this defect lives in a rule the judge was given (`judge_prompt.md` v1.2) that this rubric never carried at all until this amendment. **Open.**
 
 ---
 
@@ -241,6 +257,7 @@ Stated up front rather than waiting to be found:
 | Version | Date | Change | Reason |
 | :---- | :---- | :---- | :---- |
 | 1.0 | 2026-08-10 | Initial freeze, pre-run | — |
+| 1.8 | 2026-09-03 | **Documentation amendment only.** Writes into §3.3, §3.4 and §3.5 the rules that were already operative in `classification.json`'s, `rag-qa.json`'s and `json-output.json`'s `conventions` blocks and in `judge_prompt.md` v1.2–v1.3's per-task anchors throughout the run, but had never been written into this rubric: classification's first-line/`Note:`-line mechanics and the "however reasonable the reading" qualifier (§3.3); RAG's two-branch abstention procedure, the `INSUFFICIENT CONTEXT` token, the `Citations:` line format, and the empty-`supported_by` rule (§3.4); json-output's key-order and nullable-key rules (§3.5). Renames RAG's `Abstention` dimension to `Abstention calibration` (§3.4), matching every judge score since `judge_prompt.md` v1.2 — the rubric had not been updated to match. Adds §3.8, declaring three open scoring boundaries (precision/normalisation, recall/normalisation/null-handling, and conditional answerability) rather than resolving them. | This documents rules that were already operative in the case files and the judge prompt throughout the run; it changes no scoring standard. `01-rubric-and-testcases/Scoring-Checklist.md` §9's sweep found nothing in rubric §3 that `judge_prompt.md` and the case files did not already carry, and nothing here was invented to close a gap. It reproduces every recorded score across all four calibration files (`human_scores.json`, `judge_scores_hosted_v1.3.json`, `human_scores_heldout.json`, `judge_scores_heldout.json`) **except the six divergences adjudicated in `04-analysis/calibration/divergence_adjudication.md`** — three confirmed human scoring error (cal-18, cal-h17, cal-17 coverage), two confirmed judge scoring error (cal-09, cal-17 instruction adherence), and one left open on dispute (cal-h15, now §3.8.3). A post-run change to this rubric is legitimate only on that basis — that it documents what already governed scoring rather than changing it — per this rubric's own freeze discipline (preamble: "Any change after freeze is recorded in the changelog... with a reason, and any affected results are re-scored — not patched") and consistent with §4b's own precedent that an amendment stands or falls on whether its stated premise holds, not on convenience. |
 | 1.7 | 2026-08-28 | **Added §3.7** — median-of-three is taken **per dimension** across runs, `n/a` never enters a median (2+ `n/a` runs ⇒ dimension is `n/a`), and min–max spread is recorded and published beside every median. | v1.6 restored median-of-three without specifying the level at which it applies; dimension-level and case-level medians give different answers and `/scoring` cannot guess. Pinned **before any aggregation was computed**, so no score influenced the choice. |
 | 1.6 | 2026-08-28 | **Reverted v1.5's §4b scope reduction.** Median-of-three restored; the judge scores all 1,200 responses. | v1.5 cut judged scope on the ground that 1,200 responses were not executable. A timed cluster on the hosted judge measured 4.4s/response against the 6min/response local figure the estimate was built on — ~90 minutes, not ~120 hours. The premise was false, so the amendment was withdrawn rather than kept. Reverted the same day, before any production judging beyond a 20-row cluster; those 20 rows are `run_index = 1` and belong to the full manifest either way, so nothing is wasted or re-run. |
 | 1.5 | 2026-08-28 | **Added §4b — judged scope.** Judge scores `run_index = 1` only (400 responses); run-to-run variance measured on a 10% three-run subsample rather than by median-of-three across the whole set. Benchmark execution is unchanged; this is a judging-scope change. | Judging 1,200 responses is not executable within available free-tier throughput. Amended after the κ gate cleared (0.650) but **before the production pass began**, so no judged production result influenced it, and the calibration set — judged on `run_index = 1` throughout — is unaffected. |
