@@ -46,8 +46,8 @@ min_interval_s = 0.0      # local; pacing exists to protect free tiers, not this
 timeout_s = 120
 max_retries = 3           # 5xx only; see Harness-Spec §3
 probe_allowed = false     # no service, no ceiling to measure
-documented_rpm = 0
-documented_rpd = 0
+documented_rpm = "not applicable"
+documented_rpd = "not applicable"   # local: no service, no quota exists
 documented_source = "local — no service terms; weights licence recorded separately (ToS-Review)"
 
 [[models]]
@@ -97,7 +97,8 @@ timeout_s = 60
 max_retries = 3
 probe_allowed = true
 documented_rpm = 60
-documented_rpd = 0        # not published as a daily cap; 1B tokens/month
+documented_rpd = "none documented"   # NOT zero. No daily request cap is published.
+documented_monthly_tokens = 1_000_000_000   # the real ceiling here is token-based, not request-based
 documented_source = "https://help.mistral.ai/en/articles/225174-what-are-the-limits-of-the-free-tier (2026-08-15)"
 
 [[models]]
