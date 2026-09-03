@@ -1,6 +1,6 @@
 # Scoring Rubric — Zero-Budget Model Advisor
 
-**Version 1.2 · Frozen 2026-08-10 · Amended 2026-08-11, pre-run · Author: Braj**
+**Version 1.7 · Frozen 2026-08-10 · Amended 2026-08-11, 2026-08-19, 2026-08-20 and 2026-08-28 (×3, one reverting another) and 2026-08-28 pre-aggregation · Author: Braj**
 
 This rubric was written and frozen **before any model was run**. That ordering is deliberate: a rubric authored after seeing results can be shaped, consciously or not, to fit them. Any change after freeze is recorded in the changelog at the end, with a reason, and any affected results are re-scored — not patched.
 
@@ -44,6 +44,8 @@ Each task is scored on 3–4 dimensions. Task score = **unweighted mean of its d
 | **Concision** | Within the requested length; no padding or restatement | Substantially over length, or mostly filler |
 | **Instruction adherence** | Honours format, length, tone and audience as instructed | Ignores the instruction |
 
+***Coverage is judged by significance and against the length the instruction permits — never by counting gold points.*** *If the point the case was designed to probe (its `probes` field, or the point named in `gold.notes`) is missed, **coverage caps at 1** however many other points landed. If the probed point lands, coverage is **3** where the omitted points are ones the requested length could not accommodate, and **2** where the summary had room and still dropped a substantive point. The length clause is load-bearing: a three-sentence summary cannot carry five gold points, and marking it down for obeying the length instruction double-counts the same behaviour against instruction adherence, which is its own dimension.*
+
 ### 3.2 Extraction
 
 | Dimension | 3 | 0 |
@@ -56,6 +58,8 @@ Each task is scored on 3–4 dimensions. Task score = **unweighted mean of its d
 *Null handling is scored separately because guessing a missing field is a distinct and more dangerous failure than missing a present one — it is silent.*
 
 ***Over-abstention is scored here too, and symmetrically.*** *A model that returns null for everything it finds slightly awkward is not being careful, it is being useless — and it would otherwise score perfectly on a dimension called "null handling". Fabrication scores 0; nulling a determinable value scores 1. The asymmetry is deliberate: inventing a value misleads silently, while over-nulling merely under-delivers, and the rubric should say which it considers worse.*
+
+***Precision scores whether the value is correct, not how it is worded.*** *A semantically equivalent rewording of the correct value scores **3**. A value carrying content the gold does not contain scores **2** — the field is not the requested value and a consumer must edit it — or lower where that content is not in the source at all, which is fabrication. Differences of canonical form (date format, unit, casing, separators) are **normalisation's** business, not precision's, and must not be charged twice.*
 
 ### 3.3 Classification
 
@@ -102,6 +106,16 @@ Some cases cannot be scored on every dimension of their task. An unparseable JSO
 5. **All 20 cases count toward the task score**, adversarial included, and the three adversarial cases are *additionally* reported as their own sub-score. They are not double-counted; the sub-score is a lens on the same data.
 6. Every published task score carries its **`n/a` count**. A model accumulating `n/a` marks through unparseable output is not doing well, and the count is what makes that visible.
 
+### 3.7 Median-of-three — at which level, and how `n/a` interacts
+
+Pinned 2026-08-28, **before any aggregation was computed**. v1.6 restored median-of-three but did not say whether the median is taken over dimension scores or over case scores. `/scoring` cannot guess, and the two give different answers.
+
+1. **The median is taken per dimension, across the three runs.** Dimensions are the unit of measurement and §3.6's aggregation chain begins there, so the median feeds that chain unchanged: median per dimension → case score (mean of applicable dimensions) → task score (mean of case scores).
+2. **`n/a` is not a number and never participates in a median.** For a dimension across three runs: if **two or more runs are `n/a`**, the dimension is `n/a` for that case. Otherwise take the median of the numeric runs only, and record how many runs contributed.
+3. **Report the spread, don't discard it.** For every dimension, record the min–max across the three runs alongside the median. Median-of-three exists to blunt nondeterminism; the spread is what tells a reader how much nondeterminism there was, and with all three runs judged it is now measurable on every case rather than a subsample. Publish per-task median spread beside every task score.
+
+*Rule 3 recovers the one thing the withdrawn v1.5 amendment was going to give us. Median-of-three alone hides variance; median plus published spread reports it.*
+
 *Rule 6 exists because `n/a` is the one mechanism here that could quietly flatter a bad model — excluding a dimension raises the mean. Publishing the count is what keeps the exclusion honest.*
 
 ---
@@ -118,8 +132,21 @@ The adversarial slice is where free tiers actually separate, and it is reported 
 
 Each case carries: input, task instruction, **gold reference** (expected output or acceptable-answer criteria), difficulty tier, and the failure it is designed to probe. Cases and golds are published with the index.
 
-**Fixed conditions across all models:** identical prompts (no per-model prompt tuning — that measures my prompt engineering, not the model), temperature 0 where supported, same system prompt, same context, three runs per case with the median score taken to blunt nondeterminism.
+**Fixed conditions across all models:** identical prompts (no per-model prompt tuning — that measures my prompt engineering, not the model), temperature 0 where supported, same system prompt, same context, three runs per case. **Judging scope amended 2026-08-28, before the production judge pass — see §4b.**
 
+### 4b. Judged scope — amended 2026-08-28, then REVERTED the same day, both pre-production-run
+
+**Current rule: median-of-three stands as originally specified. The judge scores all three runs — 1,200 responses.**
+
+*Amendment (2026-08-28, morning):* judging was to be limited to `run_index = 1` (400 responses) with a 10% three-run subsample for variance, on the stated ground that 1,200 responses were "not executable within available free-tier throughput." That figure came from a CPU-only local judge at ~6 minutes per response — roughly 120 hours.
+
+*Reverted (2026-08-28, same day, before any production judging beyond a 20-row timed cluster):* the hosted judge measured **4.4 seconds per response** — an 80× difference. A 1,200-response pass is approximately **90 minutes plus retry overhead**, not 120 hours. **The premise of the amendment was false, so the amendment goes.**
+
+Retaining a scope reduction whose stated justification has been falsified by my own measurement would be indefensible under challenge — the honest position is that the constraint was real when measured against one judge and disappeared when the judge changed. Amendments are reverted when their premise fails, not kept because they are convenient.
+
+**Consequence, and it is an improvement:** median-of-three is restored *and* run-to-run variance becomes measurable across every case rather than a 10% subsample. Both the original guarantee and the better diagnostic, for about two hours of wall clock.
+
+*Residual risk, disclosed:* no daily cap has been observed in ~60 calls, but the cap is genuinely unverified above that. The pass is resumable and append-only, so a cap costs a resumption, not a re-run.
 ---
 
 ## 5. Judging protocol
@@ -132,6 +159,27 @@ Each case carries: input, task instruction, **gold reference** (expected output 
    - κ ≥ 0.6 → judge scores stand for the remaining 80%.
    - κ < 0.6 → the judge is not trusted for that task. Either the rubric anchors are sharpened and the whole set re-judged, or that task is scored entirely by hand. Which path was taken is reported.
 4. **Disagreement audit.** Every case where judge and human differ by ≥2 points is inspected and written up. These are the most informative cases in the whole benchmark and go into the methodology writeup.
+
+### Reading κ when the human marginal is concentrated — pre-registered 2026-08-19, before any judge run
+
+The human calibration scores came in at **89% 3s**. Quadratic-weighted κ is chance-corrected, so when one rater's marginal distribution is that concentrated, expected agreement converges on observed agreement and κ becomes small and unstable — the judge could match on nearly every item and still land under 0.6. This is the well-documented kappa paradox, not a property of the judge.
+
+The response is fixed **now, before any judge output exists**, because deciding how to read a disappointing κ after seeing it is the post-hoc shaping this rubric's freeze discipline exists to prevent.
+
+**Always reported together, never κ alone:** the full confusion matrix, both raters' marginal distributions, exact raw agreement, the count of ≥2-point disagreements, and **Gwet's AC1** (which is stable under skewed marginals where κ is not).
+
+**Decision rule:**
+
+| Condition | Reading | Action |
+| :---- | :---- | :---- |
+| κ ≥ 0.6 | Judge agrees | Proceed to the full set |
+| κ < 0.6, **and** AC1 ≥ 0.6, **and** zero ≥2-point disagreements, **and** disagreements not concentrated in one task or dimension | Prevalence artifact, not judge failure | Extend the calibration set with **10 additional hard/adversarial items** and recompute. Do **not** lower the threshold |
+| κ < 0.6 and AC1 < 0.6 | Real disagreement | Sharpen anchors, re-judge, per §5 |
+| Any ≥2-point disagreement | Real disagreement regardless of κ | Audit and write up before proceeding |
+
+**The threshold never moves.** The only sanctioned remedy for a prevalence artifact is *more discriminating data* — hard and adversarial items where scores should legitimately vary — because that attacks the cause. Lowering the gate would attack the evidence.
+
+**Root cause, stated for publication:** a calibration sample stratified by task, tier and model is not necessarily stratified by *judgment difficulty*. Items where competent raters would plausibly differ are what make an agreement statistic informative, and they were not deliberately over-sampled. This belongs in Known Limitations regardless of the κ result.
 
 ### Judge independence — the conflict of interest, stated plainly
 
@@ -193,5 +241,10 @@ Stated up front rather than waiting to be found:
 | Version | Date | Change | Reason |
 | :---- | :---- | :---- | :---- |
 | 1.0 | 2026-08-10 | Initial freeze, pre-run | — |
+| 1.7 | 2026-08-28 | **Added §3.7** — median-of-three is taken **per dimension** across runs, `n/a` never enters a median (2+ `n/a` runs ⇒ dimension is `n/a`), and min–max spread is recorded and published beside every median. | v1.6 restored median-of-three without specifying the level at which it applies; dimension-level and case-level medians give different answers and `/scoring` cannot guess. Pinned **before any aggregation was computed**, so no score influenced the choice. |
+| 1.6 | 2026-08-28 | **Reverted v1.5's §4b scope reduction.** Median-of-three restored; the judge scores all 1,200 responses. | v1.5 cut judged scope on the ground that 1,200 responses were not executable. A timed cluster on the hosted judge measured 4.4s/response against the 6min/response local figure the estimate was built on — ~90 minutes, not ~120 hours. The premise was false, so the amendment was withdrawn rather than kept. Reverted the same day, before any production judging beyond a 20-row cluster; those 20 rows are `run_index = 1` and belong to the full manifest either way, so nothing is wasted or re-run. |
+| 1.5 | 2026-08-28 | **Added §4b — judged scope.** Judge scores `run_index = 1` only (400 responses); run-to-run variance measured on a 10% three-run subsample rather than by median-of-three across the whole set. Benchmark execution is unchanged; this is a judging-scope change. | Judging 1,200 responses is not executable within available free-tier throughput. Amended after the κ gate cleared (0.650) but **before the production pass began**, so no judged production result influenced it, and the calibration set — judged on `run_index = 1` throughout — is unaffected. |
+| 1.4 | 2026-08-20 | **Two anchors added, both to dimensions that were under-specified where they touch a neighbouring dimension.** §3.1 **Coverage** — judged by significance and against the permitted length, never by counting gold points: missing the probed point caps coverage at 1; if the probed point lands, 3 where omissions were forced by the length instruction and 2 where the summary had room. §3.2 **Precision** — scores whether the value is correct, not how it is worded: equivalent rewording 3, value carrying content absent from the gold 2, content absent from the source lower; canonical-form differences belong to normalisation and are not charged twice. | Both gaps surfaced as cross-item inconsistencies during blind human calibration on 2026-08-20 (flags F1 and F2 in `human_scores.json`) and are recorded there with the resolving rule. **Stated plainly, because it matters to how this should be read: the rules were articulated from the scoring intuitions the calibration exposed, not derived in advance — the human judgments are the data, and the rules are what makes them reproducible by a judge.** Both anchors reproduce the scores already recorded, so **no calibration item was re-scored**; had either rule required a revision, the affected items would have been re-scored before the model map was unsealed, since a score revised after seeing model identity is no longer blind. Amended **before any judge output existed**. The judge prompt must carry both anchors verbatim — an anchor the human applies that the judge cannot see manufactures disagreement that reads as judge error. |
+| 1.3 | 2026-08-19 | **Added §5 subsection on reading κ under a concentrated marginal.** Requires confusion matrix, both marginals, raw agreement, ≥2-point disagreement count and Gwet's AC1 alongside κ; fixes a four-way decision rule; sanctions extending the calibration set with hard/adversarial items as the only remedy for a prevalence artifact. Threshold unchanged at 0.6. | Human calibration returned 89% 3s. Under that skew κ is unstable and can read low despite near-total agreement — a known property of the statistic, not of the judge. Amended **before any judge output existed**, so no result influenced the rule; deciding this after seeing a low κ would have been indistinguishable from rescuing a failed gate. |
 | 1.2 | 2026-08-11 | **Added §3.6** — not-applicable dimensions and the aggregation rule: `n/a` excluded from the denominator rather than scored zero, case score = mean of applicable dimensions, task score = mean of case scores, all 20 cases counted with adversarial additionally broken out, and `n/a` count published alongside every score. | v1.0 defined how dimensions combine into a case score but never how case scores combine into a task score — `/scoring` could not be built from it unambiguously. The `n/a` concept already existed implicitly (§3.5 leaves content dimensions unscored on unparseable output) but had no aggregation rule, and classification case `cls-a02` made a second instance explicit. Amended **pre-run**; no results affected. |
 | 1.1 | 2026-08-11 | **Over-abstention made an explicit failure** on two dimensions: Extraction §3.2 null handling (nulling a determinable field scores 1) and RAG Q&A §3.4 abstention (refusing an answerable question scores 0). Added the requirement that unanswerable cases be paired with superficially similar answerable ones. | Gap surfaced while authoring extraction cases: v1.0 anchored both dimensions only on the fabrication side, so a model that returned null or "I don't know" universally would have scored full marks on them. Amended **pre-run**, with no results affected — the freeze exists to prevent post-hoc tuning to observed results, not to prevent fixing a defect before any data exists. Had this surfaced after the run, the correct action would have been re-scoring, not amendment. |
