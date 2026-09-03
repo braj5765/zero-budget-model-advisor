@@ -1,0 +1,190 @@
+{
+  "seed": 20260820,
+  "source_run": "03-results/run-2026-08-15T114622Z.jsonl",
+  "warning": "SEALED. Do not open until human_scores.json is complete.",
+  "unsealed_at": "2026-08-28",
+  "unsealing_is_one_way": true,
+  "provenance_note": "This file's contents were read (by the assistant orchestrating this session, not by the human scorer) in the same batch as sample.json and human_scores.json, before the cal-06/null_handling PENDING flag was resolved with the user. The human scorer (Braj) did not see any model identity before answering the cal-06 question, so the blind human score is not compromised. The assistant's own read of the map happened one step earlier than the process intends; disclosed here rather than left for a reader to notice, per this project's own disclosure norm (see rubric v1.4 changelog and human_scores.json.provenance_disclosure).",
+  "map": [
+    {
+      "item_id": "cal-01",
+      "case_id": "cls-t08",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "d9412b09-5dec-4d85-89c3-281cee1407ec",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-02",
+      "case_id": "rag-t03",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "b3646f53-855d-494e-bbb2-0a81c1b6743b",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-03",
+      "case_id": "rag-a01",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "49397cde-e54f-48c4-b1ec-efb6cb091361",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-04",
+      "case_id": "jsn-t01",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "0d44d62b-24b9-493b-b16f-877cf4e8e6a0",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-05",
+      "case_id": "cls-h01",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "769d5039-787d-4d1d-8042-1fe1b4494868",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-06",
+      "case_id": "ext-a03",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "4777fc19-68d5-4e5c-ad2d-c1291aeb1d70",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-07",
+      "case_id": "rag-h05",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "902177c3-dd36-4f4a-8bee-a16c8645eeae",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-08",
+      "case_id": "cls-t06",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "cb5bba33-06aa-41ae-b4e0-fd65a80cb0bf",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-09",
+      "case_id": "sum-t10",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "23d6d1dc-09e6-4b57-93e3-db2c9e2c3da8",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-10",
+      "case_id": "sum-t09",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "33eac27a-b861-4bb9-82f9-720f9fa3ba80",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-11",
+      "case_id": "ext-t04",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "481abfba-6bb2-44ef-8603-32f9947d10e3",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-12",
+      "case_id": "jsn-t03",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "3e93dc61-5487-451a-ba84-603b51949e59",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-13",
+      "case_id": "rag-t04",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "43df153e-cbf8-49f9-8102-45e4071a1b25",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-14",
+      "case_id": "sum-a01",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "108c309b-1725-4fbd-aafe-e1da79c3c5ae",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-15",
+      "case_id": "jsn-t07",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "94bd1ef2-ac98-4d89-a206-4ecd5cd6863c",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-16",
+      "case_id": "ext-h03",
+      "model_id": "ollama-llama3.2-3b",
+      "provider": "ollama",
+      "model_version": "llama3.2:3b",
+      "call_id": "c0c021bc-2aa7-45d2-86b8-5e082d159fd0",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-17",
+      "case_id": "sum-h03",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "5d15c6ab-c27c-4f2b-b3ea-9d7f9872622e",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-18",
+      "case_id": "cls-t07",
+      "model_id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model_version": "llama-3.3-70b-versatile",
+      "call_id": "b69f6b03-a2f9-4b30-8f97-85d199ea3bd9",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-19",
+      "case_id": "jsn-h03",
+      "model_id": "gemini-3.5-flash-lite",
+      "provider": "gemini",
+      "model_version": "gemini-3.5-flash-lite",
+      "call_id": "192cf5ad-beb8-4c28-b28c-4107e31c75b4",
+      "run_index": 1
+    },
+    {
+      "item_id": "cal-20",
+      "case_id": "ext-t09",
+      "model_id": "mistral-small-2603",
+      "provider": "mistral",
+      "model_version": "mistral-small-2603",
+      "call_id": "70a9d387-3e0a-458b-a631-831305a174fc",
+      "run_index": 1
+    }
+  ]
+}

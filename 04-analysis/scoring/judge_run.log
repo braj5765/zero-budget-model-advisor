@@ -1,0 +1,31 @@
+cal-01 (cls-t08): {'label_correctness': 1, 'label_validity': 0, 'ambiguity_handling': 2}
+cal-02 (rag-t03): {'groundedness': 3, 'answer_correctness': 3, 'abstention': 0, 'citation_accuracy': 3}
+cal-03 (rag-a01): {'groundedness': 1, 'answer_correctness': 0, 'abstention': 0, 'citation_accuracy': 0}
+cal-04 (jsn-t01): {'parseability': 3, 'schema_conformance': 3, 'constraint_conformance': 3, 'content_correctness': 3}
+cal-05 (cls-h01): {'label_correctness': 3, 'label_validity': 3, 'ambiguity_handling': 3}
+cal-06 (ext-a03): {'precision': 3, 'recall': 3, 'normalisation': 3, 'null_handling': 3}
+cal-07 (rag-h05): {'groundedness': 3, 'answer_correctness': 3, 'abstention': 0, 'citation_accuracy': 3}
+cal-08 (cls-t06): {'label_correctness': 3, 'label_validity': 3, 'ambiguity_handling': 3}
+cal-01 (cls-t08): {'label_correctness': 1, 'label_validity': 0, 'ambiguity_handling': 2}
+cal-02 (rag-t03): {'groundedness': 3, 'answer_correctness': 3, 'abstention': 0, 'citation_accuracy': 3}
+cal-03 (rag-a01): {'groundedness': 1, 'answer_correctness': 0, 'abstention': 0, 'citation_accuracy': 0}
+cal-04 (jsn-t01): {'parseability': 3, 'schema_conformance': 3, 'constraint_conformance': 3, 'content_correctness': 3}
+cal-05 (cls-h01): {'label_correctness': 3, 'label_validity': 3, 'ambiguity_handling': 3}
+cal-06 (ext-a03): {'precision': 3, 'recall': 3, 'normalisation': 3, 'null_handling': 3}
+cal-07 (rag-h05): {'groundedness': 3, 'answer_correctness': 3, 'abstention': 0, 'citation_accuracy': 3}
+cal-08 (cls-t06): {'label_correctness': 3, 'label_validity': 3, 'ambiguity_handling': 3}
+cal-09 (sum-t10): {'faithfulness': 3, 'coverage': 3, 'concision': 3, 'instruction_adherence': 3}
+resuming: 9 items already judged, skipping them
+cal-10 (sum-t09): {'faithfulness': 2, 'coverage': 3, 'concision': 3, 'instruction_adherence': 1}
+cal-11 (ext-t04): {'precision': 3, 'recall': 3, 'normalisation': 3, 'null_handling': 3}
+cal-12 (jsn-t03): {'parseability': 3, 'schema_conformance': 3, 'constraint_conformance': 3, 'content_correctness': 3}
+cal-13 (rag-t04): {'groundedness': 3, 'answer_correctness': 3, 'abstention': 0, 'citation_accuracy': 3}
+cal-14 (sum-a01): {'faithfulness': 2, 'coverage': 3, 'concision': 3, 'instruction_adherence': 3}
+cal-15 (jsn-t07): {'parseability': 3, 'schema_conformance': 3, 'constraint_conformance': 3, 'content_correctness': 3}
+cal-16 (ext-h03): {'precision': 3, 'recall': 3, 'normalisation': 3, 'null_handling': 3}
+cal-17 (sum-h03): {'faithfulness': 3, 'coverage': 3, 'concision': 3, 'instruction_adherence': 3}
+cal-18 (cls-t07): {'label_correctness': 3, 'label_validity': 3, 'ambiguity_handling': 3}
+cal-19 (jsn-h03): {'parseability': 3, 'schema_conformance': 3, 'constraint_conformance': 3, 'content_correctness': 3}
+cal-20 (ext-t09): {'precision': 3, 'recall': 3, 'normalisation': 3, 'null_handling': 3}
+
+Wrote 20 judged items to judge_scores.json

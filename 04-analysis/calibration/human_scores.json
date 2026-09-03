@@ -1,0 +1,340 @@
+{
+  "schema_version": "1.0",
+  "rubric_version": "1.4",
+  "scorer": "Braj (human, blind)",
+  "started": "2026-08-20",
+  "completed": "2026-08-20",
+  "protocol": "Blind hand-scoring from Scoring-Rubric.md v1.2 only. Model identity withheld until scoring complete (sealed_model_map.json). Scale 0-3 per rubric S2. 'n/a' per S3.6 rule 1 only where case design makes a dimension unscoreable.",
+  "sample": "04-analysis/calibration/sample.json",
+  "seed": 20260820,
+  "scores": [
+    {
+      "item_id": "cal-01",
+      "case_id": "cls-t08",
+      "task": "classification",
+      "difficulty": "typical",
+      "dimensions": {
+        "label_correctness": 0,
+        "label_validity": 3,
+        "ambiguity_handling": 1
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-02",
+      "case_id": "rag-t03",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "dimensions": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention": 3,
+        "citation_accuracy": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-03",
+      "case_id": "rag-a01",
+      "task": "rag-qa",
+      "difficulty": "adversarial",
+      "dimensions": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention": 3,
+        "citation_accuracy": 0
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-04",
+      "case_id": "jsn-t01",
+      "task": "json-output",
+      "difficulty": "typical",
+      "dimensions": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "enum_constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-05",
+      "case_id": "cls-h01",
+      "task": "classification",
+      "difficulty": "hard",
+      "dimensions": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-06",
+      "case_id": "ext-a03",
+      "task": "extraction",
+      "difficulty": "adversarial",
+      "dimensions": {
+        "precision": 2,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "na_reasons": {},
+      "note": "RESOLVED 2026-08-28, before unsealing: scorer initially proposed n/a for null_handling; ext-a03 gold.notes does not declare any dimension n/a, so rubric S3.6 rule 1 does not permit it. The 3 already recorded is the real blind determination (no null-handling failure present: no absent fields to fabricate, no determinable field wrongly nulled) — the placeholder note text was left uncleared, not the score.",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-07",
+      "case_id": "rag-h05",
+      "task": "rag-qa",
+      "difficulty": "hard",
+      "dimensions": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention": 3,
+        "citation_accuracy": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-08",
+      "case_id": "cls-t06",
+      "task": "classification",
+      "difficulty": "typical",
+      "dimensions": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-09",
+      "case_id": "sum-t10",
+      "task": "summarization",
+      "difficulty": "typical",
+      "dimensions": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 2,
+        "instruction_adherence": 2
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-10",
+      "case_id": "sum-t09",
+      "task": "summarization",
+      "difficulty": "typical",
+      "dimensions": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-11",
+      "case_id": "ext-t04",
+      "task": "extraction",
+      "difficulty": "typical",
+      "dimensions": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-12",
+      "case_id": "jsn-t03",
+      "task": "json-output",
+      "difficulty": "typical",
+      "dimensions": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "enum_constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-13",
+      "case_id": "rag-t04",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "dimensions": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention": 3,
+        "citation_accuracy": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-14",
+      "case_id": "sum-a01",
+      "task": "summarization",
+      "difficulty": "adversarial",
+      "dimensions": {
+        "faithfulness": 3,
+        "coverage": 1,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-15",
+      "case_id": "jsn-t07",
+      "task": "json-output",
+      "difficulty": "typical",
+      "dimensions": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "enum_constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-16",
+      "case_id": "ext-h03",
+      "task": "extraction",
+      "difficulty": "hard",
+      "dimensions": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 1,
+        "null_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-17",
+      "case_id": "sum-h03",
+      "task": "summarization",
+      "difficulty": "hard",
+      "dimensions": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-18",
+      "case_id": "cls-t07",
+      "task": "classification",
+      "difficulty": "typical",
+      "dimensions": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-19",
+      "case_id": "jsn-h03",
+      "task": "json-output",
+      "difficulty": "hard",
+      "dimensions": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "enum_constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    },
+    {
+      "item_id": "cal-20",
+      "case_id": "ext-t09",
+      "task": "extraction",
+      "difficulty": "typical",
+      "dimensions": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "na_reasons": {},
+      "note": "",
+      "scored_at": "2026-08-20"
+    }
+  ],
+  "open_consistency_flags": [
+    {
+      "id": "F1",
+      "dimension": "extraction.precision",
+      "items": [
+        "cal-06",
+        "cal-11"
+      ],
+      "issue": "cal-06 scored 2 where extracted values carried content the gold does not contain (job titles appended to ordered_by/received_by); cal-11 scored 3 where the value differed from gold only by a connector word (location).",
+      "resolution": "Precision scores whether the value is correct, not how it is worded. A semantically equivalent rewording of the correct value scores 3. A value carrying content the gold does not contain scores 2 — the field is not the requested value and a consumer must edit it — or lower where that content is not in the source at all, which is fabrication. Differences of canonical form (date format, unit, casing, separators) are normalisation's business, not precision's, and must not be charged twice.",
+      "effect_on_recorded_scores": "None. Rule yields cal-06 = 2 and cal-11 = 3, matching what was recorded blind.",
+      "written_to": "Scoring-Rubric.md §3.2 (v1.4)",
+      "status": "resolved 2026-08-20, before unsealing"
+    },
+    {
+      "id": "F2",
+      "dimension": "summarization.coverage",
+      "items": [
+        "cal-09",
+        "cal-14",
+        "cal-17"
+      ],
+      "issue": "cal-09 (3 of 5 gold points landed) and cal-17 (3 of 5) both scored 3, while cal-14 — which dropped the fewest gold points of the three — scored 1. Point-counting cannot reconcile them.",
+      "resolution": "Coverage is judged by significance and against the length the instruction permits, never by counting gold points. If the point the case was designed to probe (its `probes` field, or the point named in `gold.notes`) is missed, coverage caps at 1 however many other points landed. If the probed point lands, coverage is 3 where the omitted points are ones the requested length could not accommodate, and 2 where the summary had room and still dropped a substantive point. The length clause prevents double-counting the same behaviour against instruction adherence, which is its own dimension.",
+      "effect_on_recorded_scores": "None. Rule yields cal-14 = 1 and cal-09 = cal-17 = 3, matching what was recorded blind.",
+      "written_to": "Scoring-Rubric.md §3.1 (v1.4)",
+      "status": "resolved 2026-08-20, before unsealing"
+    }
+  ],
+  "rubric_version_note": "Scoring was performed 2026-08-20 under v1.2. v1.3 (kappa reporting, no scoring effect) and v1.4 (the two anchors below) were both amended after scoring and before any judge output existed. Both v1.4 anchors reproduce the scores already recorded: NO calibration item was re-scored, and the model map remained sealed throughout. Recorded as 1.4 because 1.4 is the version the judge must be run against.",
+  "provenance_disclosure": "Both v1.4 anchors were articulated from the scoring intuitions this calibration exposed, not derived in advance. That is legitimate anchor refinement — the human judgments are the data and the anchors are what makes them reproducible by a judge — but it is disclosed here and in the rubric changelog rather than left for a reader to notice that the rules fit the scores exactly.",
+  "judge_prompt_requirement": "Both anchors must appear verbatim in the judge prompt. An anchor the human applies that the judge cannot see manufactures disagreement that reads as judge error."
+}

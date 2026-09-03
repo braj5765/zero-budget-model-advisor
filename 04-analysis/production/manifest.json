@@ -1,0 +1,2017 @@
+{
+  "schema_version": "1.1",
+  "purpose": "Production judge pass work-list (rubric v1.6 S4b -- median-of-three restored, JUDGE-RUN-PLAN.md S2)",
+  "generated": "2026-08-28",
+  "superseded": "v1.0 manifest (400 @ run_index=1 + 40-pair 10% variance subsample, 480 rows) drawn under rubric v1.5 S4b, reverted same day once the hosted judge measured 4.4s/row -- see Scoring-Rubric.md S4b and JUDGE-RUN-PLAN.md S4b.",
+  "eligibility": "status=='success' and provider!='openrouter' and run_index in (1,2,3)",
+  "eligible_pairs": [
+    {
+      "case_id": "cls-a01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a01",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a02",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a03",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-a03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h01",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h02",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h03",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h04",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h05",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-h05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t01",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t02",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t03",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t04",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t05",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t06",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t06",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t06",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t06",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t07",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t07",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t07",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t07",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t08",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t08",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t08",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t08",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t09",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t09",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t09",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t09",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t10",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t10",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t10",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t10",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t11",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t11",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t11",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t11",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t12",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t12",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t12",
+      "model_id": "mistral-small-2603",
+      "task": "classification"
+    },
+    {
+      "case_id": "cls-t12",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "classification"
+    },
+    {
+      "case_id": "ext-a01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a01",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a02",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a03",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-a03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h01",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h02",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h03",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h04",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h05",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-h05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t01",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t02",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t03",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t04",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t05",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t06",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t06",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t06",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t06",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t07",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t07",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t07",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t07",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t08",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t08",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t08",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t08",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t09",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t09",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t09",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t09",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t10",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t10",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t10",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t10",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t11",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t11",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t11",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t11",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t12",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t12",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t12",
+      "model_id": "mistral-small-2603",
+      "task": "extraction"
+    },
+    {
+      "case_id": "ext-t12",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "extraction"
+    },
+    {
+      "case_id": "jsn-a01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a01",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a02",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a03",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-a03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h01",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h02",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h03",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h04",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h05",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-h05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t01",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t02",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t03",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t04",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t05",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t06",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t06",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t06",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t06",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t07",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t07",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t07",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t07",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t08",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t08",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t08",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t08",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t09",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t09",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t09",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t09",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t10",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t10",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t10",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t10",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t11",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t11",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t11",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t11",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t12",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t12",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t12",
+      "model_id": "mistral-small-2603",
+      "task": "json-output"
+    },
+    {
+      "case_id": "jsn-t12",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "json-output"
+    },
+    {
+      "case_id": "rag-a01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a01",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a02",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a03",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-a03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h01",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h02",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h03",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h04",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h05",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-h05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t01",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t02",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t03",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t04",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t05",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t06",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t06",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t06",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t06",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t07",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t07",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t07",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t07",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t08",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t08",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t08",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t08",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t09",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t09",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t09",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t09",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t10",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t10",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t10",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t10",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t11",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t11",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t11",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t11",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t12",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t12",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t12",
+      "model_id": "mistral-small-2603",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "rag-t12",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "rag-qa"
+    },
+    {
+      "case_id": "sum-a01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a01",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a02",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a03",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-a03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h01",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h02",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h03",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h04",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h05",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-h05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t01",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t01",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t01",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t01",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t02",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t02",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t02",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t02",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t03",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t03",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t03",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t03",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t04",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t04",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t04",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t04",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t05",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t05",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t05",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t05",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t06",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t06",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t06",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t06",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t07",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t07",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t07",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t07",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t08",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t08",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t08",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t08",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t09",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t09",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t09",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t09",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t10",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t10",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t10",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t10",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t11",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t11",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t11",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t11",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t12",
+      "model_id": "gemini-3.5-flash-lite",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t12",
+      "model_id": "groq-llama-3.3-70b",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t12",
+      "model_id": "mistral-small-2603",
+      "task": "summarization"
+    },
+    {
+      "case_id": "sum-t12",
+      "model_id": "ollama-llama3.2-3b",
+      "task": "summarization"
+    }
+  ],
+  "n_eligible_pairs": 400,
+  "run_indices": [
+    1,
+    2,
+    3
+  ],
+  "work_list_note": "Full work list = eligible_pairs (400) x run_indices (3) = 1200 distinct (case_id, model_id, run_index) rows. The 20 rows already judged under the v1.0 manifest (all run_index=1) are a subset of this list and stay in the same output file, per JUDGE-RUN-PLAN S4: no prompt/rubric change mid-pass means no restart, and they were judged under v1.5/rubric-1.5 identity, which is accurate and unchanged.",
+  "n_work_list": 1200
+}

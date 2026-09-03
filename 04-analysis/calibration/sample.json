@@ -1,0 +1,188 @@
+{
+  "sample_version": "1.0",
+  "drawn": "2026-08-20",
+  "purpose": "Human calibration set for the kappa gate (rubric S5, PROJECT-STATE S4b.5)",
+  "seed": 20260820,
+  "rng": "python random.Random(seed), stdlib Mersenne Twister",
+  "source_run": "03-results/run-2026-08-15T114622Z.jsonl",
+  "run_index_fixed": 1,
+  "eligibility": "status=='success' and provider!='openrouter' and run_index==1",
+  "stratification": {
+    "cells": "one item per (task x model) cell = 5 tasks x 4 scored models = 20",
+    "difficulty_totals": {
+      "typical": 12,
+      "hard": 5,
+      "adversarial": 3
+    },
+    "row_rule": "each task contributes exactly 1 hard; 3 of 5 tasks contribute 1 adversarial",
+    "col_rule": "each model contributes exactly 3 typical and 2 non-typical",
+    "adversarial_tasks": [
+      "extraction",
+      "rag-qa",
+      "summarization"
+    ]
+  },
+  "blinding": "model_id, provider, model_version and call_id are withheld here; the mapping lives in sealed_model_map.json",
+  "items": [
+    {
+      "item_id": "cal-01",
+      "case_id": "cls-t08",
+      "task": "classification",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "88fd2e33faa16be09183b0a25ce4045b4d753f14d9625eb36b817bf779143ae9"
+    },
+    {
+      "item_id": "cal-02",
+      "case_id": "rag-t03",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "116bc2656541245f9ab14309753885de26635d9490b5ca0a3560319b1d4d05e3"
+    },
+    {
+      "item_id": "cal-03",
+      "case_id": "rag-a01",
+      "task": "rag-qa",
+      "difficulty": "adversarial",
+      "run_index": 1,
+      "response_sha256": "d5d3da0043e86818096ad22d52d406abf7d3bb068647eccea72570de6324dea5"
+    },
+    {
+      "item_id": "cal-04",
+      "case_id": "jsn-t01",
+      "task": "json-output",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "8be53e216f91a7184fe46232b4d4c638b2937ffae06fb3dbc2199177a98c1ac8"
+    },
+    {
+      "item_id": "cal-05",
+      "case_id": "cls-h01",
+      "task": "classification",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "a3e1386bbabf13ff1979c94271d2cde04e7121da0dd4715a1708d524e2ad1d08"
+    },
+    {
+      "item_id": "cal-06",
+      "case_id": "ext-a03",
+      "task": "extraction",
+      "difficulty": "adversarial",
+      "run_index": 1,
+      "response_sha256": "e0a1a58cd8f8f32c59987c6b94badcc43572de6f44f84762615cb783c8a34e19"
+    },
+    {
+      "item_id": "cal-07",
+      "case_id": "rag-h05",
+      "task": "rag-qa",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "78fdef10b5f996129236fa1cd9ccac2dea7be2f1fe7c339c818f5c05626bd295"
+    },
+    {
+      "item_id": "cal-08",
+      "case_id": "cls-t06",
+      "task": "classification",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "e851504f43bf3c8211004193e5de258134159ac0c863cd002e58828725a8d112"
+    },
+    {
+      "item_id": "cal-09",
+      "case_id": "sum-t10",
+      "task": "summarization",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "c87a8d4109fafbfb7242a978ca89a71fd70e9f2790571e8f0ef48a46f9a86a97"
+    },
+    {
+      "item_id": "cal-10",
+      "case_id": "sum-t09",
+      "task": "summarization",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "3ba9e8bf2adafb0feac34db8f545f41a7258e59c1abc0740b1c0e36fd7758f80"
+    },
+    {
+      "item_id": "cal-11",
+      "case_id": "ext-t04",
+      "task": "extraction",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "cd7a24498c1118009b03642e21882499e8aa3dab59f3b6fec33183e2bd774800"
+    },
+    {
+      "item_id": "cal-12",
+      "case_id": "jsn-t03",
+      "task": "json-output",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "d783136e33d41263fc7320ba428be441ce02fe2ed81db17353ee2458d0ae36a4"
+    },
+    {
+      "item_id": "cal-13",
+      "case_id": "rag-t04",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "1471dabbd54e76c30b32c3b6989b6eb3bf0f7dd08506c0bb47eca921327db6f8"
+    },
+    {
+      "item_id": "cal-14",
+      "case_id": "sum-a01",
+      "task": "summarization",
+      "difficulty": "adversarial",
+      "run_index": 1,
+      "response_sha256": "042e9af902182596e6f1fe0b2907a9eef40ca28d9b0662cb5ee2815196697be3"
+    },
+    {
+      "item_id": "cal-15",
+      "case_id": "jsn-t07",
+      "task": "json-output",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "140a7ef70fd3c641128958fce4f59d477c7b72a7a87ec645ed52c7b8e3fa524d"
+    },
+    {
+      "item_id": "cal-16",
+      "case_id": "ext-h03",
+      "task": "extraction",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "af125a37b8f4612eacb511fa8b73ffe2dda850ecca35bf4c13bea3e85ece0eea"
+    },
+    {
+      "item_id": "cal-17",
+      "case_id": "sum-h03",
+      "task": "summarization",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "5eb94a0ffb7fae03f38769048919757f50a6d3200314695090d7914ccb6812fc"
+    },
+    {
+      "item_id": "cal-18",
+      "case_id": "cls-t07",
+      "task": "classification",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "260a29131e7cbb88fa65878a1c4a54f2d0bd860aa4e00ff78aefc76ddd022cfb"
+    },
+    {
+      "item_id": "cal-19",
+      "case_id": "jsn-h03",
+      "task": "json-output",
+      "difficulty": "hard",
+      "run_index": 1,
+      "response_sha256": "30f7c5b13069f7ea6aefa47a40acf6754fee79a2ee004c2da65fa1279d3d4945"
+    },
+    {
+      "item_id": "cal-20",
+      "case_id": "ext-t09",
+      "task": "extraction",
+      "difficulty": "typical",
+      "run_index": 1,
+      "response_sha256": "ec6b6e2c16d21d51eff6ee9d2a5a837d17c7371e71a23af310086de45ed0cb4c"
+    }
+  ]
+}

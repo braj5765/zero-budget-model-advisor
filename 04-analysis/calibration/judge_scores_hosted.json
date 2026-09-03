@@ -1,0 +1,524 @@
+{
+  "schema_version": "1.0",
+  "judge_model": "minimax/minimax-m3:free",
+  "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+  "judge_provider": "GMICloud",
+  "judge_prompt_version": "1.2",
+  "rubric_version": "1.4",
+  "judged_at": "2026-08-28",
+  "sample": "04-analysis/calibration/sample.json",
+  "scores": [
+    {
+      "item_id": "cal-01",
+      "case_id": "cls-t08",
+      "task": "classification",
+      "difficulty": "typical",
+      "scores": {
+        "label_correctness": 0,
+        "label_validity": 3,
+        "ambiguity_handling": 0
+      },
+      "justifications": {
+        "label_correctness": "The first line is 'Cancel Subscription' but the gold label is 'Report Bug', so the label is wrong.",
+        "label_validity": "'Cancel Subscription' is a member of the permitted label set, so the label is valid.",
+        "ambiguity_handling": "The scoring notes state the message is unambiguous, yet the model added a 'Note:' line flagging it as ambiguous between labels, using the uncertainty channel where no genuine ambiguity exists."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-02",
+      "case_id": "rag-t03",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": 3,
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "The only assertion made (RX-2C is approved for the cold storage hall) is directly supported by P1.",
+        "answer_correctness": "The response correctly identifies the RX-2C, matching the gold answer and required must_include term.",
+        "abstention_calibration": "This is an ANSWERABLE case and the response gives the correct answer rather than abstaining.",
+        "citation_accuracy": "The response cites P1, which is the passage that actually supports the claim."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-03",
+      "case_id": "rag-a01",
+      "task": "rag-qa",
+      "difficulty": "adversarial",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": 3,
+        "citation_accuracy": 0
+      },
+      "justifications": {
+        "groundedness": "The response only states INSUFFICIENT CONTEXT and makes no factual assertions beyond the provided context.",
+        "answer_correctness": "The response correctly identifies that the passages do not contain information about when a deactivated account is permanently erased.",
+        "abstention_calibration": "The gold answer is INSUFFICIENT CONTEXT, and the response correctly states INSUFFICIENT CONTEXT, which scores 3.",
+        "citation_accuracy": "The response cites P3 as supporting its answer, but P3 only describes what deactivation does and contains no information about erasure timelines, so it does not support the INSUFFICIENT CONTEXT claim; the correct citation is 'none'."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-04",
+      "case_id": "jsn-t01",
+      "task": "json-output",
+      "difficulty": "typical",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The response is a single bare JSON object with no wrapper prose or fences, parsing cleanly on first attempt.",
+        "schema_conformance": "The object contains exactly the four required keys (name, address, opening_time, closing_time) with correct string types and no extra keys.",
+        "constraint_conformance": "Both time values are valid 24-hour HH:MM strings (07:00 and 16:00), and the non-ASCII \u00e9 in the name is valid UTF-8 JSON.",
+        "content_correctness": "All four values match the source text and the gold reference exactly, including the literal \u00e9 character."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-05",
+      "case_id": "cls-h01",
+      "task": "classification",
+      "difficulty": "hard",
+      "scores": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "justifications": {
+        "label_correctness": "The first line is 'Feature Request', which exactly matches the gold reference label.",
+        "label_validity": "The output 'Feature Request' is a member of the permitted label set {Billing, Technical, Account Access, Feature Request, Other}.",
+        "ambiguity_handling": "The ticket's central unresolved ask is a new export column, and the model correctly identified it as Feature Request without adding an unnecessary 'Note:' line, treating the case cleanly."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-06",
+      "case_id": "ext-a03",
+      "task": "extraction",
+      "difficulty": "adversarial",
+      "scores": {
+        "precision": 2,
+        "recall": 3,
+        "normalisation": 2,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "All fields are correct, but ordered_by and received_by include extra job title information ('Procurement', 'Warehouse Supervisor') not present in the gold's simpler forms, which is a minor extra-content issue.",
+        "recall": "All 14 required fields are present and extracted from the source.",
+        "normalisation": "Dates and currency are correctly canonicalized, but goods_total, delivery_charge, and invoice_total are returned as 8400.00/150.00/8550.00 rather than the plain 8400.0/150.0/8550.0 numbers in the gold, and the address lines include the extra role context.",
+        "null_handling": "No fields are fabricated and no determinable fields are nulled; null_handling is clean."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-07",
+      "case_id": "rag-h05",
+      "task": "rag-qa",
+      "difficulty": "hard",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": 3,
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "Every assertion in the response (fourteen rupees per kilometre, effective from 1 April 2026, applies to journeys after that date) is directly supported by P2.",
+        "answer_correctness": "The response correctly states fourteen rupees per kilometre for a June 2026 journey, matching the gold answer and avoiding the forbidden twelve-rupee answer.",
+        "abstention_calibration": "The case is ANSWERABLE and the response provides the correct answer rather than abstaining.",
+        "citation_accuracy": "The response cites P2, which is the passage that directly supports the claim about the June 2026 rate."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-08",
+      "case_id": "cls-t06",
+      "task": "classification",
+      "difficulty": "typical",
+      "scores": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "justifications": {
+        "label_correctness": "The first line is 'Technical', which matches the gold reference label exactly.",
+        "label_validity": "'Technical' is one of the five permitted labels written exactly as shown.",
+        "ambiguity_handling": "The ticket is straightforward and not ambiguous; correctly picking 'Technical' without an unnecessary 'Note:' line is appropriate."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-09",
+      "case_id": "sum-t10",
+      "task": "summarization",
+      "difficulty": "typical",
+      "scores": {
+        "faithfulness": 1,
+        "coverage": 2,
+        "concision": 1,
+        "instruction_adherence": 1
+      },
+      "justifications": {
+        "faithfulness": "The response omits the median first-response time figure (3.1 to 5.4 hours) and misses attributing the ARPA drop to the entry-plan mix shift, and it fails to mention net growth of 1,170 or the 2,340 signups vs 1,170 churned breakdown, leaving key figures out though the numbers stated are accurate.",
+        "coverage": "It hits active accounts growth, ARPA direction, total revenue, entry plan share, support ticket growth, and renewal rate, but omits the first-response time degradation (a key operational concern) and the specific signups/churn numbers that explain net growth.",
+        "concision": "The response is 4 sentences as requested but includes a wrapping preamble ('Here is a summary...') and the third sentence is a run-on joined by 'and' that crams two separate points together awkwardly, making it feel padded.",
+        "instruction_adherence": "The instruction asked for a 4-sentence summary preserving key figures, and the response does provide 4 sentences, but it drops key figures (first-response time, net growth, signups vs churn) and adds a meta preamble outside the summary itself."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-10",
+      "case_id": "sum-t09",
+      "task": "summarization",
+      "difficulty": "typical",
+      "scores": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "justifications": {
+        "faithfulness": "All claims\u20142.4-second delays for active users, overnight precomputation, up to a day stale, and the rejected alternative hurting quality\u2014are directly traceable to the source without invention.",
+        "coverage": "The response captures all three must-include points: slow for most active users, overnight precomputation tradeoff with up to a day staleness, and the rejected simpler alternative due to quality concerns.",
+        "concision": "The response is four sentences, within the requested 3-4 sentence range, with no padding or unnecessary restatement.",
+        "instruction_adherence": "The response is written for a non-technical business stakeholder, avoids unexplained jargon (no mention of p99, embeddings, or cache size), and maintains an appropriate tone."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-11",
+      "case_id": "ext-t04",
+      "task": "extraction",
+      "difficulty": "typical",
+      "scores": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 2,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "All extracted values match the gold: organiser, date, times, duration, attendees, and location are correct.",
+        "recall": "All fields present in the source were extracted, including the derived duration_minutes of 90.",
+        "normalisation": "The location 'Aldrich room on level 3' differs in canonical form from the gold's 'Aldrich room, level 3' (preposition vs comma), a minor normalisation inconsistency.",
+        "null_handling": "All determinable fields were resolved with correct values and no fields were nulled that shouldn't be, with no fabrication."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-12",
+      "case_id": "jsn-t03",
+      "task": "json-output",
+      "difficulty": "typical",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The response is a single valid JSON object with no wrapper prose or fences, parsing on first attempt.",
+        "schema_conformance": "All required keys are present with correct types and proper nesting under 'customer' (no flattening).",
+        "constraint_conformance": "All values are strings, matching the required types, with no extra or missing keys.",
+        "content_correctness": "All four values match the source: order_id '5512', name 'Hana Vukovic', email 'hana.v@example.net', phone '0400 118 552'."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-13",
+      "case_id": "rag-t04",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": 3,
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "Every assertion in the response is directly supported by P1, with no extraneous facts introduced.",
+        "answer_correctness": "The response correctly states both the five business day deadline and the twenty-four hour telephone deadline for serious deviations, fully matching the gold answer.",
+        "abstention_calibration": "The gold answer is a real answer (ANSWERABLE branch), and the response provides the answer rather than abstaining.",
+        "citation_accuracy": "The response cites P1, which is the exact passage supporting the claims made."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-14",
+      "case_id": "sum-a01",
+      "task": "summarization",
+      "difficulty": "adversarial",
+      "scores": {
+        "faithfulness": 0,
+        "coverage": 3,
+        "concision": 1,
+        "instruction_adherence": 1
+      },
+      "justifications": {
+        "faithfulness": "The closing clause 'two support agents were on leave for the latter half of the month, which may have contributed to the higher ticket volume' speculates on causation that is not in the source, and combined with the coincident event framing strongly implies a causal link the source explicitly does not establish.",
+        "coverage": "All key points from the gold reference are present: the 34% rise (4,100 to 5,494), billing questions doubling (610 to 1,340), the categorisation breakdown including 940 uncategorised, and all four coincident events (pricing page launch, renewals, re-engagement campaign, agents on leave).",
+        "concision": "The response is 4 sentences and somewhat within range, but it pads with specific proration/invoice/payment numbers not required at this length, and the speculative final clause adds unnecessary filler.",
+        "instruction_adherence": "The response generally follows the summarization format and hits the key points, but the speculative causation language ('which may have contributed') violates the implicit requirement to summarize without inventing causal claims not supported by the source."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-15",
+      "case_id": "jsn-t07",
+      "task": "json-output",
+      "difficulty": "typical",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The response is a single valid JSON object with no wrapper prose or fences, parsing on first attempt.",
+        "schema_conformance": "All three required keys (parcel_id, delivered_date, signed_by) are present with correct types and no extra keys.",
+        "constraint_conformance": "delivered_date is a valid ISO 8601 YYYY-MM-DD string, and signed_by is a string (not null) as the text provides a signatory.",
+        "content_correctness": "All values match the source text and the gold reference exactly, including correctly identifying R. Okonjo as the signatory rather than emitting null."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-16",
+      "case_id": "ext-h03",
+      "task": "extraction",
+      "difficulty": "hard",
+      "scores": {
+        "precision": 1,
+        "recall": 3,
+        "normalisation": 1,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "temperature_setpoint_celsius is 3.9 (should be ~3.3 from 38\u00b0F), and distance_km is 512.1 (should be ~824 from 512 miles), both of which are wrong values, not merely formatting issues.",
+        "recall": "All 15 required fields are present in the output, including currency and total_charge.",
+        "normalisation": "The delivery_window_start '2026-03-03' is a mm-dd-yyyy misinterpretation (gold expects 2026-03-05), the pickup_datetime includes an unwanted ':00+00:00' suffix instead of the requested YYYY-MM-DDTHH:MM form, temperature and distance conversions are wrong, and charges like 90.0 and 1940.0 use unnecessary .0 while the gold uses plain numbers.",
+        "null_handling": "No field is nulled that could be determined from the source, and no value is fabricated where the source is silent."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-17",
+      "case_id": "sum-h03",
+      "task": "summarization",
+      "difficulty": "hard",
+      "scores": {
+        "faithfulness": 3,
+        "coverage": 2,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "justifications": {
+        "faithfulness": "Every claim in the response is directly traceable to the source material, with no invented facts or contradictions.",
+        "coverage": "Captures the main points (job failure, decommissioned scheduler box, mismatched inventory systems, risk to other boxes) but omits that the job has been moved to the new scheduler and the two missed days backfilled.",
+        "concision": "Stays within the 3-4 sentence limit and contains no filler or unrelated remarks like coffee, Priya, or parking.",
+        "instruction_adherence": "Follows the format (3-4 sentences), ignores unrelated remarks, and addresses the substantive issue as requested."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-18",
+      "case_id": "cls-t07",
+      "task": "classification",
+      "difficulty": "typical",
+      "scores": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 2
+      },
+      "justifications": {
+        "label_correctness": "The first line is 'Upgrade Plan', which matches the gold label exactly.",
+        "label_validity": "'Upgrade Plan' is one of the permitted labels in the instruction's set.",
+        "ambiguity_handling": "The message has a clear primary intent of upgrading, so invoking the 'Note:' channel to flag 'Ask Question' as a secondary element signals unnecessary uncertainty, costing a point per the rubric."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-19",
+      "case_id": "jsn-h03",
+      "task": "json-output",
+      "difficulty": "hard",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The response is a valid JSON object with no wrapper prose or fences, parsing on first attempt.",
+        "schema_conformance": "All five required keys are present with correct types and no extra keys.",
+        "constraint_conformance": "The three empty forms are correctly distinguished: empty string for improvement_comment, empty array for features_used, and JSON null for contactable.",
+        "content_correctness": "The values match the source material and gold reference: response_id \"442\", rating 5, and the three distinct empty forms are correct."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    },
+    {
+      "item_id": "cal-20",
+      "case_id": "ext-t09",
+      "task": "extraction",
+      "difficulty": "typical",
+      "scores": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "All extracted values exactly match the gold reference, with no fabricated content.",
+        "recall": "Every field present in the source document is extracted, including the inferred fully_remote=false from the hybrid arrangement.",
+        "normalisation": "Dates are in ISO 8601 format, salary numbers are plain without symbols, currency is the three-letter ISO code AUD, and salary_period uses the required enum value.",
+        "null_handling": "fully_remote is correctly resolved to false based on the hybrid/three-days-on-site information, and visa_sponsorship_available is correctly resolved to false from the explicit statement about being unable to sponsor visas, rather than being nulled."
+      },
+      "na_protocol_violations": [],
+      "judge_model": "minimax/minimax-m3:free",
+      "judge_model_pinned_slug": "minimax/minimax-m3-20260531",
+      "judge_model_returned": "minimax/minimax-m3:free",
+      "judge_provider_requested": "GMICloud",
+      "judge_provider_returned": "GMICloud",
+      "judge_prompt_version": "1.2",
+      "rubric_version": "1.4"
+    }
+  ]
+}

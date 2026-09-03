@@ -1,0 +1,1179 @@
+{
+  "threshold": 0.6,
+  "overall": {
+    "n": 76,
+    "confusion_matrix": [
+      [
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        2,
+        1,
+        0
+      ],
+      [
+        1,
+        4,
+        5,
+        58
+      ]
+    ],
+    "human_marginal": [
+      2,
+      3,
+      3,
+      68
+    ],
+    "judge_marginal": [
+      4,
+      7,
+      6,
+      59
+    ],
+    "raw_agreement": 0.8157894736842105,
+    "quadratic_weighted_kappa": 0.5905649388468259,
+    "gwet_ac1": 0.7958883524634716,
+    "n_ge2_disagreements": 6
+  },
+  "by_task": {
+    "classification": {
+      "n": 12,
+      "confusion_matrix": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          9
+        ]
+      ],
+      "human_marginal": [
+        1,
+        1,
+        0,
+        10
+      ],
+      "judge_marginal": [
+        2,
+        0,
+        1,
+        9
+      ],
+      "raw_agreement": 0.8333333333333334,
+      "quadratic_weighted_kappa": 0.9235668789808917,
+      "gwet_ac1": 0.8110236220472441,
+      "n_ge2_disagreements": 0
+    },
+    "rag-qa": {
+      "n": 16,
+      "confusion_matrix": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          15
+        ]
+      ],
+      "human_marginal": [
+        1,
+        0,
+        0,
+        15
+      ],
+      "judge_marginal": [
+        1,
+        0,
+        0,
+        15
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "json-output": {
+      "n": 16,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          16
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        16
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        16
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "extraction": {
+      "n": 16,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          2,
+          11
+        ]
+      ],
+      "human_marginal": [
+        0,
+        1,
+        1,
+        14
+      ],
+      "judge_marginal": [
+        0,
+        2,
+        3,
+        11
+      ],
+      "raw_agreement": 0.8125,
+      "quadratic_weighted_kappa": 0.5514018691588785,
+      "gwet_ac1": 0.7865085248332098,
+      "n_ge2_disagreements": 1
+    },
+    "summarization": {
+      "n": 16,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          1,
+          3,
+          2,
+          7
+        ]
+      ],
+      "human_marginal": [
+        0,
+        1,
+        2,
+        13
+      ],
+      "judge_marginal": [
+        1,
+        5,
+        2,
+        8
+      ],
+      "raw_agreement": 0.4375,
+      "quadratic_weighted_kappa": 0.016949152542372836,
+      "gwet_ac1": 0.32022029897718335,
+      "n_ge2_disagreements": 5
+    }
+  },
+  "by_dimension": {
+    "label_correctness": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          3
+        ]
+      ],
+      "human_marginal": [
+        1,
+        0,
+        0,
+        3
+      ],
+      "judge_marginal": [
+        1,
+        0,
+        0,
+        3
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "label_validity": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "ambiguity_handling": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          2
+        ]
+      ],
+      "human_marginal": [
+        0,
+        1,
+        0,
+        3
+      ],
+      "judge_marginal": [
+        1,
+        0,
+        1,
+        2
+      ],
+      "raw_agreement": 0.5,
+      "quadratic_weighted_kappa": 0.8,
+      "gwet_ac1": 0.38461538461538464,
+      "n_ge2_disagreements": 0
+    },
+    "groundedness": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "answer_correctness": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "abstention": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "citation_accuracy": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          3
+        ]
+      ],
+      "human_marginal": [
+        1,
+        0,
+        0,
+        3
+      ],
+      "judge_marginal": [
+        1,
+        0,
+        0,
+        3
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "parseability": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "schema_conformance": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "enum_constraint_conformance": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "content_correctness": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "precision": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          2
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        1,
+        3
+      ],
+      "judge_marginal": [
+        0,
+        1,
+        1,
+        2
+      ],
+      "raw_agreement": 0.75,
+      "quadratic_weighted_kappa": 0.11111111111111105,
+      "gwet_ac1": 0.6962025316455696,
+      "n_ge2_disagreements": 1
+    },
+    "recall": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "normalisation": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          1
+        ]
+      ],
+      "human_marginal": [
+        0,
+        1,
+        0,
+        3
+      ],
+      "judge_marginal": [
+        0,
+        1,
+        2,
+        1
+      ],
+      "raw_agreement": 0.5,
+      "quadratic_weighted_kappa": 0.6666666666666667,
+      "gwet_ac1": 0.3684210526315789,
+      "n_ge2_disagreements": 0
+    },
+    "null_handling": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "raw_agreement": 1.0,
+      "quadratic_weighted_kappa": 1.0,
+      "gwet_ac1": 1.0,
+      "n_ge2_disagreements": 0
+    },
+    "faithfulness": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          2
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        0,
+        4
+      ],
+      "judge_marginal": [
+        1,
+        1,
+        0,
+        2
+      ],
+      "raw_agreement": 0.5,
+      "quadratic_weighted_kappa": 0.0,
+      "gwet_ac1": 0.42168674698795183,
+      "n_ge2_disagreements": 2
+    },
+    "coverage": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          1
+        ]
+      ],
+      "human_marginal": [
+        0,
+        1,
+        0,
+        3
+      ],
+      "judge_marginal": [
+        0,
+        0,
+        2,
+        2
+      ],
+      "raw_agreement": 0.25,
+      "quadratic_weighted_kappa": -0.5,
+      "gwet_ac1": 0.08860759493670885,
+      "n_ge2_disagreements": 1
+    },
+    "concision": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          2
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        1,
+        3
+      ],
+      "judge_marginal": [
+        0,
+        2,
+        0,
+        2
+      ],
+      "raw_agreement": 0.5,
+      "quadratic_weighted_kappa": 0.2857142857142856,
+      "gwet_ac1": 0.3924050632911392,
+      "n_ge2_disagreements": 1
+    },
+    "instruction_adherence": {
+      "n": 4,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          2
+        ]
+      ],
+      "human_marginal": [
+        0,
+        0,
+        1,
+        3
+      ],
+      "judge_marginal": [
+        0,
+        2,
+        0,
+        2
+      ],
+      "raw_agreement": 0.5,
+      "quadratic_weighted_kappa": 0.2857142857142856,
+      "gwet_ac1": 0.3924050632911392,
+      "n_ge2_disagreements": 1
+    }
+  },
+  "big_disagreements": [
+    {
+      "item_id": "cal-09",
+      "task": "summarization",
+      "dimension": "faithfulness",
+      "human": 3,
+      "judge": 1
+    },
+    {
+      "item_id": "cal-14",
+      "task": "summarization",
+      "dimension": "faithfulness",
+      "human": 3,
+      "judge": 0
+    },
+    {
+      "item_id": "cal-14",
+      "task": "summarization",
+      "dimension": "coverage",
+      "human": 1,
+      "judge": 3
+    },
+    {
+      "item_id": "cal-14",
+      "task": "summarization",
+      "dimension": "concision",
+      "human": 3,
+      "judge": 1
+    },
+    {
+      "item_id": "cal-14",
+      "task": "summarization",
+      "dimension": "instruction_adherence",
+      "human": 3,
+      "judge": 1
+    },
+    {
+      "item_id": "cal-16",
+      "task": "extraction",
+      "dimension": "precision",
+      "human": 3,
+      "judge": 1
+    }
+  ],
+  "na_protocol_violations": [],
+  "n_na_protocol_violations": 0,
+  "decision": "kappa < 0.6 with >=1 disagreement of >=2 points present (or concentration detected): does not qualify as a clean prevalence artifact. Treat as REAL DISAGREEMENT -- sharpen anchors, re-judge, retry per S5. ALSO: 6 disagreement(s) of >=2 points exist -- per the 'any >=2-point disagreement' row, these must be audited and written up before proceeding, regardless of kappa."
+}

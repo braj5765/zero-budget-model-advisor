@@ -1,0 +1,362 @@
+{
+  "schema_version": "1.0",
+  "judge_model": "qwen2.5:7b",
+  "judge_prompt_version": "1.2",
+  "rubric_version": "1.4",
+  "judged_at": "2026-08-28",
+  "sample": "04-analysis/calibration/sample.json",
+  "scores": [
+    {
+      "item_id": "cal-01",
+      "case_id": "cls-t08",
+      "task": "classification",
+      "difficulty": "typical",
+      "scores": {
+        "label_correctness": 0,
+        "label_validity": 0,
+        "ambiguity_handling": 2
+      },
+      "justifications": {
+        "label_correctness": "The response 'Cancel Subscription' does not match the gold label 'Report Bug'.",
+        "label_validity": "The response 'Cancel Subscription' is not a member of the permitted label set.",
+        "ambiguity_handling": "The response includes a 'Note:' line, indicating uncertainty, but the message is unambiguously about a bug."
+      }
+    },
+    {
+      "item_id": "cal-02",
+      "case_id": "rag-t03",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": 3,
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "The response correctly identifies the RX-2C as the approved scanner for the cold storage hall, supported by P1.",
+        "answer_correctness": "The response factually answers the question asked, identifying the RX-2C as the correct model.",
+        "abstention_calibration": "The response answers the question correctly and does not need to state INSUFFICIENT CONTEXT.",
+        "citation_accuracy": "The response cites P1, which supports the claim about the RX-2C being the approved scanner for the cold storage hall."
+      }
+    },
+    {
+      "item_id": "cal-03",
+      "case_id": "rag-a01",
+      "task": "rag-qa",
+      "difficulty": "adversarial",
+      "scores": {
+        "groundedness": 0,
+        "answer_correctness": 0,
+        "abstention_calibration": 0,
+        "citation_accuracy": 1
+      },
+      "justifications": {
+        "groundedness": "The response cites P3, which does not support the answer of INSUFFICIENT CONTEXT.",
+        "answer_correctness": "The response incorrectly states that the account is permanently erased, which is not supported by the context.",
+        "abstention_calibration": "The response gives an answer instead of stating INSUFFICIENT CONTEXT, which is not the correct abstention.",
+        "citation_accuracy": "The response cites P3, which does not support the answer of INSUFFICIENT CONTEXT."
+      }
+    },
+    {
+      "item_id": "cal-04",
+      "case_id": "jsn-t01",
+      "task": "json-output",
+      "difficulty": "typical",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The response parses correctly on first attempt.",
+        "schema_conformance": "All required keys are present and correctly typed.",
+        "constraint_conformance": "Times are in the correct 24-hour format.",
+        "content_correctness": "Values are factually correct."
+      }
+    },
+    {
+      "item_id": "cal-05",
+      "case_id": "cls-h01",
+      "task": "classification",
+      "difficulty": "hard",
+      "scores": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 2
+      },
+      "justifications": {
+        "label_correctness": "The response matches the gold label 'Feature Request'.",
+        "label_validity": "The response is a member of the permitted label set.",
+        "ambiguity_handling": "The response confidently picks 'Feature Request' without a note of uncertainty, despite the ticket containing elements that could be interpreted as other labels."
+      }
+    },
+    {
+      "item_id": "cal-06",
+      "case_id": "ext-a03",
+      "task": "extraction",
+      "difficulty": "adversarial",
+      "scores": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "All fields are correctly extracted and match the gold reference.",
+        "recall": "All fields present in the source are extracted.",
+        "normalisation": "Dates, numbers, and currency are in the correct format.",
+        "null_handling": "Determinable fields are resolved and nulls are used where the field is not stated."
+      }
+    },
+    {
+      "item_id": "cal-07",
+      "case_id": "rag-h05",
+      "task": "rag-qa",
+      "difficulty": "hard",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": 3,
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "Every assertion supported by the supplied context.",
+        "answer_correctness": "Factually answers the question asked.",
+        "abstention_calibration": "Answers an ANSWERABLE question correctly.",
+        "citation_accuracy": "Points to the passage that actually supports the claim."
+      }
+    },
+    {
+      "item_id": "cal-08",
+      "case_id": "cls-t06",
+      "task": "classification",
+      "difficulty": "typical",
+      "scores": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 2
+      },
+      "justifications": {
+        "label_correctness": "The response matches the gold label 'Technical'.",
+        "label_validity": "The response is a member of the permitted label set.",
+        "ambiguity_handling": "No additional line beginning with 'Note:' is provided, despite the case being ambiguous between 'Technical' and 'Other'."
+      }
+    },
+    {
+      "item_id": "cal-09",
+      "case_id": "sum-t10",
+      "task": "summarization",
+      "difficulty": "typical",
+      "scores": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "justifications": {
+        "faithfulness": "All figures are correct and traceable to the source.",
+        "coverage": "All key points from the gold reference are included within the four sentences.",
+        "concision": "The summary is exactly four sentences long and captures the essence without padding.",
+        "instruction_adherence": "The summary adheres to the format, length, and audience as instructed."
+      }
+    },
+    {
+      "item_id": "cal-10",
+      "case_id": "sum-t09",
+      "task": "summarization",
+      "difficulty": "typical",
+      "scores": {
+        "faithfulness": 2,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 1
+      },
+      "justifications": {
+        "faithfulness": "The response contains unexplained jargon such as 'massive amounts of past activity' and 'frequent users', which are not defined.",
+        "coverage": "The response captures the key points about the current issue, the proposed solution, and the alternative approach, though it omits the specific latency figures and the exact threshold for 'frequent users'.",
+        "concision": "The response is within the requested length and does not contain padding or restatement.",
+        "instruction_adherence": "The response uses unexplained jargon, which is the failure this case probes, and thus scores 1."
+      }
+    },
+    {
+      "item_id": "cal-11",
+      "case_id": "ext-t04",
+      "task": "extraction",
+      "difficulty": "typical",
+      "scores": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "All fields are correctly extracted and formatted as per the instruction.",
+        "recall": "All fields present in the source were extracted.",
+        "normalisation": "Dates, times, and location are in the correct format.",
+        "null_handling": "Confirmed and tentative attendees are correctly handled without guessing."
+      }
+    },
+    {
+      "item_id": "cal-12",
+      "case_id": "jsn-t03",
+      "task": "json-output",
+      "difficulty": "typical",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The JSON object parses correctly on first attempt.",
+        "schema_conformance": "All required keys are present and types are correct.",
+        "constraint_conformance": "Values respect the permitted sets.",
+        "content_correctness": "Values are factually correct."
+      }
+    },
+    {
+      "item_id": "cal-13",
+      "case_id": "rag-t04",
+      "task": "rag-qa",
+      "difficulty": "typical",
+      "scores": {
+        "groundedness": 3,
+        "answer_correctness": 3,
+        "abstention_calibration": "n/a",
+        "citation_accuracy": 3
+      },
+      "justifications": {
+        "groundedness": "The response accurately reflects the information provided in P1.",
+        "answer_correctness": "The response correctly answers the question by including both the five business days and twenty-four hours reporting periods.",
+        "abstention_calibration": "Not applicable as the question is answerable.",
+        "citation_accuracy": "The response correctly cites P1 as the supporting passage."
+      }
+    },
+    {
+      "item_id": "cal-14",
+      "case_id": "sum-a01",
+      "task": "summarization",
+      "difficulty": "adversarial",
+      "scores": {
+        "faithfulness": 2,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "justifications": {
+        "faithfulness": "The response implies causation between the pricing page launch and the increase in ticket volume, which is not supported by the source.",
+        "coverage": "The response captures all key points identified in the gold reference, including the ticket volume increase, the largest category of increase, and the categorization of billing tickets.",
+        "concision": "The response is within the requested length of 3-4 sentences.",
+        "instruction_adherence": "The response adheres to the format, length, tone, and audience as instructed."
+      }
+    },
+    {
+      "item_id": "cal-15",
+      "case_id": "jsn-t07",
+      "task": "json-output",
+      "difficulty": "typical",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "parses on first attempt without wrapper prose or fences.",
+        "schema_conformance": "all required keys present, types correct, no extra keys.",
+        "constraint_conformance": "constrained/enum values respected.",
+        "content_correctness": "values are factually right."
+      }
+    },
+    {
+      "item_id": "cal-16",
+      "case_id": "ext-h03",
+      "task": "extraction",
+      "difficulty": "hard",
+      "scores": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "All fields are correctly extracted and converted as requested, with no additional or incorrect information.",
+        "recall": "All fields present in the source are extracted and included in the JSON object.",
+        "normalisation": "Dates, numbers, units, and names are in the requested canonical form, with appropriate rounding.",
+        "null_handling": "All determinable fields are resolved, and null is used for missing fields."
+      }
+    },
+    {
+      "item_id": "cal-17",
+      "case_id": "sum-h03",
+      "task": "summarization",
+      "difficulty": "hard",
+      "scores": {
+        "faithfulness": 3,
+        "coverage": 3,
+        "concision": 3,
+        "instruction_adherence": 3
+      },
+      "justifications": {
+        "faithfulness": "The response accurately reflects the source material without inventing any claims.",
+        "coverage": "The response captures all key points from the source material, including the batch job failure, the decommissioned box, the mismatched inventory systems, the potential for other affected boxes, and the job relocation.",
+        "concision": "The response is within the requested length of 3-4 sentences and does not include any padding or restatement.",
+        "instruction_adherence": "The response adheres to the instruction by summarizing the substantive issue without including unrelated remarks such as the coffee machine, Priya's last day, or parking."
+      }
+    },
+    {
+      "item_id": "cal-18",
+      "case_id": "cls-t07",
+      "task": "classification",
+      "difficulty": "typical",
+      "scores": {
+        "label_correctness": 3,
+        "label_validity": 3,
+        "ambiguity_handling": 3
+      },
+      "justifications": {
+        "label_correctness": "The response correctly identifies 'Upgrade Plan' as the label.",
+        "label_validity": "The response uses a label from the permitted set.",
+        "ambiguity_handling": "The response acknowledges the secondary intent but correctly identifies the primary intent."
+      }
+    },
+    {
+      "item_id": "cal-19",
+      "case_id": "jsn-h03",
+      "task": "json-output",
+      "difficulty": "hard",
+      "scores": {
+        "parseability": 3,
+        "schema_conformance": 3,
+        "constraint_conformance": 3,
+        "content_correctness": 3
+      },
+      "justifications": {
+        "parseability": "The JSON object parses correctly on first attempt.",
+        "schema_conformance": "All required keys are present with correct types.",
+        "constraint_conformance": "Constraint values are respected.",
+        "content_correctness": "Values are factually correct."
+      }
+    },
+    {
+      "item_id": "cal-20",
+      "case_id": "ext-t09",
+      "task": "extraction",
+      "difficulty": "typical",
+      "scores": {
+        "precision": 3,
+        "recall": 3,
+        "normalisation": 3,
+        "null_handling": 3
+      },
+      "justifications": {
+        "precision": "All fields are correctly extracted and formatted as per the instruction.",
+        "recall": "All fields present in the source are extracted.",
+        "normalisation": "Dates and numbers are in the correct format.",
+        "null_handling": "Determinable fields are resolved and null is used where the field is not stated."
+      }
+    }
+  ]
+}
