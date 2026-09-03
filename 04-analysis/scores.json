@@ -1,0 +1,1181 @@
+{
+  "schema_version": "1.0",
+  "rubric_version": "1.7",
+  "judge_model": "minimax/minimax-m3:free",
+  "judge_provider": "GMICloud",
+  "judge_prompt_version": "1.3",
+  "judged_at": "2026-08-29",
+  "scored_models": [
+    "gemini-3.5-flash-lite",
+    "groq-llama-3.3-70b",
+    "mistral-small-2603",
+    "ollama-llama3.2-3b"
+  ],
+  "excluded_from_quality_scoring": [
+    "openrouter-gpt-oss-20b"
+  ],
+  "models": {
+    "gemini-3.5-flash-lite": {
+      "tasks": {
+        "classification": {
+          "task_score": 93.3,
+          "adversarial_sub_score": 92.6,
+          "n_cases": 20,
+          "n_na_dimension_marks": 1,
+          "median_spread": {
+            "n_dimension_instances": 59,
+            "pct_identical_across_runs": 93.2,
+            "mean_spread": 0.102,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "ambiguity_handling": 88.3,
+            "label_correctness": 91.2,
+            "label_validity": 100.0
+          },
+          "case_scores": {
+            "cls-t01": 100.0,
+            "cls-t02": 100.0,
+            "cls-t03": 100.0,
+            "cls-t04": 100.0,
+            "cls-t05": 100.0,
+            "cls-t06": 100.0,
+            "cls-t07": 100.0,
+            "cls-t08": 100.0,
+            "cls-t09": 100.0,
+            "cls-t10": 44.4,
+            "cls-t11": 100.0,
+            "cls-t12": 100.0,
+            "cls-h01": 100.0,
+            "cls-h02": 88.9,
+            "cls-h03": 100.0,
+            "cls-h04": 55.6,
+            "cls-h05": 100.0,
+            "cls-a01": 77.8,
+            "cls-a02": 100.0,
+            "cls-a03": 100.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 4515,
+            "mean_tokens_per_request": 191.1,
+            "derived_token_ceiling": null
+          }
+        },
+        "extraction": {
+          "task_score": 92.1,
+          "adversarial_sub_score": 72.2,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 81.2,
+            "mean_spread": 0.2,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "normalisation": 83.3,
+            "null_handling": 95.0,
+            "precision": 93.3,
+            "recall": 96.7
+          },
+          "case_scores": {
+            "ext-t01": 100.0,
+            "ext-t02": 100.0,
+            "ext-t03": 100.0,
+            "ext-t04": 91.7,
+            "ext-t05": 100.0,
+            "ext-t06": 100.0,
+            "ext-t07": 100.0,
+            "ext-t08": 91.7,
+            "ext-t09": 83.3,
+            "ext-t10": 91.7,
+            "ext-t11": 100.0,
+            "ext-t12": 91.7,
+            "ext-h01": 100.0,
+            "ext-h02": 100.0,
+            "ext-h03": 91.7,
+            "ext-h04": 100.0,
+            "ext-h05": 83.3,
+            "ext-a01": 100.0,
+            "ext-a02": 25.0,
+            "ext-a03": 91.7
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 1577,
+            "mean_tokens_per_request": 517.2,
+            "derived_token_ceiling": null
+          }
+        },
+        "json-output": {
+          "task_score": 67.1,
+          "adversarial_sub_score": 66.7,
+          "n_cases": 20,
+          "n_na_dimension_marks": 18,
+          "median_spread": {
+            "n_dimension_instances": 62,
+            "pct_identical_across_runs": 79.0,
+            "mean_spread": 0.565,
+            "max_spread": 3
+          },
+          "dimension_means": {
+            "constraint_conformance": 100.0,
+            "content_correctness": 90.5,
+            "parseability": 65.0,
+            "schema_conformance": 100.0
+          },
+          "case_scores": {
+            "jsn-t01": 100.0,
+            "jsn-t02": 0.0,
+            "jsn-t03": 100.0,
+            "jsn-t04": 100.0,
+            "jsn-t05": 0.0,
+            "jsn-t06": 100.0,
+            "jsn-t07": 0.0,
+            "jsn-t08": 100.0,
+            "jsn-t09": 0.0,
+            "jsn-t10": 0.0,
+            "jsn-t11": 75.0,
+            "jsn-t12": 100.0,
+            "jsn-h01": 100.0,
+            "jsn-h02": 83.3,
+            "jsn-h03": 100.0,
+            "jsn-h04": 83.3,
+            "jsn-h05": 100.0,
+            "jsn-a01": 100.0,
+            "jsn-a02": 0.0,
+            "jsn-a03": 100.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 1828,
+            "mean_tokens_per_request": 244.9,
+            "derived_token_ceiling": null
+          }
+        },
+        "rag-qa": {
+          "task_score": 96.2,
+          "adversarial_sub_score": 97.2,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 90.0,
+            "mean_spread": 0.113,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "abstention_calibration": 95.0,
+            "answer_correctness": 90.0,
+            "citation_accuracy": 100.0,
+            "groundedness": 100.0
+          },
+          "case_scores": {
+            "rag-t01": 100.0,
+            "rag-t02": 100.0,
+            "rag-t03": 100.0,
+            "rag-t04": 100.0,
+            "rag-t05": 100.0,
+            "rag-t06": 91.7,
+            "rag-t07": 100.0,
+            "rag-t08": 100.0,
+            "rag-t09": 91.7,
+            "rag-t10": 58.3,
+            "rag-t11": 91.7,
+            "rag-t12": 100.0,
+            "rag-h01": 100.0,
+            "rag-h02": 100.0,
+            "rag-h03": 100.0,
+            "rag-h04": 100.0,
+            "rag-h05": 100.0,
+            "rag-a01": 100.0,
+            "rag-a02": 91.7,
+            "rag-a03": 100.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 2125,
+            "mean_tokens_per_request": 294.4,
+            "derived_token_ceiling": null
+          }
+        },
+        "summarization": {
+          "task_score": 88.3,
+          "adversarial_sub_score": 77.8,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 58.8,
+            "mean_spread": 0.5,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "concision": 90.0,
+            "coverage": 86.7,
+            "faithfulness": 90.0,
+            "instruction_adherence": 86.7
+          },
+          "case_scores": {
+            "sum-t01": 83.3,
+            "sum-t02": 100.0,
+            "sum-t03": 58.3,
+            "sum-t04": 91.7,
+            "sum-t05": 91.7,
+            "sum-t06": 83.3,
+            "sum-t07": 100.0,
+            "sum-t08": 100.0,
+            "sum-t09": 100.0,
+            "sum-t10": 100.0,
+            "sum-t11": 66.7,
+            "sum-t12": 100.0,
+            "sum-h01": 100.0,
+            "sum-h02": 83.3,
+            "sum-h03": 100.0,
+            "sum-h04": 75.0,
+            "sum-h05": 100.0,
+            "sum-a01": 58.3,
+            "sum-a02": 75.0,
+            "sum-a03": 100.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 2764,
+            "mean_tokens_per_request": 312.2,
+            "derived_token_ceiling": null
+          }
+        }
+      },
+      "rate_limit_ceiling": {
+        "documented_rpm": 15,
+        "documented_rpd": 1000,
+        "documented_monthly_tokens": null,
+        "documented_source": "Gemini 429 response body, 2026-08-17 (limit: 15 rpm, stated by the API)",
+        "measured": {
+          "rpm_at_rejection": 16.6,
+          "requests_before_first_rejection": 39
+        },
+        "provenance": "measured",
+        "note": "Confirmed by Gemini's own 429 body (limit: 15, generate_content_free_tier_requests)."
+      }
+    },
+    "groq-llama-3.3-70b": {
+      "tasks": {
+        "classification": {
+          "task_score": 85.6,
+          "adversarial_sub_score": 88.9,
+          "n_cases": 20,
+          "n_na_dimension_marks": 1,
+          "median_spread": {
+            "n_dimension_instances": 59,
+            "pct_identical_across_runs": 81.4,
+            "mean_spread": 0.22,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "ambiguity_handling": 61.7,
+            "label_correctness": 94.7,
+            "label_validity": 100.0
+          },
+          "case_scores": {
+            "cls-t01": 88.9,
+            "cls-t02": 77.8,
+            "cls-t03": 88.9,
+            "cls-t04": 88.9,
+            "cls-t05": 88.9,
+            "cls-t06": 88.9,
+            "cls-t07": 88.9,
+            "cls-t08": 77.8,
+            "cls-t09": 88.9,
+            "cls-t10": 33.3,
+            "cls-t11": 77.8,
+            "cls-t12": 100.0,
+            "cls-h01": 77.8,
+            "cls-h02": 88.9,
+            "cls-h03": 100.0,
+            "cls-h04": 88.9,
+            "cls-h05": 100.0,
+            "cls-a01": 88.9,
+            "cls-a02": 100.0,
+            "cls-a03": 77.8
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 579,
+            "mean_tokens_per_request": 248.1,
+            "derived_token_ceiling": null
+          }
+        },
+        "extraction": {
+          "task_score": 92.5,
+          "adversarial_sub_score": 66.7,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 86.2,
+            "mean_spread": 0.15,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "normalisation": 85.0,
+            "null_handling": 91.7,
+            "precision": 95.0,
+            "recall": 98.3
+          },
+          "case_scores": {
+            "ext-t01": 100.0,
+            "ext-t02": 100.0,
+            "ext-t03": 91.7,
+            "ext-t04": 91.7,
+            "ext-t05": 100.0,
+            "ext-t06": 100.0,
+            "ext-t07": 100.0,
+            "ext-t08": 100.0,
+            "ext-t09": 100.0,
+            "ext-t10": 91.7,
+            "ext-t11": 100.0,
+            "ext-t12": 91.7,
+            "ext-h01": 100.0,
+            "ext-h02": 100.0,
+            "ext-h03": 100.0,
+            "ext-h04": 100.0,
+            "ext-h05": 83.3,
+            "ext-a01": 75.0,
+            "ext-a02": 33.3,
+            "ext-a03": 91.7
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 1389,
+            "mean_tokens_per_request": 474.7,
+            "derived_token_ceiling": null
+          }
+        },
+        "json-output": {
+          "task_score": 87.5,
+          "adversarial_sub_score": 63.9,
+          "n_cases": 20,
+          "n_na_dimension_marks": 6,
+          "median_spread": {
+            "n_dimension_instances": 74,
+            "pct_identical_across_runs": 95.9,
+            "mean_spread": 0.041,
+            "max_spread": 1
+          },
+          "dimension_means": {
+            "constraint_conformance": 98.1,
+            "content_correctness": 90.7,
+            "parseability": 90.0,
+            "schema_conformance": 100.0
+          },
+          "case_scores": {
+            "jsn-t01": 100.0,
+            "jsn-t02": 100.0,
+            "jsn-t03": 100.0,
+            "jsn-t04": 100.0,
+            "jsn-t05": 100.0,
+            "jsn-t06": 100.0,
+            "jsn-t07": 100.0,
+            "jsn-t08": 100.0,
+            "jsn-t09": 100.0,
+            "jsn-t10": 100.0,
+            "jsn-t11": 100.0,
+            "jsn-t12": 100.0,
+            "jsn-h01": 0.0,
+            "jsn-h02": 75.0,
+            "jsn-h03": 100.0,
+            "jsn-h04": 83.3,
+            "jsn-h05": 100.0,
+            "jsn-a01": 0.0,
+            "jsn-a02": 100.0,
+            "jsn-a03": 91.7
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 1797,
+            "mean_tokens_per_request": 257.6,
+            "derived_token_ceiling": null
+          }
+        },
+        "rag-qa": {
+          "task_score": 96.7,
+          "adversarial_sub_score": 97.2,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 93.8,
+            "mean_spread": 0.062,
+            "max_spread": 1
+          },
+          "dimension_means": {
+            "abstention_calibration": 100.0,
+            "answer_correctness": 90.0,
+            "citation_accuracy": 96.7,
+            "groundedness": 100.0
+          },
+          "case_scores": {
+            "rag-t01": 100.0,
+            "rag-t02": 100.0,
+            "rag-t03": 100.0,
+            "rag-t04": 100.0,
+            "rag-t05": 100.0,
+            "rag-t06": 100.0,
+            "rag-t07": 91.7,
+            "rag-t08": 100.0,
+            "rag-t09": 91.7,
+            "rag-t10": 91.7,
+            "rag-t11": 100.0,
+            "rag-t12": 100.0,
+            "rag-h01": 91.7,
+            "rag-h02": 91.7,
+            "rag-h03": 100.0,
+            "rag-h04": 100.0,
+            "rag-h05": 83.3,
+            "rag-a01": 100.0,
+            "rag-a02": 91.7,
+            "rag-a03": 100.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 577,
+            "mean_tokens_per_request": 305.2,
+            "derived_token_ceiling": null
+          }
+        },
+        "summarization": {
+          "task_score": 75.4,
+          "adversarial_sub_score": 58.3,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 36.2,
+            "mean_spread": 0.75,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "concision": 71.7,
+            "coverage": 81.7,
+            "faithfulness": 81.7,
+            "instruction_adherence": 66.7
+          },
+          "case_scores": {
+            "sum-t01": 66.7,
+            "sum-t02": 83.3,
+            "sum-t03": 75.0,
+            "sum-t04": 83.3,
+            "sum-t05": 83.3,
+            "sum-t06": 83.3,
+            "sum-t07": 100.0,
+            "sum-t08": 91.7,
+            "sum-t09": 83.3,
+            "sum-t10": 75.0,
+            "sum-t11": 83.3,
+            "sum-t12": 75.0,
+            "sum-h01": 58.3,
+            "sum-h02": 41.7,
+            "sum-h03": 83.3,
+            "sum-h04": 75.0,
+            "sum-h05": 91.7,
+            "sum-a01": 50.0,
+            "sum-a02": 58.3,
+            "sum-a03": 66.7
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 985,
+            "mean_tokens_per_request": 354.4,
+            "derived_token_ceiling": null
+          }
+        }
+      },
+      "rate_limit_ceiling": {
+        "documented_rpm": 30,
+        "documented_rpd": 1000,
+        "documented_monthly_tokens": null,
+        "documented_source": "https://console.groq.com/docs/rate-limits (2026-08-15)",
+        "measured": null,
+        "provenance": "documented + incidental",
+        "note": "Never actively probed (AUP, ToS-Review R-1). Incidental evidence from the benchmark run: 8 retries across 7 rows, backoff waits up to 1075s, all eventually succeeded under the harness's own retry policy."
+      }
+    },
+    "mistral-small-2603": {
+      "tasks": {
+        "classification": {
+          "task_score": 84.4,
+          "adversarial_sub_score": 81.5,
+          "n_cases": 20,
+          "n_na_dimension_marks": 1,
+          "median_spread": {
+            "n_dimension_instances": 59,
+            "pct_identical_across_runs": 96.6,
+            "mean_spread": 0.068,
+            "max_spread": 3
+          },
+          "dimension_means": {
+            "ambiguity_handling": 73.3,
+            "label_correctness": 80.7,
+            "label_validity": 100.0
+          },
+          "case_scores": {
+            "cls-t01": 100.0,
+            "cls-t02": 100.0,
+            "cls-t03": 100.0,
+            "cls-t04": 100.0,
+            "cls-t05": 100.0,
+            "cls-t06": 100.0,
+            "cls-t07": 100.0,
+            "cls-t08": 33.3,
+            "cls-t09": 100.0,
+            "cls-t10": 33.3,
+            "cls-t11": 100.0,
+            "cls-t12": 100.0,
+            "cls-h01": 100.0,
+            "cls-h02": 33.3,
+            "cls-h03": 100.0,
+            "cls-h04": 44.4,
+            "cls-h05": 100.0,
+            "cls-a01": 77.8,
+            "cls-a02": 66.7,
+            "cls-a03": 100.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 889,
+            "mean_tokens_per_request": 197.3,
+            "derived_token_ceiling": {
+              "req_per_day_at_token_ceiling": 168947,
+              "basis": "derived -- computed from this benchmark's measured mean tokens/request and the provider's documented monthly token ceiling. NOT a provider-documented figure; varies by task because prompt and response lengths vary by task.",
+              "mean_tokens_per_request": 197.3,
+              "documented_monthly_tokens": 1000000000,
+              "days_per_month_assumed": 30
+            }
+          }
+        },
+        "extraction": {
+          "task_score": 90.8,
+          "adversarial_sub_score": 75.0,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 86.2,
+            "mean_spread": 0.15,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "normalisation": 80.0,
+            "null_handling": 93.3,
+            "precision": 93.3,
+            "recall": 96.7
+          },
+          "case_scores": {
+            "ext-t01": 91.7,
+            "ext-t02": 100.0,
+            "ext-t03": 100.0,
+            "ext-t04": 91.7,
+            "ext-t05": 100.0,
+            "ext-t06": 100.0,
+            "ext-t07": 100.0,
+            "ext-t08": 100.0,
+            "ext-t09": 100.0,
+            "ext-t10": 91.7,
+            "ext-t11": 100.0,
+            "ext-t12": 91.7,
+            "ext-h01": 91.7,
+            "ext-h02": 75.0,
+            "ext-h03": 91.7,
+            "ext-h04": 91.7,
+            "ext-h05": 75.0,
+            "ext-a01": 100.0,
+            "ext-a02": 33.3,
+            "ext-a03": 91.7
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 3171,
+            "mean_tokens_per_request": 511.3,
+            "derived_token_ceiling": {
+              "req_per_day_at_token_ceiling": 65198,
+              "basis": "derived -- computed from this benchmark's measured mean tokens/request and the provider's documented monthly token ceiling. NOT a provider-documented figure; varies by task because prompt and response lengths vary by task.",
+              "mean_tokens_per_request": 511.3,
+              "documented_monthly_tokens": 1000000000,
+              "days_per_month_assumed": 30
+            }
+          }
+        },
+        "json-output": {
+          "task_score": 33.8,
+          "adversarial_sub_score": 33.3,
+          "n_cases": 20,
+          "n_na_dimension_marks": 39,
+          "median_spread": {
+            "n_dimension_instances": 41,
+            "pct_identical_across_runs": 92.7,
+            "mean_spread": 0.22,
+            "max_spread": 3
+          },
+          "dimension_means": {
+            "constraint_conformance": 100.0,
+            "content_correctness": 100.0,
+            "parseability": 30.0,
+            "schema_conformance": 100.0
+          },
+          "case_scores": {
+            "jsn-t01": 100.0,
+            "jsn-t02": 100.0,
+            "jsn-t03": 0.0,
+            "jsn-t04": 0.0,
+            "jsn-t05": 0.0,
+            "jsn-t06": 100.0,
+            "jsn-t07": 0.0,
+            "jsn-t08": 0.0,
+            "jsn-t09": 100.0,
+            "jsn-t10": 0.0,
+            "jsn-t11": 0.0,
+            "jsn-t12": 0.0,
+            "jsn-h01": 0.0,
+            "jsn-h02": 0.0,
+            "jsn-h03": 100.0,
+            "jsn-h04": 0.0,
+            "jsn-h05": 75.0,
+            "jsn-a01": 0.0,
+            "jsn-a02": 0.0,
+            "jsn-a03": 100.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 2264,
+            "mean_tokens_per_request": 256.7,
+            "derived_token_ceiling": {
+              "req_per_day_at_token_ceiling": 129862,
+              "basis": "derived -- computed from this benchmark's measured mean tokens/request and the provider's documented monthly token ceiling. NOT a provider-documented figure; varies by task because prompt and response lengths vary by task.",
+              "mean_tokens_per_request": 256.7,
+              "documented_monthly_tokens": 1000000000,
+              "days_per_month_assumed": 30
+            }
+          }
+        },
+        "rag-qa": {
+          "task_score": 85.4,
+          "adversarial_sub_score": 77.8,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 86.2,
+            "mean_spread": 0.2,
+            "max_spread": 3
+          },
+          "dimension_means": {
+            "abstention_calibration": 78.3,
+            "answer_correctness": 68.3,
+            "citation_accuracy": 98.3,
+            "groundedness": 96.7
+          },
+          "case_scores": {
+            "rag-t01": 83.3,
+            "rag-t02": 100.0,
+            "rag-t03": 100.0,
+            "rag-t04": 100.0,
+            "rag-t05": 100.0,
+            "rag-t06": 91.7,
+            "rag-t07": 50.0,
+            "rag-t08": 100.0,
+            "rag-t09": 50.0,
+            "rag-t10": 50.0,
+            "rag-t11": 100.0,
+            "rag-t12": 100.0,
+            "rag-h01": 100.0,
+            "rag-h02": 91.7,
+            "rag-h03": 58.3,
+            "rag-h04": 100.0,
+            "rag-h05": 100.0,
+            "rag-a01": 100.0,
+            "rag-a02": 33.3,
+            "rag-a03": 100.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 1327,
+            "mean_tokens_per_request": 289.2,
+            "derived_token_ceiling": {
+              "req_per_day_at_token_ceiling": 115241,
+              "basis": "derived -- computed from this benchmark's measured mean tokens/request and the provider's documented monthly token ceiling. NOT a provider-documented figure; varies by task because prompt and response lengths vary by task.",
+              "mean_tokens_per_request": 289.2,
+              "documented_monthly_tokens": 1000000000,
+              "days_per_month_assumed": 30
+            }
+          }
+        },
+        "summarization": {
+          "task_score": 82.5,
+          "adversarial_sub_score": 75.0,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 60.0,
+            "mean_spread": 0.475,
+            "max_spread": 3
+          },
+          "dimension_means": {
+            "concision": 70.0,
+            "coverage": 95.0,
+            "faithfulness": 91.7,
+            "instruction_adherence": 73.3
+          },
+          "case_scores": {
+            "sum-t01": 66.7,
+            "sum-t02": 100.0,
+            "sum-t03": 83.3,
+            "sum-t04": 83.3,
+            "sum-t05": 66.7,
+            "sum-t06": 100.0,
+            "sum-t07": 75.0,
+            "sum-t08": 91.7,
+            "sum-t09": 66.7,
+            "sum-t10": 100.0,
+            "sum-t11": 83.3,
+            "sum-t12": 100.0,
+            "sum-h01": 83.3,
+            "sum-h02": 58.3,
+            "sum-h03": 66.7,
+            "sum-h04": 100.0,
+            "sum-h05": 100.0,
+            "sum-a01": 58.3,
+            "sum-a02": 66.7,
+            "sum-a03": 100.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 2375,
+            "mean_tokens_per_request": 353.0,
+            "derived_token_ceiling": {
+              "req_per_day_at_token_ceiling": 94438,
+              "basis": "derived -- computed from this benchmark's measured mean tokens/request and the provider's documented monthly token ceiling. NOT a provider-documented figure; varies by task because prompt and response lengths vary by task.",
+              "mean_tokens_per_request": 353.0,
+              "documented_monthly_tokens": 1000000000,
+              "days_per_month_assumed": 30
+            }
+          }
+        }
+      },
+      "rate_limit_ceiling": {
+        "documented_rpm": 60,
+        "documented_rpd": "none documented",
+        "documented_monthly_tokens": 1000000000,
+        "documented_source": "https://help.mistral.ai/en/articles/225174-what-are-the-limits-of-the-free-tier (2026-08-15)",
+        "measured": {
+          "rpm_at_rejection": 52.1,
+          "requests_before_first_rejection": 96
+        },
+        "provenance": "measured",
+        "note": "Bare error prose; limit_period_guess left 'unknown', not guessed beyond the string. The binding ceiling here is token-based (documented_monthly_tokens), not request-based."
+      }
+    },
+    "ollama-llama3.2-3b": {
+      "tasks": {
+        "classification": {
+          "task_score": 57.8,
+          "adversarial_sub_score": 66.7,
+          "n_cases": 20,
+          "n_na_dimension_marks": 1,
+          "median_spread": {
+            "n_dimension_instances": 59,
+            "pct_identical_across_runs": 83.1,
+            "mean_spread": 0.22,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "ambiguity_handling": 35.0,
+            "label_correctness": 35.1,
+            "label_validity": 100.0
+          },
+          "case_scores": {
+            "cls-t01": 88.9,
+            "cls-t02": 88.9,
+            "cls-t03": 33.3,
+            "cls-t04": 33.3,
+            "cls-t05": 33.3,
+            "cls-t06": 33.3,
+            "cls-t07": 88.9,
+            "cls-t08": 33.3,
+            "cls-t09": 88.9,
+            "cls-t10": 33.3,
+            "cls-t11": 100.0,
+            "cls-t12": 33.3,
+            "cls-h01": 88.9,
+            "cls-h02": 33.3,
+            "cls-h03": 33.3,
+            "cls-h04": 55.6,
+            "cls-h05": 55.6,
+            "cls-a01": 44.4,
+            "cls-a02": 100.0,
+            "cls-a03": 55.6
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 22172,
+            "mean_tokens_per_request": 226.8,
+            "derived_token_ceiling": null
+          }
+        },
+        "extraction": {
+          "task_score": 72.9,
+          "adversarial_sub_score": 44.4,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 67.5,
+            "mean_spread": 0.35,
+            "max_spread": 2
+          },
+          "dimension_means": {
+            "normalisation": 63.3,
+            "null_handling": 75.0,
+            "precision": 70.0,
+            "recall": 83.3
+          },
+          "case_scores": {
+            "ext-t01": 100.0,
+            "ext-t02": 75.0,
+            "ext-t03": 83.3,
+            "ext-t04": 100.0,
+            "ext-t05": 50.0,
+            "ext-t06": 100.0,
+            "ext-t07": 100.0,
+            "ext-t08": 75.0,
+            "ext-t09": 100.0,
+            "ext-t10": 58.3,
+            "ext-t11": 91.7,
+            "ext-t12": 83.3,
+            "ext-h01": 58.3,
+            "ext-h02": 100.0,
+            "ext-h03": 75.0,
+            "ext-h04": 33.3,
+            "ext-h05": 41.7,
+            "ext-a01": 41.7,
+            "ext-a02": 25.0,
+            "ext-a03": 66.7
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 81703,
+            "mean_tokens_per_request": 504.3,
+            "derived_token_ceiling": null
+          }
+        },
+        "json-output": {
+          "task_score": 75.8,
+          "adversarial_sub_score": 55.6,
+          "n_cases": 20,
+          "n_na_dimension_marks": 9,
+          "median_spread": {
+            "n_dimension_instances": 71,
+            "pct_identical_across_runs": 91.5,
+            "mean_spread": 0.141,
+            "max_spread": 3
+          },
+          "dimension_means": {
+            "constraint_conformance": 88.2,
+            "content_correctness": 80.4,
+            "parseability": 80.0,
+            "schema_conformance": 94.1
+          },
+          "case_scores": {
+            "jsn-t01": 100.0,
+            "jsn-t02": 100.0,
+            "jsn-t03": 100.0,
+            "jsn-t04": 100.0,
+            "jsn-t05": 100.0,
+            "jsn-t06": 58.3,
+            "jsn-t07": 100.0,
+            "jsn-t08": 100.0,
+            "jsn-t09": 100.0,
+            "jsn-t10": 100.0,
+            "jsn-t11": 100.0,
+            "jsn-t12": 0.0,
+            "jsn-h01": 0.0,
+            "jsn-h02": 50.0,
+            "jsn-h03": 100.0,
+            "jsn-h04": 83.3,
+            "jsn-h05": 58.3,
+            "jsn-a01": 91.7,
+            "jsn-a02": 0.0,
+            "jsn-a03": 75.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 60859,
+            "mean_tokens_per_request": 254.1,
+            "derived_token_ceiling": null
+          }
+        },
+        "rag-qa": {
+          "task_score": 71.7,
+          "adversarial_sub_score": 58.3,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 76.2,
+            "mean_spread": 0.362,
+            "max_spread": 3
+          },
+          "dimension_means": {
+            "abstention_calibration": 80.0,
+            "answer_correctness": 60.0,
+            "citation_accuracy": 66.7,
+            "groundedness": 80.0
+          },
+          "case_scores": {
+            "rag-t01": 91.7,
+            "rag-t02": 91.7,
+            "rag-t03": 100.0,
+            "rag-t04": 91.7,
+            "rag-t05": 100.0,
+            "rag-t06": 91.7,
+            "rag-t07": 25.0,
+            "rag-t08": 100.0,
+            "rag-t09": 33.3,
+            "rag-t10": 58.3,
+            "rag-t11": 58.3,
+            "rag-t12": 100.0,
+            "rag-h01": 66.7,
+            "rag-h02": 91.7,
+            "rag-h03": 58.3,
+            "rag-h04": 100.0,
+            "rag-h05": 0.0,
+            "rag-a01": 75.0,
+            "rag-a02": 25.0,
+            "rag-a03": 75.0
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 17359,
+            "mean_tokens_per_request": 285.4,
+            "derived_token_ceiling": null
+          }
+        },
+        "summarization": {
+          "task_score": 72.1,
+          "adversarial_sub_score": 77.8,
+          "n_cases": 20,
+          "n_na_dimension_marks": 0,
+          "median_spread": {
+            "n_dimension_instances": 80,
+            "pct_identical_across_runs": 45.0,
+            "mean_spread": 0.588,
+            "max_spread": 3
+          },
+          "dimension_means": {
+            "concision": 80.0,
+            "coverage": 63.3,
+            "faithfulness": 73.3,
+            "instruction_adherence": 71.7
+          },
+          "case_scores": {
+            "sum-t01": 66.7,
+            "sum-t02": 91.7,
+            "sum-t03": 58.3,
+            "sum-t04": 58.3,
+            "sum-t05": 83.3,
+            "sum-t06": 33.3,
+            "sum-t07": 66.7,
+            "sum-t08": 66.7,
+            "sum-t09": 58.3,
+            "sum-t10": 91.7,
+            "sum-t11": 41.7,
+            "sum-t12": 83.3,
+            "sum-h01": 50.0,
+            "sum-h02": 66.7,
+            "sum-h03": 100.0,
+            "sum-h04": 100.0,
+            "sum-h05": 91.7,
+            "sum-a01": 75.0,
+            "sum-a02": 66.7,
+            "sum-a03": 91.7
+          },
+          "benchmark": {
+            "n_attempts": 60,
+            "n_success": 60,
+            "success_rate_pct": 100.0,
+            "failure_code_distribution": {},
+            "p95_latency_ms": 39265,
+            "mean_tokens_per_request": 338.1,
+            "derived_token_ceiling": null
+          }
+        }
+      },
+      "rate_limit_ceiling": {
+        "documented_rpm": "not applicable",
+        "documented_rpd": "not applicable",
+        "documented_monthly_tokens": null,
+        "documented_source": "local \u2014 no service terms; weights licence recorded separately (ToS-Review)",
+        "measured": null,
+        "provenance": "documented (not applicable)",
+        "note": "Local, no network service, no rate limit exists to measure."
+      }
+    }
+  },
+  "openrouter_excluded_from_quality": {
+    "tasks": {
+      "classification": {
+        "benchmark": {
+          "n_attempts": 60,
+          "n_success": 47,
+          "success_rate_pct": 78.3,
+          "failure_code_distribution": {
+            "RATE_LIMIT": 13
+          },
+          "p95_latency_ms": 17796,
+          "mean_tokens_per_request": 329.8,
+          "derived_token_ceiling": null
+        }
+      },
+      "extraction": {
+        "benchmark": {
+          "n_attempts": 60,
+          "n_success": 0,
+          "success_rate_pct": 0.0,
+          "failure_code_distribution": {
+            "RATE_LIMIT": 60
+          },
+          "p95_latency_ms": null,
+          "mean_tokens_per_request": null,
+          "derived_token_ceiling": null
+        }
+      },
+      "json-output": {
+        "benchmark": {
+          "n_attempts": 60,
+          "n_success": 0,
+          "success_rate_pct": 0.0,
+          "failure_code_distribution": {
+            "RATE_LIMIT": 60
+          },
+          "p95_latency_ms": null,
+          "mean_tokens_per_request": null,
+          "derived_token_ceiling": null
+        }
+      },
+      "rag-qa": {
+        "benchmark": {
+          "n_attempts": 60,
+          "n_success": 0,
+          "success_rate_pct": 0.0,
+          "failure_code_distribution": {
+            "RATE_LIMIT": 60
+          },
+          "p95_latency_ms": null,
+          "mean_tokens_per_request": null,
+          "derived_token_ceiling": null
+        }
+      },
+      "summarization": {
+        "benchmark": {
+          "n_attempts": 60,
+          "n_success": 49,
+          "success_rate_pct": 81.7,
+          "failure_code_distribution": {
+            "RATE_LIMIT": 11
+          },
+          "p95_latency_ms": 26592,
+          "mean_tokens_per_request": 559.6,
+          "derived_token_ceiling": null
+        }
+      }
+    },
+    "benchmark_overall": {
+      "n_attempts": 300,
+      "n_success": 96,
+      "success_rate_pct": 32.0,
+      "failure_code_distribution": {
+        "RATE_LIMIT": 204
+      }
+    },
+    "rate_limit_ceiling": {
+      "documented_rpm": 20,
+      "documented_rpd": 50,
+      "documented_monthly_tokens": null,
+      "documented_source": "https://openrouter.ai/docs/api-reference/limits (2026-08-15)",
+      "measured": {
+        "daily_cap": {
+          "rejections_in_benchmark": 204,
+          "attempts": 300,
+          "limit_source": "openrouter_free_tier_daily"
+        },
+        "shared_pool": {
+          "rpm_at_rejection": 24.1,
+          "requests_before_first_rejection": 2,
+          "limit_source": "upstream_provider_shared_pool",
+          "provider_name": "Darkbloom"
+        }
+      },
+      "provenance": "measured",
+      "note": "Two distinct, real ceilings -- an account-level daily cap and a shared-pool ceiling unrelated to the account's own quota. Both published."
+    }
+  }
+}
