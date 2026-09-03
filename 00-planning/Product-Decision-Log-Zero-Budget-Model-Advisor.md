@@ -172,6 +172,25 @@ A decision without a stated "what would change my mind" is a belief, not a judgm
   → A real concern at scale, and the reason each quarterly refresh rotates in a portion of new cases. At v1 scale, the tradeoff is not close.
 - **M:** If a vendor visibly optimised against the published set, the set splits into public (methodology demonstration) and held-out (scoring).
 
+### C5. The advisor prices nothing — it publishes volume thresholds and names the cheapest paid path
+
+- **D:** The advisor states the volume at which each free tier's ceiling binds, and — when nothing fits — names which provider's paid tier removes the binding constraint. It states no price, no monthly cost projection, and no currency figure. The reader prices it themselves against the vendor's current page.
+- **A:** A hand-maintained price table refreshed quarterly; a live pricing lookup at query time.
+- **R:** C1 forbids a backend, so live pricing is impossible — the site is static JSON served from a CDN. A hand-maintained table reintroduces exactly the staleness this project refuses everywhere else: paid pricing moves faster than a quarterly refresh, and a wrong price is worse than no price because the reader acts on it. Volume thresholds are what the benchmark actually measured; prices are what it did not.
+- **C:** *"A tool that says 'you'll need to pay' without saying how much isn't finished."*
+  → It is finished on the axis it measured. The threshold is the hard part and the part nobody publishes; converting a threshold to a monthly bill is one lookup on a page that is authoritative and current, which this index would never be.
+- **M:** If feedback shows readers consistently stall at the paid-path handoff, a dated, clearly-sourced price table with a visible "checked on" stamp becomes worth its maintenance cost — but it ships as a separate, separately-dated surface, never folded into a recommendation.
+- **Corrects (2026-08-29):** three documents claimed the opposite and are now amended — `Quality-Cost-Latency-Tradeoff-Framework.md` §8 ("breakeven is computed live from current pricing"), `Model-Selection-Memo.md` §4 ("the advisor computes breakeven from live pricing at query time"), and `UX-and-Feedback-Spec` §3's recommendation card (cost projection in ₹/$ and a paid-tier breakeven callout). `advisor.js` never priced anything; the code was right and the prose drifted. Framework §8 also contradicted itself inside one section, asserting both live pricing and "it does not price anything."
+
+### C6. Up to three ranked survivors per query, with the full filter table beside them
+
+- **D:** A recommendation shows **up to three** surviving models, ranked for the stated workload, the top one carrying its fallback pairing and failover trigger. Every filtered-out model is shown alongside the specific threshold it failed. Fewer than three survivors is a normal outcome, displayed as such — never padded back to three by relaxing a filter.
+- **A:** A single winner plus fallback (what `advisor.js` currently returns); a fixed three-result card (what the UX spec promised).
+- **R:** Ranking survivors *for a stated workload* is A4 executing, not A4 violated — A4 forbids a query-independent leaderboard precisely because the answer depends on the query, so a query-dependent ordering is the thesis rather than an exception to it. But the filters are hard and often leave one or two survivors (the JSON-output example leaves exactly one after Mistral fails the format floor and Ollama fails latency), so a fixed three is unimplementable. The filter table is the more load-bearing half: it is the evidence that a recommendation is a decision with reasons rather than an opinion, and `advisor.js` already builds it for the none-fit path.
+- **C:** *"Three results is a leaderboard with extra steps."*
+  → A leaderboard is stable across readers; this ordering changes with every input, and two workloads in the same task routinely invert it. The published index still carries no overall ranking anywhere (A4 stands).
+- **M:** If feedback shows the second and third results are ignored, collapse to winner-plus-fallback and keep the filter table — the table is the part that earns its space.
+
 ---
 
 ## Part D — The three questions most likely to be asked

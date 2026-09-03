@@ -44,14 +44,16 @@ Five routes, one page each. Deliberately small.
 
 ### Output — the Recommendation card
 
-Three stacked results, ranked, each showing:
+**Up to three** stacked survivors, ranked for the stated workload (Decision C6). Fewer than three is a normal outcome and is shown as such — a filter is never relaxed to reach three. Each shows:
 
 - **Model + provider**, with a one-line plain-English verdict ("Best quality at your volume, but you'll hit the ceiling above ~800 req/day")
 - **Fit bars** for quality / latency / headroom against the user's stated volume
-- **Cost projection** — free at this volume, or ₹/$ per month if they exceed the tier
-- **Breakeven callout** — "free until ~X req/day; above that, paid tier Y costs less than the workarounds"
+- **Volume threshold** — the requests/day at which this tier's ceiling binds, with the metering unit named (requests/day, or a task-specific figure derived from tokens/month, labelled as derived)
+- **Paid-path callout, unpriced** — "free until ~X req/day; above that, provider Y's paid tier is the one that removes this constraint." No currency figure, no monthly projection (Decision C5)
 - **Known failure modes** for their selected tasks, stated as design guidance, not warnings
 - **"Why this?"** expander → the exact scores, n, judge version and measurement date behind the ranking
+
+**Beside the survivors, the filter table.** Every model that was eliminated, with the specific threshold it failed ("Ollama — latency, p95 60.9s against your <3s"). This is not a debug view; it is the evidence that the recommendation is a decision with reasons rather than an opinion, and it is the half of the card most likely to convince a skeptic.
 
 ### Three UX rules that are really product decisions
 
