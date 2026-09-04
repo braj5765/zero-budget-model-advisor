@@ -89,6 +89,16 @@ h1{font-size:1.7rem; font-weight:600; margin:0 0 8px;}
 .stat{padding:14px 4px 14px 0; border-right:1px solid var(--rule);}
 .stat:last-child{border-right:none; padding-left:18px;}
 .stat:nth-child(2){padding-left:18px;}
+/* Each .stat carries a label + value + note -- three lines -- so a 2-up
+   squeeze at phone width just wraps all three harder. Full width reads
+   better here; the dividers switch from vertical (border-right, needs the
+   left-padding offsets above) to horizontal (border-bottom, doesn't). */
+@media (max-width:480px){
+  .stat-row{grid-template-columns:1fr;}
+  .stat{border-right:none; border-bottom:1px solid var(--rule); padding:12px 0;}
+  .stat:last-child{border-bottom:none; padding-left:0;}
+  .stat:nth-child(2){padding-left:0;}
+}
 .stat-label{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); margin-bottom:4px;}
 .stat-value{font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:1.15rem; font-weight:600;}
 .stat-note{font-size:.74rem; color:var(--ink-soft); margin-top:2px;}
@@ -254,16 +264,21 @@ details.advanced summary{cursor:pointer; font-family:-apple-system,"Segoe UI",Ro
 .lens-tab.active{background:var(--paper-raised); color:var(--rust-deep);}
 #lens-hint{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.78rem; color:var(--ink-soft); background:var(--paper-raised); border:1px solid var(--rule); border-top:none; border-bottom:none; padding:10px 16px; margin:0;}
 
-/* Matrix has 6 columns of near-equal minimum content width; on a narrow
-   viewport that overflows and (unwrapped) used to scroll the whole page,
-   with nothing signalling more columns exist. This wrapper contains the
-   scroll locally and a visible hint appears with it (below); the model
-   column stays sticky so the row's identity never scrolls out of view. */
+/* Matrix has 6 columns of near-equal minimum content width. Above ~700px
+   that's a normal table with a local scroll fallback (min-width below)
+   and a sticky model column; below it, reading 190px of a six-column grid
+   at a time was still bad even with that scroll -- render.html's
+   buildCard() replaces the table with one stacked card per model instead
+   (see .model-result-* below), and this wrapper is hidden entirely. */
 .matrix-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
-.matrix-hint{display:none; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.76rem; color:var(--ink-soft); margin:0 0 8px; text-align:right;}
-@media (max-width:700px){ .matrix-hint{display:block;} }
+.matrix-cards{display:none;}
+@media (max-width:700px){
+  .matrix-scroll{display:none;}
+  .matrix-cards{display:block;}
+}
 
-table.matrix{width:100%; min-width:640px; border-collapse:collapse; background:var(--paper-raised); border:1px solid var(--rule);}
+table.matrix{width:100%; border-collapse:collapse; background:var(--paper-raised); border:1px solid var(--rule);}
+@media (min-width:701px){ table.matrix{min-width:640px;} }
 table.matrix th, table.matrix td{padding:14px 16px; text-align:left; border-bottom:1px solid var(--rule); vertical-align:top;}
 table.matrix thead th{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); font-weight:600; border-bottom:2px solid var(--rule);}
 table.matrix tbody tr:last-child td{border-bottom:none;}
@@ -272,10 +287,14 @@ table.matrix td.model{font-weight:600; min-width:170px; white-space:nowrap;}
 table.matrix td.model a{text-decoration:none; color:inherit; border-bottom:1px dotted var(--rule);}
 table.matrix td.model a:hover{border-bottom-color:var(--rust);}
 table.matrix td.model span{display:block; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.72rem; font-weight:400; color:var(--ink-soft); white-space:normal;}
-td.cell{font-family:ui-monospace,"SF Mono",Consolas,monospace;}
-td.cell.clickable{cursor:pointer; transition:background .1s;}
-td.cell.clickable:hover{background:var(--amber-bg);}
-td.cell.expanded{background:var(--amber-bg);}
+/* .cell is shared by desktop table <td>s and mobile card rows (a <div> --
+   see .model-result-row below) so quality/latency/success values, the
+   clickable/expanded states, and the dispute-form trigger behave
+   identically in both layouts rather than needing parallel rule sets. */
+.cell{font-family:ui-monospace,"SF Mono",Consolas,monospace;}
+.cell.clickable{cursor:pointer; transition:background .1s;}
+.cell.clickable:hover{background:var(--amber-bg);}
+.cell.expanded{background:var(--amber-bg);}
 .cellwrap{display:flex; align-items:center; gap:10px;}
 .celltrack{width:64px; height:6px; background:#ece2ce; border-radius:1px; flex:0 0 auto;}
 .cellfill{height:100%; background:var(--rust); border-radius:1px;}
@@ -284,6 +303,22 @@ td.cell.expanded{background:var(--amber-bg);}
 .ceil-const-cell{background:#f6f0e2; text-align:center;}
 .ceil-tag{display:block; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.66rem; font-style:italic; color:var(--ink-soft); margin-top:3px; font-weight:400;}
 .ceil-derived{font-weight:600;}
+
+/* ---- results matrix, mobile card mode (<=700px): one card per model,
+   reusing .cell/.cellwrap/.celltrack/.cellfill and .ceil-* verbatim from
+   the table above so the two layouts render identical values, just
+   stacked instead of columned. Card shell matches .task-card (model.html). ---- */
+.model-result-card{background:var(--paper-raised); border:1px solid var(--rule); padding:20px 22px; margin-bottom:16px;}
+.model-result-head{margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--rule);}
+.model-result-head a{font-weight:600; font-size:1.02rem; text-decoration:none; color:inherit; border-bottom:1px dotted var(--rule);}
+.model-result-head a:hover{border-bottom-color:var(--rust);}
+.model-result-sub{display:block; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.76rem; color:var(--ink-soft); margin-top:2px;}
+.model-result-row{display:flex; justify-content:space-between; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid var(--rule);}
+.model-result-rows .model-result-row:last-child{border-bottom:none;}
+.model-result-row-label{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.82rem; color:var(--ink-soft); flex:0 0 auto;}
+.model-result-row .cellwrap{flex:0 0 auto; justify-content:flex-end;}
+.model-result-row.clickable:hover, .model-result-row.expanded{background:var(--amber-bg); margin:0 -12px; padding:10px 12px; border-radius:2px;}
+.model-result-ceiling{padding:2px 0;}
 
 .cell-expand{margin-top:0; background:var(--paper-raised); border:1px solid var(--rule); border-top:none; padding:20px 24px;}
 .cell-expand-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;}
@@ -299,6 +334,9 @@ td.cell.expanded{background:var(--amber-bg);}
 .excluded-tag{display:inline-block; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.66rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; background:var(--brick); color:#fff; padding:3px 9px; border-radius:2px; margin-bottom:10px;}
 .excluded-panel p{font-size:.9rem; margin:10px 0;}
 .excluded-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:16px 0; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;}
+/* At a third of ~245px content width these values wrap mid-token ("204 /
+   300", "2026-08-29") -- full width fixes both without shortening either. */
+@media (max-width:480px){ .excluded-stats{grid-template-columns:1fr;} }
 .excluded-stat-label{font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; color:#6b3527; font-weight:700; margin-bottom:4px;}
 .excluded-stat-value{font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:1.2rem; font-weight:700; color:var(--brick);}
 .excluded-cite{font-size:.8rem; color:#6b3527; font-style:italic;}
@@ -329,6 +367,11 @@ table.decision th, table.decision td{border:1px solid var(--rule); padding:9px 1
 table.decision th{background:var(--amber-bg); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft);}
 .pullquote{margin:24px 0; padding:16px 22px; background:var(--amber-bg); border-left:3px solid var(--rust); font-size:1.05rem; font-style:italic; color:var(--rust-deep);}
 .kpi-strip{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0 26px;}
+/* Unlike .stat-row/.excluded-stats, each .kpi is just a short label plus a
+   4-5 char mono number (0.650, 0.358, 0.45) -- nothing here wraps, so 2-up
+   still reads cleanly at phone width and keeps more of the comparison
+   visible at once than dropping to one column would. */
+@media (max-width:480px){ .kpi-strip{grid-template-columns:repeat(2,1fr);} }
 .kpi{background:var(--paper-raised); border:1px solid var(--rule); padding:14px 16px;}
 .kpi-label{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:4px;}
 .kpi-value{font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:1.3rem; font-weight:700; color:var(--brick);}
