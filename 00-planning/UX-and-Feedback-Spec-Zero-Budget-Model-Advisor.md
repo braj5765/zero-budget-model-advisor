@@ -102,6 +102,12 @@ Three questions v1 needs answered, and the instrumentation exists to answer them
 
 Feedback that changes nothing trains people to stop giving it. So: **every quarterly refresh ships a changelog entry naming what feedback changed** — models added, rubric anchors sharpened, scores revised after a dispute. Disputes that led to a re-score get a public note. This is cheap, and it's the difference between a feedback form and a feedback mechanism.
 
+### Amended 2026-09-06 — a fourth, persistent placement; tracking added under the same privacy stance
+
+**A fourth placement:** a small "Feedback" tab, present on every route, additive to the three above (see Decision C3's amendment for why — response volume). This does not relax the design principle above; it enforces it a different way. Opening the tab calls into the page's current state — the advisor's query inputs, the active results lens and any expanded cell, or the model in view — and shows that context to the reader before they write anything, so a submission from this placement is exactly as diagnosable as one from the three fixed moments. A version of this tab that opened a blank textarea with no attached context would be exactly the generic footer this section opens by rejecting, and would not satisfy this decision.
+
+**Tracking, first-party only, same session convention:** before this amendment, nothing about a visit was recorded unless the reader chose to submit feedback. That is no longer true. A narrow, named set of events (advisor submissions and their input combinations, which recommendation was shown, filter-table opens, results-lens switches, reaching `/methodology`, feedback opens vs. completions) now records automatically as the site is used, with no per-event opt-in, and posts to its own Google Form/Sheet — a second form, separate from feedback's, same mechanism — under the identical anonymised, client-generated, non-persisted-across-visits session ID this section already specifies. This is a real addition, not a reinterpretation of what "Data captured per submission" already covered — it is bounded by staying first-party (no third-party analytics tool is introduced — §6 below still holds on that point), first-party-session-scoped, and narrowly named, but bounding it is not the same as it not having happened. Full disclosure lives on `/about` alongside the feedback disclosure.
+
 ---
 
 ## 6. What is deliberately not in v1
