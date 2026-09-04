@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — Zero-Budget Model Advisor</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main>
+  <article style="max-width:74ch;">
+    <div class="intent">About</div>
+    <h1 class="about-hero">Why this exists</h1>
+    <p class="lede">An original benchmark of free-tier LLMs across five everyday builder tasks, plus a routing advisor built on the results, published as a quarterly-refreshed public index. The zero-budget constraint is the thesis, not a limitation — nobody has rigorously published what you can actually ship on a free tier.</p>
+
+    <h2>Who this is for</h2>
+    <p>Solo builders who are pre-revenue, students building portfolio work, and early-stage teams justifying a first spend. If you're choosing between a paid API and a free tier for a real project, this index is measuring the question you actually have.</p>
+
+    <h2>What it does and doesn't claim</h2>
+    <p>It measures four free-tier models — Gemini, Groq, Mistral, and a local Ollama model — across summarization, extraction, classification, RAG Q&amp;A, and structured JSON output, and ships a client-side advisor that filters and ranks them against your stated workload. It does not publish an overall ranking or a single "best model" — the right model depends on your volume, latency need, and error tolerance, and a leaderboard would flatten exactly the tradeoff this index exists to show. It does not price anything — free-tier terms and paid pricing both move faster than this index refreshes, so it publishes the volume threshold where a tier's ceiling binds and names which paid path removes that constraint, unpriced, for you to check against the vendor's current page.</p>
+    <p>The judge behind every score here is <b>uncalibrated</b> — its held-out agreement with a careful human came in at κ=0.358, below this project's own 0.45 floor. That's disclosed on every page, not just this one; see <a href="methodology.html">Methodology</a> for the complete account.</p>
+
+    <h2>Refresh cadence</h2>
+    <p>Quarterly. Free-tier terms, rate limits, and model versions change without notice, and a stale benchmark quietly misleads — a dated index that says so is the honest alternative to a one-off report that goes stale silently. If refresh cost ever proves unsustainable for a single-author project, the cadence drops to semi-annual and that change is stated publicly here rather than quietly missed.</p>
+
+    <h2>How to contribute</h2>
+    <p>Everything is published — the rubric, the test cases, the gold references, the judge's justifications, and the raw benchmark rows. If you think a score is wrong, the highest-value thing you can do is dispute it on the specific cell: open <a href="results.html">Results</a>, click into the model × task you disagree with, and use the "Disagree with this score?" form right there — it's the same rubric anyone can check your reasoning against. Model and task requests for the next refresh go in the form below. There's also a persistent "Feedback" tab on every page (bottom right) for anything that doesn't fit one of the three contextual forms — it still attaches whatever you were looking at when you opened it, shown to you before you send it.</p>
+
+    <h2 id="privacy">Feedback, privacy, and on-site tracking</h2>
+    <p>Everything in this section is a promise about <b>what this site collects from you</b> as a visitor. It has nothing to do with the author's name, photo, and contact details published further down this page — those are the author's own choice to publish, not data gathered from anyone who visits.</p>
+    <p><b>Feedback</b> — every placement (under a recommendation, on a disputed score, the roadmap form, and the persistent tab) posts to a Google Form / Sheet. Each submission carries: a timestamp; the route you were on; an anonymised, client-generated session ID that is <b>not</b> persisted across visits (it lives in <span class="mono">sessionStorage</span> and is gone when you close the tab); the advisor inputs or model/task cell behind whatever you were looking at; your free-text response; and the index version (<span class="mono">generated_at</span> from <span class="mono">index.json</span>) so a disputed score can be traced to the exact data it was scored under. It does <b>not</b> capture an account, a name, an email address, an IP-derived identity, or anything from a third-party analytics tool — there is no third-party tool in this pipeline at all.</p>
+    <p><b>Tracking</b> — this is new, and it is a real change: previously nothing about a visit here was recorded unless you chose to submit feedback; now a small, first-party, self-made set of events records automatically as you use the site, with no action required from you and no per-event notice. Those events — advisor submissions and the input combination behind them, which recommendation was shown, filter-table opens, which results lens you're on, whether you reached this page or Methodology, and feedback opens versus completions — post to their own Google Form/Sheet (a separate form from feedback's, same idea), under the same anonymised, non-persisted session ID above. Nothing else — no mouse movement, no scroll depth, no fingerprinting, and nothing that follows you across a visit boundary. It fails silently and never blocks the page: events queue locally and send in one batch when you navigate away, and if the request fails for any reason, the site behaves exactly as if tracking were switched off.</p>
+
+    <h2>Changelog</h2>
+    <div class="changelog-entry">
+      <div class="changelog-date">2026-09-06</div>
+      <p>Persistent, context-carrying feedback entry point added on every route (Decision C3 amendment); feedback and tracking payloads made real and disclosed here; the Yes/No follow-up buttons' 1.05:1 contrast bug fixed.</p>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">2026-09-04</div>
+      <p>Production site built: five routes (Advisor, Results, Model profile, Methodology, About) plus the feedback widget, from the frozen design spec.</p>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">2026-09-03</div>
+      <p><span class="mono">Known-Limitations.md</span> published in full; rubric reaches v1.9; the site's visual direction ("Field Notes") is chosen and specified.</p>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">2026-08-29</div>
+      <p>Held-out judge calibration measured: κ=0.358, below the pre-registered 0.45 floor. The gate is published as failed, not quietly reverted or re-run until it passed.</p>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">2026-08-16</div>
+      <p>OpenRouter cut from quality scoring after 96/300 successful calls (68% rate-limited) — insufficient coverage for this project's scoring method. The failure data is published, not hidden; see the excluded-provider panel on <a href="results.html">Results</a>.</p>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">2026-08-15</div>
+      <p>Full benchmark run: 1,500 calls across four scored providers and five tasks.</p>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-date">2026-08-10</div>
+      <p>Project scoped: rubric v1.0 frozen, decision log started, zero-budget constraint set as the thesis.</p>
+    </div>
+
+    <div class="author-block">
+      <img src="assets/braj.jpg" alt="Photo of Braj Kishan Singh" width="80" height="80" class="author-photo">
+      <div class="author-info">
+        <div class="author-name">Braj Kishan Singh</div>
+        <div class="author-links">
+          <a href="mailto:brajkishan.singh5765@gmail.com">brajkishan.singh5765@gmail.com</a>
+          <a href="https://www.linkedin.com/in/braj-kishan-singh-050810169/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <div id="footer-feedback-mount"></div>
+</main>
+
+<div class="footnote">
+  <b>Zero-Budget Model Advisor.</b> Built by Braj Kishan Singh.
+</div>
+
+<script src="data/index.data.js"></script>
+<script src="site.js"></script>
+<script>
+(async function () {
+  const data = await SITE.loadIndexData();
+  SITE.checkDataFreshness(data);
+  SITE.renderHeader(document.getElementById("site-header"), { active: "about", data });
+  SITE.mountPersistentFeedback(() => ({ route: "about" }));
+  SITE.mountFooterFeedback(document.getElementById("footer-feedback-mount"));
+})();
+</script>
+
+</body>
+</html>

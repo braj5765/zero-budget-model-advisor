@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methodology — Zero-Budget Model Advisor</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<div class="page-toc">
+  <nav class="toc">
+    <div class="toc-label">On this page</div>
+    <a href="#judging-protocol">Judging protocol</a>
+    <a href="#kappa-reading">Reading κ, pre-registered</a>
+    <a href="#cal-arc">1. The judge calibration arc</a>
+    <a class="toc-sub" href="#cal-11">1.1 Gate cleared, failed to generalise</a>
+    <a class="toc-sub" href="#cal-12">1.2 κ is not a clean measure</a>
+    <a class="toc-sub" href="#cal-13">1.3 Concordance ≠ correctness</a>
+    <a class="toc-sub" href="#cal-14">1.4 Four failure modes</a>
+    <a href="#everything-else">2. Everything else</a>
+    <a href="#next-refresh">3. What the next refresh fixes</a>
+  </nav>
+
+  <article>
+    <div class="intent">Methodology</div>
+    <h1>Rubric, judging protocol, and every known limitation</h1>
+    <p class="lede">This is the complete account of how every score on this site was produced and what could be wrong with it, ordered by how much each item should move your confidence — strongest first, not by when it was found. It exists because "what did you get wrong" is a fair question to ask of a benchmark, and it deserves a better answer than a scattered set of caveats across four files.</p>
+
+    <h2 id="judging-protocol">Judging protocol</h2>
+    <p><b>Hybrid: LLM-as-judge over the full set, calibrated against a human-scored subset.</b> Source: Scoring-Rubric.md v1.9 §5.</p>
+    <div class="protocol-steps">
+      <ol>
+        <li><b>Human calibration set.</b> 20% of cases (20 total), stratified across all five tasks and all three difficulty tiers, hand-scored working from the rubric only, before seeing any judge output.</li>
+        <li><b>Judge runs the full set</b> — all 100 cases × all models — scoring each dimension 0–3 against the gold reference, required to output a one-sentence justification per dimension. Justifications are published; a score without a reason is not auditable.</li>
+        <li><b>Agreement check.</b> Judge vs. human scores on the calibration set, compared with quadratic-weighted Cohen's κ. Threshold: κ ≥ 0.6. κ ≥ 0.6 → judge scores stand for the remaining 80%. κ &lt; 0.6 → the judge is not trusted for that task; either the rubric anchors are sharpened and the set re-judged, or that task is scored entirely by hand — and which path was taken is reported.</li>
+        <li><b>Disagreement audit.</b> Every case where judge and human differ by ≥2 points is inspected and written up. These are the most informative cases in the whole benchmark.</li>
+      </ol>
+    </div>
+
+    <p><b>Judge independence.</b> The judge must not be a model under test — scoring Gemini's output with Gemini invites self-preference bias, which is documented and real. The judge here is a model outside the benchmark set (<span class="mono" id="judge-model-name"></span>), and its identity, version and date are recorded with every score. The unavoidable residual risk: judge models have their own stylistic preferences and may systematically favour outputs resembling their own — the κ check against human scores is the control on this, which is the reason the human subset exists at all rather than being a formality.</p>
+    <p><b>Blinding.</b> Model identity is stripped from responses before judging. Response order is randomised per case. Both are cheap and remove two known confounds.</p>
+
+    <h3 id="kappa-reading">Reading κ when the human marginal is concentrated</h3>
+    <p><i>Pre-registered 2026-08-19, before any judge run.</i> The human calibration scores came in at 89% 3s. Quadratic-weighted κ is chance-corrected, so when one rater's marginal distribution is that concentrated, expected agreement converges on observed agreement and κ becomes small and unstable — the judge could match on nearly every item and still land under 0.6. This is the well-documented kappa paradox, not a property of the judge. The response was fixed before any judge output existed, because deciding how to read a disappointing κ after seeing it is exactly the post-hoc shaping this rubric's freeze discipline exists to prevent.</p>
+    <p><b>Always reported together, never κ alone:</b> the full confusion matrix, both raters' marginal distributions, exact raw agreement, the count of ≥2-point disagreements, and Gwet's AC1 (stable under skewed marginals where κ is not).</p>
+    <table class="decision">
+      <tr><th>Condition</th><th>Reading</th><th>Action</th></tr>
+      <tr><td>κ ≥ 0.6</td><td>Judge agrees</td><td>Proceed to the full set</td></tr>
+      <tr><td>κ &lt; 0.6, AC1 ≥ 0.6, zero ≥2-point disagreements, not concentrated in one task/dimension</td><td>Prevalence artifact, not judge failure</td><td>Extend calibration with 10 hard/adversarial items and recompute. Do not lower the threshold</td></tr>
+      <tr><td>κ &lt; 0.6 and AC1 &lt; 0.6</td><td>Real disagreement</td><td>Sharpen anchors, re-judge</td></tr>
+      <tr><td>Any ≥2-point disagreement</td><td>Real disagreement regardless of κ</td><td>Audit and write up before proceeding</td></tr>
+    </table>
+    <p>The threshold never moves. The only sanctioned remedy for a prevalence artifact is more discriminating data — hard and adversarial items where scores should legitimately vary — because that attacks the cause; lowering the gate would attack the evidence.</p>
+
+    <h2 id="cal-arc">1. The judge calibration arc</h2>
+    <p>This is the most serious limitation in the project, and the most interesting, because it's not a story about a benchmark being sloppy — it's a story about what a well-designed control (pre-registration, held-out measurement, blinded scoring) still can't buy you at this scale.</p>
+
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-label">In-sample κ</div><div class="kpi-value">0.650</div></div>
+      <div class="kpi"><div class="kpi-label">Held-out κ</div><div class="kpi-value">0.358</div></div>
+      <div class="kpi"><div class="kpi-label">Pre-registered floor</div><div class="kpi-value">0.45</div></div>
+    </div>
+
+    <h4 id="cal-11">1.1 The gate cleared, then failed to generalise</h4>
+    <p>The κ gate is Rubric §5's condition for trusting an LLM judge instead of hand-scoring everything: quadratic-weighted Cohen's κ ≥ 0.6 against human scores. It cleared at κ = 0.650, in-sample, after four rounds of prompt iteration (<span class="mono">judge_prompt.md</span> v1.1 → v1.2 → a judge-model swap → v1.3) — all four rounds run against the same 20 calibration items.</p>
+    <p><span class="mono">JUDGE-RUN-PLAN.md</span> §6 pre-registered, before scoring a single held-out item, how a fresh measurement would be read. Held-out κ on 20 fresh items — drawn by case_id exclusion from the 80 case_ids untouched by the in-sample set, matched to the in-sample set's adversarial task composition, hand-scored blind — came in at κ = 0.358 (AC1 0.689, raw agreement 72.6%, 7 disagreements of ≥2 points, n=73 pooled pairs). That falls in §6's pre-registered "&lt; 0.45" band: the in-sample gate does not hold; κ=0.650 is invalidated as a generalisation estimate.</p>
+    <p><b>I'm stating this without softening it: the index ships with a judge whose agreement with a careful human is unestablished.</b> The collapse is not uniform: classification held at κ=0.96 and extraction/summarization collapsed to κ=0.08/0.06, with json-output returning κ=0.00 despite 12/13 raw agreement — the concentrated-marginal paradox Rubric v1.3 pre-registered a reading procedure for. This invalidates the specific claim "the judge agrees with a careful human at κ=0.65." It does not, by itself, mean every judged score in the production run is wrong — §1.3 below is why that distinction matters.</p>
+
+    <h4 id="cal-12">1.2 The number itself is not a clean measure of judge quality</h4>
+    <p><b>The specification gap.</b> A pure restatement of Rubric §3, swept against <span class="mono">judge_prompt.md</span> and every case file's conventions block in both directions, found 13 rules that governed the judge's scoring throughout the entire run and were never written into the rubric at all: 4 in classification, 5 in RAG Q&amp;A, 2 in json-output, and 2 more in extraction and out-of-scope territory. Rubric §5 requires the human to hand-score "working from this rubric only." <b>The two legs — human and judge — were never scored against the same specification, in-sample or held-out.</b> κ in this pipeline was never cleanly measuring judge-vs-human agreement; it was partly measuring the gap between two documents both were believed to be "the rubric."</p>
+    <p><b>The protocol asymmetry.</b> The in-sample 20 were hand-scored in one long blind session that surfaced cross-item inconsistencies, logged as flags that became Rubric v1.4's coverage and precision anchors. The held-out 20 were scored in a guided walkthrough with zero notes recorded and no cross-item consistency pass, because nothing required one. An unknown share of the κ drop from 0.650 to 0.358 may measure that protocol difference rather than judge generalisation.</p>
+    <p><b>What this does and doesn't invalidate:</b> it means the gap between 0.650 and 0.358 overstates pure overfitting by some amount that can't be sized. It does not mean the true generalisation number is good — §1.4 shows independently that a large share of the held-out disagreements are real human error, not judge error, which cuts the other way.</p>
+
+    <h4 id="cal-13">1.3 κ measures concordance, not correctness — demonstrated, not asserted</h4>
+    <p>This is the sharpest finding in the project, and it comes from the project's own data rather than a textbook caveat about weighted kappa.</p>
+    <div class="pullquote">A case scored under an unambiguous rule was rated 3 by the human and 0 by the judge — both wrong, in opposite directions, on a rule that had been unambiguous since rubric v1.1.</div>
+    <p>Had both raters said 3, κ would have recorded perfect agreement on that pair — and both scores would still have been wrong. <b>κ measures whether two raters land on the same number, not whether that number is correct.</b> This is exactly why validating scores against the standard — a checklist, applied item by item — turned out to be the better instrument than the κ gate: it compares each score to the rule, not the raters to each other. The full checklist sweep found 15 divergences across both calibration sets this way, 2 of them sourced to the base rubric itself rather than the judge-only rules — meaning the checklist caught real judge errors on rules the human also had.</p>
+    <p><b>Consequence:</b> any reader treating κ=0.650 (or 0.358) as "the judge is X% as good as a human" is reading the statistic wrong on this project's own evidence. The correct reading is narrower: this many pairs landed on the same number, and a meaningful fraction of the ones that didn't — and some that did — are traceable to a specific, nameable cause below.</p>
+
+    <h4 id="cal-14">1.4 Four failure modes, none of them visible to κ</h4>
+    <p>1. <b>The human misses a rule the rubric never carried.</b> Five of five presented held-out cases confirmed as scoring errors where the case's own gold notes or a file-level convention stated the rule plainly and it was read generously without checking.</p>
+    <p>2. <b>The judge confuses dimension boundaries.</b> One case scored faithfulness down for an omission — faithfulness is about invented or contradicted claims, not missing ones; that's coverage's job. Another deducted instruction_adherence for the identical omission already (correctly) charged to coverage on the same item — the exact double-counting the coverage anchor's own text warns against.</p>
+    <p>3. <b>The judge prompt cannot represent a real case shape.</b> The abstention-calibration branch is binary (UNANSWERABLE/ANSWERABLE) and has no representation for a conditionally answerable question. One case ("yes if a hardware bundle, no otherwise") lands on the majority-case answer without resolving the condition — recorded as open, not resolved, because the defect is in a rule the judge was given that the rubric never carried at all.</p>
+    <p>4. <b>Both raters miss a determinate rule at once</b> — the case shown in the pull-quote above, which shows κ's blind spot directly.</p>
+    <p>None of these four is visible in a κ number by construction — a concordance statistic cannot distinguish "both raters agree because both are right" from "both raters agree because both share the same blind spot," and it actively hides case 4 as if it were a success.</p>
+
+    <h2 id="everything-else">2. Everything else, in descending order of how much it should move your confidence</h2>
+
+    <div class="limitation">
+      <p class="lead">2.1 Half the scoring scale is discretion, not anchor.</p>
+      <p>Rubric §3's dimension tables anchor only the 3 and 0 poles on most dimensions — a clean pass and a clean failure. The 1s and 2s in between are not separately anchored, and that's where essentially all of the non-determinate disagreement in the calibration data lives. <b>Consequence:</b> a 1-vs-2 disagreement between any two scorers is expected noise, not a defect to chase — but roughly half the scale's resolution is judgment calls rather than rule application. <b>Fix:</b> anchor the 1 and 2 cells the way v1.4 anchored coverage and precision, before the next run.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.2 Three declared open boundaries, and six extraction gaps sit inside the first two.</p>
+      <p>Rubric §3.8 declares three boundaries this rubric does not resolve: precision/normalisation, recall/normalisation/null-handling, and conditional answerability. A complete sweep found six extraction-task gaps sitting inside the first two — the open boundary isn't a one-off edge case, it's the seam extraction hits repeatedly whenever a field carries both a content defect and a canonical-form defect. <b>Consequence:</b> any extraction score close to a dimension boundary should be read as sitting in genuinely undecided territory, not as a scoring error. <b>Fix:</b> the boundaries stay open per instruction — resolving one now, after seeing which reading is more flattering to which model, is exactly what this project's freeze discipline exists to prevent.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.3 One person did all the human scoring.</p>
+      <p>Every hand-score in this project — calibration, held-out, adjudication — was scored by the same person who wrote the rubric, the test cases, and the gold references. There is no inter-human reliability estimate anywhere in this project. <b>Consequence:</b> every "human score" should be read as "this project's author's score," not as a proxy for scorer consensus. <b>Fix:</b> structurally unfixable at this project's scale — it would require a second qualified scorer, which is a different project.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.4 Both adjudications were non-blind by necessity, and one had a disclosure error.</p>
+      <p>Both review documents had the same person review their own prior scores after seeing the judge's scores — a genuinely blind re-check would need a third, unscored calibration set, which doesn't exist. One document additionally listed two items backwards in its own bias-disclosure paragraph; the aggregate counts told before ruling were correct throughout, so the verdicts stand, but the error was in a document meant to demonstrate the review wasn't gamed. <b>Consequence:</b> treat every adjudication verdict as "confirmed by the interested party, with the stated caveats," not as independent confirmation.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.5 Rubric v1.4's anchors were articulated after seeing what needed explaining.</p>
+      <p>The coverage and precision anchors were written from the scoring intuitions the first blind calibration session exposed — legitimate under this project's own freeze discipline only because it happened before any judge output existed. <b>Consequence:</b> these two anchors are calibration-derived rather than first-principles-derived; their generality beyond this project's specific 20-case set is unverified.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.6 Everything after 2026-08-19 is an in-file claim, not a git-attested one.</p>
+      <p>Every amendment, revert, and pre-registration dated after 2026-08-19 was committed in one batch on 2026-09-03. A reader who doesn't trust the in-file dates has no independent way to check, from the repository alone, that the discipline claimed was actually followed in the order claimed. The discipline itself was followed either way; what's missing is a third party's ability to verify the order from git rather than from the author's word.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.7 n=20 per task, and adversarial sub-scores rest on n=3.</p>
+      <p>Differences under roughly 5 points on the 0–100 scale are not claimed as meaningful anywhere in this index. Adversarial sub-scores rest on n=3 per task and are directional signal, not measurement. <b>Consequence:</b> don't read a 3-point gap between two models on any table as a real difference.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.8 OpenRouter's exclusion is not random.</p>
+      <p>OpenRouter was cut from quality scoring after 96/300 successful calls (68% RATE_LIMIT) — not enough coverage to support median-of-three at this project's stratification. The exclusion correlates with availability under load, which is exactly the property this index claims to measure. <b>Consequence:</b> the four scored providers are, by construction, the four that were available enough to score — a selection effect baked into which providers get a quality number at all. See the excluded-provider panel on the <a href="results.html#excluded" style="color:var(--rust-deep);">Results</a> page.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.9 Untuned prompts undersell a model that responds to tuning.</p>
+      <p>Every model got the identical, untuned prompt, deliberately — the goal is out-of-the-box behaviour. <b>Consequence:</b> a model that would perform substantially better with light prompt engineering scores as if it can't, and this index cannot distinguish "bad at the task" from "needs a different prompt."</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.10 Temperature 0 is not deterministic, and every summarization figure inherits it.</p>
+      <p>Median-of-three assumes run-to-run stability temperature 0 doesn't actually provide. Measured median-identical rates on summarization ranged 36–60% across the four scored models — on well over a third of summarization cases, the three judged runs didn't even produce the same output. <b>Consequence:</b> every summarization figure carries meaningfully more run-to-run variance than "temp 0, median-of-three" implies, and this is also the task where in-sample and held-out κ collapsed hardest.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.11 Derived token ceilings are projections, not vendor figures.</p>
+      <p>Mistral's request-equivalent ceilings are computed from this benchmark's own measured mean tokens-per-request against Mistral's documented 1B-tokens/month cap — not a number Mistral publishes. The conversion assumes a 30-day month and this benchmark's specific prompt lengths. <b>Consequence:</b> treat every Mistral "requests/day" figure in this index as this-benchmark's-workload-shaped, not as a general Mistral capacity claim.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.12 The judge pass itself had a ~3% silent-retry failure rate, concentrated where judging is hardest.</p>
+      <p>Of 1,200 judged keys, 95 were retried, and 39 of those retries followed a MALFORMED result — a judge-content failure, not a transport failure. Roughly 3% of recorded production judgments are the surviving attempt of a judge call that first produced unusable output, and those 39 concentrate in summarization (13) and Ollama's outputs (16) — exactly the slices already flagged as hardest to judge.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.13 The n/a exclusion rule flatters Mistral's JSON score.</p>
+      <p>Mistral's json-output score of 33.8 is computed with 39 of 60 dimension-rows excluded as n/a (parseability failed, so the other three dimensions never get scored). Excluding a failure from the denominator rather than scoring it 0 raises the mean over what a "did it actually work" reading would show. <b>Consequence:</b> 33.8 is the charitable number — the average of the roughly one-third of attempts that produced parseable JSON, not a score reflecting the two-thirds that didn't.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.14 The test cases encode one person's view of a typical workload.</p>
+      <p>The 12/5/3 typical/hard/adversarial split, and what counts as "typical" within it, reflects one person's judgment about what an ordinary builder asks an LLM to do. <b>Consequence:</b> this index measures performance on this test design, not on "everyday tasks" in some universal sense. <b>Fix:</b> the cases and golds are published specifically so this can be checked and disagreed with.</p>
+    </div>
+    <div class="limitation">
+      <p class="lead">2.15 Free tiers are a moving target.</p>
+      <p>Every figure in this index — rate limits, quality scores, latency — is a point-in-time reading, dated at the top of every table. Providers change free-tier terms, models, and infrastructure without notice. <b>Consequence:</b> treat any figure more than a quarter old as unverified.</p>
+    </div>
+
+    <h2 id="next-refresh">3. What the next refresh fixes, and what stays broken</h2>
+    <div class="refresh-split">
+      <div class="refresh-card">
+        <h4>Fixed by the next quarterly run</h4>
+        <p>The 20 items originally drawn for a third calibration round ("Set 3") were redirected, not discarded — they become the next refresh's calibration set, judged under Rubric v1.8's consolidated specification on both legs for the first time. That run produces a κ figure that actually tests whether v1.8 closed the specification gap, rather than another number asserted to be better.</p>
+      </div>
+      <div class="refresh-card">
+        <h4>Structurally unfixable at this scale</h4>
+        <p>A single human scorer and n=20 per task don't go away with better documentation or a better prompt. Both are functions of this being a zero-budget, single-author project — fixing either means a different project, with a second scorer and a larger case budget.</p>
+      </div>
+    </div>
+  </article>
+</div>
+
+<div class="footnote">
+  <b>Zero-Budget Model Advisor.</b> Content is the real text of <span class="mono">04-analysis/Known-Limitations.md</span> and <span class="mono">Scoring-Rubric.md</span> v1.9 §5 — every number and finding on this page is from those two source files.
+</div>
+
+<script src="data/index.data.js"></script>
+<script src="site.js"></script>
+<script>
+(async function () {
+  const data = await SITE.loadIndexData();
+  SITE.checkDataFreshness(data);
+  SITE.renderHeader(document.getElementById("site-header"), { active: "methodology", data, expandable: false, trailingNote: "This entire page is that disclosure, in full." });
+  SITE.mountPersistentFeedback(() => ({ route: "methodology" }));
+  SITE.track("methodology_reach", {});
+  document.getElementById("judge-model-name").textContent = data.judge_model;
+})();
+</script>
+
+</body>
+</html>
