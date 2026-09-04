@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction 3 — Studio — Results</title>
+<style>
+  :root{
+    --bg:#fbf9f6; --panel:#ffffff; --ink:#1c1917; --ink-soft:#78716c;
+    --line:#e7e2da; --coral:#e2572b; --coral-deep:#b8431f; --coral-bg:#fdeae2;
+    --teal:#2a6f6f; --teal-bg:#e3f0ef; --red:#c0392b; --red-bg:#fbe6e2;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",system-ui,sans-serif; line-height:1.55;}
+  .num{font-variant-numeric:tabular-nums;}
+
+  header.masthead{background:var(--panel); border-bottom:1px solid var(--line);}
+  .masthead-top{max-width:1180px; margin:0 auto; padding:22px 32px 16px; display:flex; align-items:center; justify-content:space-between; gap:24px;}
+  .wordmark{font-size:1.15rem; font-weight:800; letter-spacing:-.01em;}
+  .wordmark small{display:block; font-size:.66rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin-top:3px;}
+  nav.routes{font-size:.85rem; font-weight:600; display:flex; gap:24px;}
+  nav.routes a{color:var(--ink-soft); text-decoration:none; padding:6px 0;}
+  nav.routes a.current{color:var(--coral-deep);}
+
+  .disclosure-strip{background:var(--coral-bg);}
+  .disclosure-inner{max-width:1180px; margin:0 auto; padding:12px 32px; display:flex; align-items:center; gap:14px; font-size:.86rem; color:#5c2c17;}
+  .disclosure-mark{flex:0 0 auto; width:34px; height:34px; border-radius:50%; background:var(--coral); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.72rem;}
+  .disclosure-inner p{margin:0; flex:1;}
+
+  main{max-width:1180px; margin:0 auto; padding:40px 32px 90px;}
+  .intent{font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); margin-bottom:8px;}
+  h1{font-size:1.7rem; font-weight:800; letter-spacing:-.01em; margin:0 0 8px;}
+  .sub{color:var(--ink-soft); font-size:.94rem; margin:0 0 22px;}
+
+  .no-rank{background:var(--teal-bg); border-radius:14px; padding:14px 18px; font-size:.86rem; margin-bottom:26px; color:#1d4c4c; max-width:82ch;}
+
+  .lens-tabs{display:inline-flex; background:var(--panel); border:1px solid var(--line); border-radius:100px; padding:4px; margin-bottom:18px; gap:2px;}
+  .lens-tab{padding:8px 18px; font-size:.82rem; font-weight:700; cursor:pointer; color:var(--ink-soft); border-radius:100px;}
+  .lens-tab.active{background:var(--coral); color:#fff;}
+
+  table.matrix{width:100%; border-collapse:separate; border-spacing:0; background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden;}
+  table.matrix th, table.matrix td{padding:14px 18px; text-align:left; border-bottom:1px solid var(--line);}
+  table.matrix thead th{font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:700; background:var(--bg);}
+  table.matrix tbody tr:last-child td{border-bottom:none;}
+  table.matrix td.model{font-weight:700;}
+  table.matrix td.model span{display:block; font-size:.74rem; font-weight:500; color:var(--ink-soft);}
+  .cellwrap{display:flex; align-items:center; gap:10px;}
+  .celltrack{width:70px; height:8px; background:var(--coral-bg); border-radius:100px;}
+  .cellfill{height:100%; background:linear-gradient(90deg,var(--coral),var(--coral-deep)); border-radius:100px;}
+
+  .footnote{max-width:1180px; margin:44px auto 0; padding:18px 32px 30px; font-size:.8rem; color:var(--ink-soft); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-top">
+    <div class="wordmark">Zero-Budget Model Advisor<small>Free-tier LLM benchmark &amp; routing advisor</small></div>
+    <nav class="routes">
+      <a href="3-studio-advisor.html">Advisor</a>
+      <a href="#" class="current">Results</a>
+      <a href="#" onclick="return false">Models</a>
+      <a href="#" onclick="return false">Methodology</a>
+      <a href="#" onclick="return false">About</a>
+    </nav>
+  </div>
+  <div class="disclosure-strip">
+    <div class="disclosure-inner">
+      <div class="disclosure-mark">κ<br>.358</div>
+      <p>Measured 2026-08-29 &middot; judge minimax/minimax-m3:free v1.3. Held-out agreement came in at κ=0.358, below our own 0.45 floor — the calibration gate is invalidated, and every score here is published anyway, disclosed rather than hidden.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="intent">Results matrix</div>
+  <h1>Four models, five tasks</h1>
+  <p class="sub">Every scored model &times; task. One lens at a time.</p>
+
+  <div class="no-rank">This index publishes no overall ranking and no single "best model" figure, on principle — the right model depends entirely on your workload. Ask the advisor for a query-specific answer instead of scanning for a winner here.</div>
+
+  <div class="lens-tabs">
+    <div class="lens-tab active" data-lens="quality">Quality</div>
+    <div class="lens-tab" data-lens="latency">p95 Latency</div>
+    <div class="lens-tab" data-lens="success">Success rate</div>
+    <div class="lens-tab" data-lens="ceiling">Rate-limit ceiling</div>
+  </div>
+
+  <table class="matrix">
+    <thead>
+      <tr><th>Model</th><th>Classification</th><th>Extraction</th><th>JSON output</th><th>RAG Q&amp;A</th><th>Summarization</th></tr>
+    </thead>
+    <tbody id="matrix-body"></tbody>
+  </table>
+
+  <p class="footnote" style="margin-top:16px; border-top:none; padding:12px 0 0;">n=20 cases per task, median of 3 runs &middot; adversarial sub-scores rest on n=3, directional only &middot; a gap under ~5 points on any lens should read as noise, not signal.</p>
+</main>
+
+<div class="footnote">
+  <b>Direction 3 — Studio.</b> Warm humanist sans, card-based layout, coral/teal accent. Every figure below is the real value from 05-site/data/index.json as published 2026-08-29 — the tabs re-render the same real dataset, nothing here is simulated.
+</div>
+
+<script>
+  const DATA = {
+    quality: { max:100, unit:"", rows:{
+      "gemini-3.5-flash-lite":[93.3,92.1,67.1,96.2,88.3],
+      "groq-llama-3.3-70b":[85.6,92.5,87.5,96.7,75.4],
+      "mistral-small-2603":[84.4,90.8,33.8,85.4,82.5],
+      "ollama-llama3.2-3b":[57.8,72.9,75.8,71.7,72.1],
+    }},
+    latency: { max:82000, unit:"ms", rows:{
+      "gemini-3.5-flash-lite":[4515,1577,1828,2125,2764],
+      "groq-llama-3.3-70b":[579,1389,1797,577,985],
+      "mistral-small-2603":[889,3171,2264,1327,2375],
+      "ollama-llama3.2-3b":[22172,81703,60859,17359,39265],
+    }},
+    success: { max:100, unit:"%", rows:{
+      "gemini-3.5-flash-lite":[100,100,100,100,100],
+      "groq-llama-3.3-70b":[100,100,100,100,100],
+      "mistral-small-2603":[100,100,100,100,100],
+      "ollama-llama3.2-3b":[100,100,100,100,100],
+    }},
+    ceiling: { max:null, unit:"", rows:{
+      "gemini-3.5-flash-lite":["15 rpm / 1,000 rpd","15 rpm / 1,000 rpd","15 rpm / 1,000 rpd","15 rpm / 1,000 rpd","15 rpm / 1,000 rpd"],
+      "groq-llama-3.3-70b":["30 rpm / 1,000 rpd","30 rpm / 1,000 rpd","30 rpm / 1,000 rpd","30 rpm / 1,000 rpd","30 rpm / 1,000 rpd"],
+      "mistral-small-2603":["60 rpm / 1B tok/mo","60 rpm / 1B tok/mo","60 rpm / 1B tok/mo","60 rpm / 1B tok/mo","60 rpm / 1B tok/mo"],
+      "ollama-llama3.2-3b":["local — n/a","local — n/a","local — n/a","local — n/a","local — n/a"],
+    }},
+  };
+  const LABELS = {
+    "gemini-3.5-flash-lite":"Gemini 3.5 Flash Lite",
+    "groq-llama-3.3-70b":"Groq Llama 3.3 70B",
+    "mistral-small-2603":"Mistral Small 2603",
+    "ollama-llama3.2-3b":"Ollama Llama 3.2 3B",
+  };
+  const SUB = {
+    "gemini-3.5-flash-lite":"Google &middot; hosted",
+    "groq-llama-3.3-70b":"Groq &middot; hosted",
+    "mistral-small-2603":"Mistral &middot; hosted",
+    "ollama-llama3.2-3b":"Local, no network ceiling",
+  };
+  function render(lens){
+    const d = DATA[lens];
+    const body = document.getElementById("matrix-body");
+    body.innerHTML = "";
+    for (const id of Object.keys(d.rows)){
+      const tr = document.createElement("tr");
+      const nameTd = document.createElement("td");
+      nameTd.className = "model";
+      nameTd.innerHTML = LABELS[id] + "<span>" + SUB[id] + "</span>";
+      tr.appendChild(nameTd);
+      d.rows[id].forEach(v => {
+        const td = document.createElement("td");
+        td.className = "num";
+        if (d.max){
+          const pct = Math.min(100, (v / d.max) * 100);
+          td.innerHTML = '<div class="cellwrap"><span>' + v.toLocaleString() + d.unit + '</span><div class="celltrack"><div class="cellfill" style="width:' + pct + '%"></div></div></div>';
+        } else {
+          td.textContent = v;
+        }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    }
+  }
+  document.querySelectorAll(".lens-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".lens-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      render(tab.dataset.lens);
+    });
+  });
+  render("quality");
+</script>
+
+</body>
+</html>

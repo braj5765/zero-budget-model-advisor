@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction 2 — Control Room — Results</title>
+<style>
+  :root{
+    --bg:#eef1f6; --panel:#ffffff; --ink:#12151a; --ink-soft:#5b6472;
+    --line:#c9d1dc; --indigo:#4338ca; --indigo-deep:#332a9e; --indigo-bg:#e6e4fb;
+    --teal:#0f766e; --teal-bg:#dff2ef; --red:#b91c1c; --red-bg:#fbe4e2;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:ui-monospace,"SF Mono","JetBrains Mono",Consolas,monospace; font-variant-numeric:tabular-nums; line-height:1.5;}
+  .sans{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;}
+
+  header.masthead{border-bottom:1px solid var(--line); background:var(--panel);}
+  .masthead-top{max-width:1200px; margin:0 auto; padding:20px 32px 14px; display:flex; align-items:baseline; justify-content:space-between; gap:24px;}
+  .wordmark{font-size:1.05rem; font-weight:700;}
+  .wordmark small{display:block; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-top:3px; font-weight:400;}
+  nav.routes{font-size:.78rem; display:flex; gap:20px;}
+  nav.routes a{color:var(--ink-soft); text-decoration:none; padding-bottom:4px; border-bottom:2px solid transparent;}
+  nav.routes a.current{color:var(--indigo); border-bottom-color:var(--indigo);}
+
+  .disclosure-strip{background:var(--indigo); color:#fff;}
+  .disclosure-inner{max-width:1200px; margin:0 auto; padding:9px 32px; display:flex; align-items:center; gap:14px; font-size:.76rem;}
+  .disclosure-mark{font-weight:700; font-size:.72rem; background:#fff; color:var(--indigo-deep); padding:2px 8px; border-radius:2px;}
+  .disclosure-inner p{margin:0; flex:1; opacity:.95;}
+
+  main{max-width:1200px; margin:0 auto; padding:34px 32px 80px;}
+  .intent{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); margin-bottom:8px; font-weight:700;}
+  h1{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:1.5rem; font-weight:700; margin:0 0 6px;}
+  .sub{color:var(--ink-soft); font-size:.82rem; margin:0 0 20px;}
+
+  .no-rank{background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--teal); padding:12px 16px; font-size:.78rem; margin-bottom:24px; color:var(--ink-soft); max-width:82ch;}
+
+  .lens-tabs{display:flex; gap:0; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;}
+  .lens-tab{padding:9px 18px; font-size:.76rem; font-weight:700; cursor:pointer; background:var(--bg); color:var(--ink-soft); border:1px solid var(--line); border-bottom:none; border-right:none;}
+  .lens-tab:last-child{border-right:1px solid var(--line);}
+  .lens-tab.active{background:var(--panel); color:var(--indigo-deep);}
+
+  table.matrix{width:100%; border-collapse:collapse; background:var(--panel); border:1px solid var(--line);}
+  table.matrix th, table.matrix td{padding:12px 14px; text-align:left; border-bottom:1px solid var(--line); border-right:1px solid var(--line); font-size:.82rem;}
+  table.matrix th:last-child, table.matrix td:last-child{border-right:none;}
+  table.matrix thead th{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.66rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:700; background:var(--bg);}
+  table.matrix tbody tr:last-child td{border-bottom:none;}
+  table.matrix td.model{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-weight:700;}
+  table.matrix td.model span{display:block; font-size:.66rem; font-weight:400; color:var(--ink-soft);}
+  .cellwrap{display:flex; align-items:center; gap:8px;}
+  .celltrack{display:flex; gap:1px;}
+  .cs{width:5px; height:12px; background:#dde2ea;}
+  .cs.on{background:var(--indigo);}
+
+  .footnote{max-width:1200px; margin:36px auto 0; padding:14px 32px 30px; font-size:.72rem; color:var(--ink-soft); border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-top">
+    <div class="wordmark">ZERO-BUDGET_MODEL_ADVISOR<small>free-tier LLM benchmark + routing advisor</small></div>
+    <nav class="routes">
+      <a href="2-control-room-advisor.html">advisor</a>
+      <a href="#" class="current">results</a>
+      <a href="#" onclick="return false">model/:id</a>
+      <a href="#" onclick="return false">methodology</a>
+      <a href="#" onclick="return false">about</a>
+    </nav>
+  </div>
+  <div class="disclosure-strip">
+    <div class="disclosure-inner">
+      <span class="disclosure-mark">κ = 0.358</span>
+      <p>measured 2026-08-29 · judge minimax/minimax-m3:free v1.3 · held-out agreement 0.358, below the pre-registered 0.45 floor → gate invalidated, disclosed.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="intent">// results_matrix</div>
+  <h1>4 models × 5 tasks</h1>
+  <p class="sub">every scored model, every task, one lens at a time.</p>
+
+  <div class="no-rank">no overall ranking, no single "best model" figure — the right model depends on the workload. this table is four independent readings of the same grid, not a leaderboard.</div>
+
+  <div class="lens-tabs">
+    <div class="lens-tab active" data-lens="quality">quality</div>
+    <div class="lens-tab" data-lens="latency">p95 latency</div>
+    <div class="lens-tab" data-lens="success">success rate</div>
+    <div class="lens-tab" data-lens="ceiling">rate-limit ceiling</div>
+  </div>
+
+  <table class="matrix">
+    <thead>
+      <tr><th>model</th><th>classification</th><th>extraction</th><th>json-output</th><th>rag-qa</th><th>summarization</th></tr>
+    </thead>
+    <tbody id="matrix-body"></tbody>
+  </table>
+
+  <p class="footnote" style="margin-top:14px; border-top:none; padding:12px 0 0;">n=20 cases/task, median of 3 runs · adversarial sub-scores rest on n=3, directional only · gaps under ~5 points on any lens: noise, not signal.</p>
+</main>
+
+<div class="footnote">
+  <b>Direction 2 — Control Room.</b> Monospace, instrument-panel register, indigo/teal accent. Every value below is real, from <span class="sans">05-site/data/index.json</span> as published 2026-08-29 — tabs re-render the same real dataset.
+</div>
+
+<script>
+  const DATA = {
+    quality: { max:100, unit:"", rows:{
+      "gemini-3.5-flash-lite":[93.3,92.1,67.1,96.2,88.3],
+      "groq-llama-3.3-70b":[85.6,92.5,87.5,96.7,75.4],
+      "mistral-small-2603":[84.4,90.8,33.8,85.4,82.5],
+      "ollama-llama3.2-3b":[57.8,72.9,75.8,71.7,72.1],
+    }},
+    latency: { max:82000, unit:"ms", rows:{
+      "gemini-3.5-flash-lite":[4515,1577,1828,2125,2764],
+      "groq-llama-3.3-70b":[579,1389,1797,577,985],
+      "mistral-small-2603":[889,3171,2264,1327,2375],
+      "ollama-llama3.2-3b":[22172,81703,60859,17359,39265],
+    }},
+    success: { max:100, unit:"%", rows:{
+      "gemini-3.5-flash-lite":[100,100,100,100,100],
+      "groq-llama-3.3-70b":[100,100,100,100,100],
+      "mistral-small-2603":[100,100,100,100,100],
+      "ollama-llama3.2-3b":[100,100,100,100,100],
+    }},
+    ceiling: { max:null, unit:"", rows:{
+      "gemini-3.5-flash-lite":["15rpm/1000rpd","15rpm/1000rpd","15rpm/1000rpd","15rpm/1000rpd","15rpm/1000rpd"],
+      "groq-llama-3.3-70b":["30rpm/1000rpd","30rpm/1000rpd","30rpm/1000rpd","30rpm/1000rpd","30rpm/1000rpd"],
+      "mistral-small-2603":["60rpm/1B-tok·mo","60rpm/1B-tok·mo","60rpm/1B-tok·mo","60rpm/1B-tok·mo","60rpm/1B-tok·mo"],
+      "ollama-llama3.2-3b":["local n/a","local n/a","local n/a","local n/a","local n/a"],
+    }},
+  };
+  const LABELS = {
+    "gemini-3.5-flash-lite":"gemini-3.5-flash-lite",
+    "groq-llama-3.3-70b":"groq-llama-3.3-70b",
+    "mistral-small-2603":"mistral-small-2603",
+    "ollama-llama3.2-3b":"ollama-llama3.2-3b",
+  };
+  const SUB = {
+    "gemini-3.5-flash-lite":"google · hosted",
+    "groq-llama-3.3-70b":"groq · hosted",
+    "mistral-small-2603":"mistral · hosted",
+    "ollama-llama3.2-3b":"local, no network ceiling",
+  };
+  function render(lens){
+    const d = DATA[lens];
+    const body = document.getElementById("matrix-body");
+    body.innerHTML = "";
+    for (const id of Object.keys(d.rows)){
+      const tr = document.createElement("tr");
+      const nameTd = document.createElement("td");
+      nameTd.className = "model";
+      nameTd.innerHTML = LABELS[id] + "<span>" + SUB[id] + "</span>";
+      tr.appendChild(nameTd);
+      d.rows[id].forEach(v => {
+        const td = document.createElement("td");
+        if (d.max){
+          const segments = 10;
+          const on = Math.round((v / d.max) * segments);
+          let segs = "";
+          for (let i=0;i<segments;i++) segs += '<div class="cs' + (i<on?' on':'') + '"></div>';
+          td.innerHTML = '<div class="cellwrap"><span>' + v.toLocaleString() + d.unit + '</span><div class="celltrack">' + segs + '</div></div>';
+        } else {
+          td.textContent = v;
+        }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    }
+  }
+  document.querySelectorAll(".lens-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".lens-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      render(tab.dataset.lens);
+    });
+  });
+  render("quality");
+</script>
+
+</body>
+</html>

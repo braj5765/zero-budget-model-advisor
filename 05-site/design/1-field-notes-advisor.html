@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction 1 — Field Notes — Advisor</title>
+<style>
+  :root{
+    --paper:#faf6ee;
+    --paper-raised:#fffdf8;
+    --ink:#1c1a16;
+    --ink-soft:#5a544a;
+    --rule:#ddd2bd;
+    --rust:#a8461f;
+    --rust-deep:#7d3115;
+    --sage:#516b4c;
+    --sage-bg:#e9efe4;
+    --brick:#8f3226;
+    --brick-bg:#f6e6e1;
+    --amber-bg:#f4ecd8;
+    font-size:17px;
+  }
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",ui-serif,Georgia,serif;
+    line-height:1.5;
+  }
+  .mono{font-family:ui-monospace,"SF Mono",Consolas,"Liberation Mono",monospace; font-variant-numeric:tabular-nums;}
+  .sans{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;}
+
+  /* ---- masthead + disclosure (site-wide element, every page) ---- */
+  header.masthead{
+    border-bottom:1px solid var(--rule);
+    background:var(--paper-raised);
+  }
+  .masthead-top{
+    max-width:1180px; margin:0 auto; padding:22px 32px 14px;
+    display:flex; align-items:baseline; justify-content:space-between; gap:24px;
+  }
+  .wordmark{font-size:1.5rem; font-weight:600; letter-spacing:0.01em;}
+  .wordmark small{display:block; font-family: -apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-top:2px;}
+  nav.routes{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.8rem; display:flex; gap:22px;}
+  nav.routes a{color:var(--ink-soft); text-decoration:none; border-bottom:1px solid transparent;}
+  nav.routes a.current{color:var(--ink); border-bottom-color:var(--rust);}
+
+  .disclosure-strip{
+    background:var(--amber-bg);
+    border-top:1px solid var(--rule);
+  }
+  .disclosure-inner{
+    max-width:1180px; margin:0 auto; padding:10px 32px;
+    display:flex; align-items:flex-start; gap:14px;
+    font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;
+    font-size:.82rem; color:#463c26;
+  }
+  .disclosure-mark{
+    font-family:ui-monospace,"SF Mono",Consolas,monospace;
+    font-weight:700; font-size:.72rem; letter-spacing:.04em;
+    background:var(--rust); color:#fff9ef; padding:2px 7px; border-radius:2px;
+    flex:0 0 auto; margin-top:1px;
+  }
+  .disclosure-inner p{margin:0; flex:1; line-height:1.55;}
+  .disclosure-inner details{margin-top:4px;}
+  .disclosure-inner summary{cursor:pointer; color:var(--rust-deep); font-weight:600;}
+  .disclosure-inner summary::marker{content:"";}
+  .disclosure-inner summary:before{content:"What that means → "; }
+  .disclosure-more{margin:8px 0 2px; padding:10px 14px; background:var(--paper-raised); border-left:3px solid var(--rust); font-size:.86rem; color:var(--ink-soft); max-width:70ch;}
+
+  main{max-width:1180px; margin:0 auto; padding:38px 32px 80px;}
+
+  .intent{
+    font-size:.85rem; color:var(--ink-soft); font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;
+    text-transform:uppercase; letter-spacing:.09em; margin-bottom:6px;
+  }
+  h1.query{
+    font-size:1.7rem; font-weight:600; margin:0 0 34px; padding-bottom:20px;
+    border-bottom:1px solid var(--rule);
+  }
+  h1.query .sep{color:var(--rule); margin:0 10px;}
+
+  .layout{display:grid; grid-template-columns: 1.55fr 1fr; gap:40px; align-items:start;}
+  @media (max-width: 860px){ .layout{grid-template-columns:1fr;} }
+
+  /* ---- primary card ---- */
+  .primary{
+    background:var(--paper-raised);
+    border:1px solid var(--rule);
+    padding:32px 34px;
+    position:relative;
+  }
+  .primary:before{
+    content:"BEST FIT FOR THIS WORKLOAD";
+    position:absolute; top:-11px; left:32px;
+    background:var(--rust); color:#fff9ef;
+    font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;
+    font-size:.66rem; letter-spacing:.12em; font-weight:700;
+    padding:4px 10px;
+  }
+  .primary h2{font-size:1.7rem; margin:10px 0 4px; font-weight:600;}
+  .provider{color:var(--ink-soft); font-size:.9rem; margin-bottom:20px; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;}
+  .verdict{font-size:1.05rem; line-height:1.6; margin:0 0 26px; padding-left:16px; border-left:3px solid var(--rust);}
+
+  .score-block{display:flex; align-items:flex-end; gap:22px; margin-bottom:8px;}
+  .score-num{font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:3rem; font-weight:600; line-height:1; color:var(--rust-deep);}
+  .score-num sup{font-size:1.1rem; font-weight:500; color:var(--ink-soft);}
+  .score-bar-wrap{flex:1; padding-bottom:8px;}
+  .score-bar-track{height:9px; background:#ece2ce; position:relative; border-radius:1px;}
+  .score-bar-fill{height:100%; background:var(--rust); border-radius:1px;}
+  .score-bar-band{position:absolute; top:-3px; bottom:-3px; width:11%; background:repeating-linear-gradient(45deg, rgba(0,0,0,.14) 0 2px, transparent 2px 5px);}
+  .score-cap{font-size:.72rem; color:var(--ink-soft); margin-top:5px; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;}
+
+  .stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin:26px 0 24px; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);}
+  .stat{padding:14px 4px 14px 0; border-right:1px solid var(--rule);}
+  .stat:last-child{border-right:none; padding-left:18px;}
+  .stat:nth-child(2){padding-left:18px;}
+  .stat-label{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); margin-bottom:4px;}
+  .stat-value{font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:1.15rem; font-weight:600;}
+  .stat-note{font-size:.74rem; color:var(--ink-soft); margin-top:2px;}
+
+  .headroom{font-size:.92rem; color:var(--ink-soft); margin:0 0 22px;}
+  .headroom .mono{color:var(--ink);}
+
+  .fallback{background:var(--sage-bg); border:1px solid #c9d8c2; padding:16px 18px; font-size:.88rem;}
+  .fallback-label{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--sage); font-weight:700; margin-bottom:6px;}
+  .fallback b{font-family:ui-monospace,"SF Mono",Consolas,monospace;}
+
+  details.why{margin-top:24px; border-top:1px solid var(--rule); padding-top:16px;}
+  details.why summary{cursor:pointer; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.85rem; font-weight:600; color:var(--rust-deep);}
+  .why-body{margin-top:14px; font-size:.86rem;}
+  .why-body table{width:100%; border-collapse:collapse; margin:10px 0;}
+  .why-body td{padding:5px 0; border-bottom:1px solid var(--rule);}
+  .why-body td:last-child{text-align:right; font-family:ui-monospace,"SF Mono",Consolas,monospace;}
+  .why-meta{color:var(--ink-soft); font-size:.8rem; margin-top:10px;}
+
+  /* ---- right column: alternates + filter disclosure ---- */
+  .side-label{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); margin:0 0 12px;}
+  .rank-note{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.78rem; color:var(--ink-soft); line-height:1.55; margin:0 0 16px; padding:10px 12px; background:var(--amber-bg); border-left:2px solid var(--rust);}
+  .alt{
+    background:var(--paper-raised); border:1px solid var(--rule); padding:16px 18px; margin-bottom:12px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .alt-name{font-weight:600; font-size:.98rem;}
+  .alt-note{font-size:.76rem; color:var(--ink-soft); margin-top:2px; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;}
+  .alt-score{font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:1.3rem; font-weight:600; color:var(--sage);}
+
+  .filter-summary{margin:24px 0 8px; font-size:.86rem; color:var(--ink-soft); font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;}
+  .filter-summary b{color:var(--brick); font-weight:700; font-family:ui-monospace,"SF Mono",Consolas,monospace;}
+  details.filter-disclosure{margin-top:0; background:var(--paper-raised); border:1px solid var(--rule);}
+  details.filter-disclosure summary{
+    padding:14px 18px; cursor:pointer; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;
+    font-size:.86rem; font-weight:600; list-style:none; display:flex; justify-content:space-between; align-items:center;
+  }
+  details.filter-disclosure summary::-webkit-details-marker{display:none;}
+  details.filter-disclosure summary:after{content:"show ↓"; font-weight:400; color:var(--ink-soft); font-size:.76rem;}
+  details.filter-disclosure[open] summary:after{content:"hide ↑";}
+  .filter-table{border-top:1px solid var(--rule); padding:6px 18px 18px;}
+  .frow{display:flex; justify-content:space-between; gap:10px; padding:9px 0; border-bottom:1px solid var(--rule); font-size:.84rem;}
+  .frow:last-child{border-bottom:none;}
+  .frow .fname{font-family:ui-monospace,"SF Mono",Consolas,monospace;}
+  .fpass{color:var(--sage); font-weight:700; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em;}
+  .ffail{color:var(--brick); font-weight:700; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em;}
+  .freason{flex-basis:100%; font-size:.78rem; color:var(--ink-soft); margin-top:-3px;}
+
+  .feedback-widget{
+    margin-top:36px; padding:22px 26px; background:var(--paper-raised); border:1px solid var(--rule);
+    font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; max-width:640px;
+  }
+  .feedback-prompt{font-weight:700; font-size:.95rem; margin-bottom:12px;}
+  .feedback-thumbs{display:flex; gap:10px; margin-bottom:4px;}
+  .thumb{
+    font-size:1.2rem; padding:8px 16px; border:1px solid var(--rule); background:#fff; border-radius:4px; cursor:pointer;
+  }
+  .thumb:hover{border-color:var(--rust);}
+  .thumb.selected{border-color:var(--rust); background:var(--amber-bg);}
+  .feedback-followup{margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;}
+  .feedback-followup input[type="text"]{
+    flex:1; min-width:220px; font-family:inherit; font-size:.86rem; padding:8px 10px; border:1px solid var(--rule); border-radius:2px;
+  }
+  .feedback-followup button{
+    font-family:inherit; font-size:.86rem; font-weight:600; padding:8px 16px; border:1px solid var(--rust); background:var(--rust); color:#fff9ef; border-radius:2px; cursor:pointer;
+  }
+  .feedback-yn{display:flex; gap:8px; align-items:center; font-size:.84rem; color:var(--ink-soft); margin-top:10px;}
+  .feedback-yn button{font-family:inherit; font-size:.82rem; padding:5px 12px; border:1px solid var(--rule); background:#fff; border-radius:2px; cursor:pointer;}
+  .feedback-thanks{font-size:.86rem; color:var(--sage); font-weight:600; margin-top:12px;}
+
+  .footnote{max-width:1180px; margin:56px auto 0; padding:0 32px 30px; font-size:.78rem; color:var(--ink-soft); border-top:1px solid var(--rule); padding-top:16px;}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-top">
+    <div class="wordmark">Zero-Budget Model Advisor<small>free-tier LLM benchmark &amp; routing advisor</small></div>
+    <nav class="routes">
+      <a href="#" class="current">Advisor</a>
+      <a href="1-field-notes-results.html">Results</a>
+      <a href="#" onclick="return false">Model profiles</a>
+      <a href="1-field-notes-methodology.html">Methodology</a>
+      <a href="#" onclick="return false">About</a>
+    </nav>
+  </div>
+  <div class="disclosure-strip">
+    <div class="disclosure-inner">
+      <span class="disclosure-mark">κ 0.358</span>
+      <div>
+        <p>Measured 2026-08-29 · judge <span class="mono">minimax/minimax-m3:free</span> v1.3. Held-out agreement fell to κ=0.358, below this project's own 0.45 floor — the calibration gate is invalidated, and every score below is published anyway, disclosed rather than hidden.</p>
+        <details>
+          <summary></summary>
+          <div class="disclosure-more">The judge's agreement with a careful human, measured on a fresh 20-item set never used to tune the prompt, came in at κ=0.358 — below the 0.45 floor this project pre-registered as the bar for trusting a judge over hand-scoring everything. The in-sample κ=0.650 that first cleared the gate was measured against the same 20 items the prompt had been iterated on four times, and didn't hold on unseen cases. Read every score on this site as judge output that has not been shown to agree with a human above chance-corrected reliability — full account in <a href="1-field-notes-methodology.html" style="color:inherit;">Known Limitations</a>.</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="intent">Your workload</div>
+  <h1 class="query">Summarization<span class="sep">·</span>500 requests/day<span class="sep">·</span>Interactive (&lt;3s)<span class="sep">·</span>User-facing, errors are costly</h1>
+
+  <div class="layout">
+    <div class="primary">
+      <h2>Gemini 3.5 Flash Lite</h2>
+      <div class="provider">Google · hosted free tier</div>
+      <p class="verdict">Quality 88.3 on summarization, p95 2,764ms, 500/day against a documented 1,000/day ceiling.</p>
+
+      <div class="score-block">
+        <div class="score-num">88.3<sup>/100</sup></div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-track">
+            <div class="score-bar-fill" style="width:88.3%"></div>
+            <div class="score-bar-band" style="left:calc(88.3% - 5.5%)"></div>
+          </div>
+          <div class="score-cap">summarization quality · n=20 cases · hatched band marks ±5pts, below which this index reads a gap as noise, not signal</div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-label">Adversarial sub-score</div>
+          <div class="stat-value">77.8</div>
+          <div class="stat-note">n=3 · directional, not a measurement</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">p95 latency</div>
+          <div class="stat-value">2,764ms</div>
+          <div class="stat-note">under your 3,000ms bar</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Run-to-run spread</div>
+          <div class="stat-value">58.8%</div>
+          <div class="stat-note">identical output across judged runs</div>
+        </div>
+      </div>
+
+      <p class="headroom">Headroom at your volume: <span class="mono">500/day</span> against a documented <span class="mono">1,000/day</span> ceiling (confirmed by Gemini's own 429 response body). Success rate <span class="mono">100%</span> across all 60 benchmark attempts.</p>
+
+      <div class="fallback">
+        <div class="fallback-label">Fallback pairing</div>
+        Fails over to <b>mistral-small-2603</b> — different provider, independent infrastructure. Trigger: HTTP 429 (measured ceiling 16.6 rpm against a documented 15 rpm), or a Retry-After wait longer than your SLA.
+      </div>
+
+      <details class="why">
+        <summary>Why this? — exact scores, n, judge version</summary>
+        <div class="why-body">
+          <table>
+            <tr><td>Concision</td><td>90.0</td></tr>
+            <tr><td>Coverage</td><td>86.7</td></tr>
+            <tr><td>Faithfulness</td><td>90.0</td></tr>
+            <tr><td>Instruction adherence</td><td>86.7</td></tr>
+          </table>
+          <div class="why-meta">n=20 cases, median of 3 runs (60 attempts) · judge minimax/minimax-m3:free v1.3 · measured 2026-08-29 · 0 dimension marks scored n/a</div>
+        </div>
+      </details>
+    </div>
+
+    <div>
+      <div class="side-label">Also cleared your filters</div>
+      <p class="rank-note">Ranked by quality among survivors, not by speed. Once a model clears your 3,000ms bar, extra speed doesn't raise its rank — latency is a filter, not a ranking weight (Tradeoff Framework §2–3). That's why Groq, the fastest of the three at 985ms, ranks below Mistral here.</p>
+      <div class="alt">
+        <div>
+          <div class="alt-name">Mistral Small 2603</div>
+          <div class="alt-note">p95 2,375ms · your fallback pick above</div>
+        </div>
+        <div class="alt-score">82.5</div>
+      </div>
+      <div class="alt">
+        <div>
+          <div class="alt-name">Groq Llama 3.3 70B</div>
+          <div class="alt-note">p95 985ms · fastest of the three, ranked third on quality</div>
+        </div>
+        <div class="alt-score">75.4</div>
+      </div>
+
+      <p class="filter-summary"><b>1 of 4</b> models filtered out — latency.</p>
+      <details class="filter-disclosure">
+        <summary>Show how all 4 models compared</summary>
+        <div class="filter-table">
+          <div class="frow"><span class="fname">gemini-3.5-flash-lite</span><span class="fpass">passed</span></div>
+          <div class="frow"><span class="fname">groq-llama-3.3-70b</span><span class="fpass">passed</span></div>
+          <div class="frow"><span class="fname">mistral-small-2603</span><span class="fpass">passed</span></div>
+          <div class="frow"><span class="fname">ollama-llama3.2-3b</span><span class="ffail">failed</span></div>
+          <div class="frow"><span class="freason">latency — p95 39,265ms exceeds your interactive (&lt;3s) SLA</span></div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="feedback-widget">
+    <div class="feedback-prompt">Was this useful?</div>
+    <div class="feedback-thumbs">
+      <button class="thumb" id="thumb-up" onclick="selectThumb('up')">👍</button>
+      <button class="thumb" id="thumb-down" onclick="selectThumb('down')">👎</button>
+    </div>
+    <div class="feedback-followup" id="followup-up" hidden>
+      <div class="feedback-yn">
+        Did this change what you were going to use?
+        <button onclick="submitFollowup()">Yes</button>
+        <button onclick="submitFollowup()">No</button>
+      </div>
+    </div>
+    <div class="feedback-followup" id="followup-down" hidden>
+      <input type="text" placeholder="One line — what would make this better?">
+      <button onclick="submitFollowup()">Send</button>
+    </div>
+    <div class="feedback-thanks" id="feedback-thanks" hidden>Thanks — logged against this query and index version. No account needed.</div>
+  </div>
+</main>
+
+<div class="footnote">
+  Direction 1 — <b>Field Notes.</b> Serif editorial register, warm paper ground, rust accent. Data shown is real: scenario = summarization / 500 req/day / interactive / user-facing-errors-costly, run through <span class="mono">advisor.js</span> against <span class="mono">index.json</span> as published 2026-08-29.
+</div>
+
+<script>
+  function selectThumb(which){
+    document.getElementById("thumb-up").classList.toggle("selected", which === "up");
+    document.getElementById("thumb-down").classList.toggle("selected", which === "down");
+    document.getElementById("followup-up").hidden = which !== "up";
+    document.getElementById("followup-down").hidden = which !== "down";
+    document.getElementById("feedback-thanks").hidden = true;
+  }
+  function submitFollowup(){
+    document.getElementById("followup-up").hidden = true;
+    document.getElementById("followup-down").hidden = true;
+    document.getElementById("feedback-thanks").hidden = false;
+  }
+</script>
+
+</body>
+</html>
