@@ -87,7 +87,19 @@ Reads `scores.json`, writes `05-site/data/index.json` **and** `05-site/data/inde
 
 ## 6. Publish
 
-Commit, in one changeset: the new `03-results/run-*.jsonl` (and `probe.jsonl` if it changed), `04-analysis/production/judge-run-*.jsonl`, `04-analysis/scores.json`, `04-analysis/scores-summary.md`, `05-site/data/index.json`, `05-site/data/index.data.js`, and the new dated `ToS-Review.md` section from step 0.1. Push to whatever branch GitHub Pages serves from (Decision Q4) — there is no separate deploy step; Pages serves the repo directly.
+Commit, in one changeset: the new `03-results/run-*.jsonl` (and `probe.jsonl` if it changed), `04-analysis/production/judge-run-*.jsonl`, `04-analysis/scores.json`, `04-analysis/scores-summary.md`, `05-site/data/index.json`, `05-site/data/index.data.js`, and the new dated `ToS-Review.md` section from step 0.1. Push to `main`.
+
+**This is not the deploy step.** As of 2026-09-04 (Q4's configuration closed empirically, `PROJECT-STATE.md` §5), Pages does **not** serve `main` directly — `/05-site` on `main` is not a folder GitHub's branch-deploy UI offers. Pages serves a separate `gh-pages` branch, generated from `05-site/` by `git subtree split`. After pushing `main`, from the repo root:
+
+```
+git branch -D gh-pages
+git subtree split --prefix=05-site -b gh-pages
+git push -f origin gh-pages
+```
+
+`git branch -D` first because `subtree split -b` refuses to reuse an existing branch name; the force-push is expected and safe — `gh-pages` is entirely derived from `05-site/`, never a source of truth, so there is nothing on it to lose. **If you skip this and only push `main`, the live site does not update at all** — `main`'s content changing is invisible to Pages.
+
+**If any file under `05-site/styles.css` changed this refresh** (not just data): bump the version number in `?v=N` on the stylesheet `<link>` tag in **all five** HTML files (`index.html`, `results.html`, `model.html`, `methodology.html`, `about.html`) before committing. GitHub Pages' CDN caches `styles.css` for up to 10 minutes (`Cache-Control: max-age=600`) and a browser that already has it cached will not even ask again inside that window — so a stylesheet change can deploy correctly (verified in git, verified on the server) while a large share of visitors keep seeing the old rules for a while, or indefinitely if their tab was already open. Bumping `?v=` changes the requested URL, which bypasses both caches unconditionally; nothing about the CSS's actual content needs to change for this, just the number. This is a real failure mode this project shipped once (2026-09-04: a card-based mobile layout deployed correctly but was reported as "broken, unstyled" against a stale cached stylesheet) — it is not hypothetical.
 
 Ship the `/about` changelog entry naming what changed this refresh (UX-and-Feedback-Spec §5, "the loop that closes") — including, if applicable, what feedback or disputes from the last quarter changed a score or a rubric anchor.
 
@@ -99,3 +111,4 @@ Ship the `/about` changelog entry naming what changed this refresh (UX-and-Feedb
 - **Step 3's hardcoded `JUDGE_FILE`/`RUN_FILE` edit** — the most likely single point of silent staleness in this whole procedure. `aggregate.py` will not warn you; it will happily re-score last quarter's run.
 - **The κ gate's decision rule (step 2)** — Rubric §5's table is a decision procedure, not a script. Whether a fresh calibration result clears the gate, is a prevalence artifact, or is a real failure is a judgment call against that table, the same way `Known-Limitations.md` §1 documents it being made (and missed) before.
 - **Step 5's generated_at check** — `checkDataFreshness()` in `site.js` catches drift live on the deployed site, but that is a safety net for readers, not a substitute for checking before you publish.
+- **Verifying the live site from a warm tab or a warm CDN edge.** After step 6's deploy, a tab that already had the site open, or the very next request to the same GitHub Pages edge node, can both still serve the pre-deploy `styles.css` for its cache lifetime — "I checked and it looked right" is not evidence the deploy actually took if that's how you checked. Confirm with something that cannot be serving a cache: `curl -s https://<pages-url>/styles.css | sha256sum` compared against `git show gh-pages:styles.css | sha256sum` (or `git show main:05-site/styles.css`, they must match `gh-pages` exactly), or a private/incognito window. An iframe with its `src` re-pointed at the same URL is **not** a fresh check either — it can and did reuse the outer browser's cache.
