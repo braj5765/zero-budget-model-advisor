@@ -29,7 +29,6 @@
   </div>
   <p id="lens-hint"></p>
 
-  <p class="matrix-hint">Scroll for more tasks →</p>
   <div class="matrix-scroll">
     <table class="matrix">
       <thead>
@@ -45,6 +44,7 @@
       <tbody id="matrix-body"></tbody>
     </table>
   </div>
+  <div id="matrix-cards" class="matrix-cards"></div>
 
   <div id="cell-expand" class="cell-expand" hidden></div>
 
@@ -139,7 +139,7 @@
     const panel = document.getElementById("cell-expand");
     panel.hidden = true;
     panel.innerHTML = "";
-    document.querySelectorAll("td.cell.expanded").forEach((td) => td.classList.remove("expanded"));
+    document.querySelectorAll(".cell.expanded").forEach((el) => el.classList.remove("expanded"));
     currentExpandedCell = null;
   }
 
@@ -167,6 +167,65 @@
     panel.querySelector(".cell-expand-close").addEventListener("click", closeExpand);
     SITE.mountDisputeForm(panel.querySelector("#dispute-mount"), dims, currentExpandedCell);
     panel.hidden = false;
+    // In card mode the panel renders below every card, potentially well
+    // below the row that was tapped -- bring it into view rather than
+    // leaving the reader to find it. Harmless on desktop, where it's
+    // already adjacent to the table.
+    panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // Shared by both the desktop table cells and the mobile stacked cards
+  // (buildCard, below) -- same value/bar-percent math either way, so the
+  // two render paths can't quietly drift apart on what a lens actually shows.
+  function cellValueFor(id, t, lens) {
+    const taskData = data.models[id].tasks[t];
+    if (lens === "quality") return { v: taskData.task_score, unit: "", pct: Math.min(100, taskData.task_score) };
+    if (lens === "latency") {
+      const v = taskData.benchmark.p95_latency_ms;
+      return { v, unit: "ms", pct: Math.max(0, Math.min(100, ((latencyMax - v) / latencyMax) * 100)) };
+    }
+    const v = taskData.benchmark.success_rate_pct;
+    return { v, unit: "%", pct: Math.min(100, v) };
+  }
+
+  // Mobile stacked-card layout (<=700px, see styles.css) -- one card per
+  // model, task rows down the card instead of table columns across the
+  // screen. Renders from the exact same per-lens data as the table (via
+  // cellValueFor/ceilingInfoFor), never a separate simplified view, and
+  // the quality lens's task rows wire into the same openExpand/dispute-form
+  // flow as a table cell -- tapping a row is not a dead end on mobile.
+  function buildCard(id, lens) {
+    const card = document.createElement("div");
+    card.className = "model-result-card";
+    const head = `<div class="model-result-head"><a href="model.html?id=${encodeURIComponent(id)}">${labelFor(id)}</a><span class="model-result-sub">${subFor(id)}</span></div>`;
+
+    if (lens === "ceiling") {
+      const c = ceilingInfoFor(id);
+      card.innerHTML = head + (c.constant
+        ? `<div class="model-result-ceiling"><span class="ceil-const">${c.value}</span><span class="ceil-tag">${c.tag}</span></div>`
+        : `<div class="model-result-rows">${TASKS.map((t, i) => {
+            const v = c.perTask[i];
+            return `<div class="model-result-row"><span class="model-result-row-label">${TASK_LABELS[t]}</span>${v == null ? "—" : `<span class="ceil-derived">~${Math.round(v).toLocaleString()}/day</span>`}</div>`;
+          }).join("")}</div><span class="ceil-tag">${c.tag}</span>`);
+      return card;
+    }
+
+    const rows = TASKS.map((t, i) => {
+      const { v, unit, pct } = cellValueFor(id, t, lens);
+      const rowClass = lens === "quality" ? "model-result-row cell clickable" : "model-result-row cell";
+      return `
+      <div class="${rowClass}" data-task-idx="${i}">
+        <span class="model-result-row-label">${TASK_LABELS[t]}</span>
+        <div class="cellwrap"><span>${v.toLocaleString()}${unit}</span><div class="celltrack"><div class="cellfill" style="width:${pct}%"></div></div></div>
+      </div>`;
+    }).join("");
+    card.innerHTML = head + `<div class="model-result-rows">${rows}</div>`;
+    if (lens === "quality") {
+      card.querySelectorAll(".model-result-row.clickable").forEach((rowEl) => {
+        rowEl.addEventListener("click", () => openExpand(id, Number(rowEl.dataset.taskIdx), rowEl));
+      });
+    }
+    return card;
   }
 
   function render(lens) {
@@ -177,8 +236,12 @@
 
     const body = document.getElementById("matrix-body");
     body.innerHTML = "";
+    const cardsWrap = document.getElementById("matrix-cards");
+    cardsWrap.innerHTML = "";
 
     for (const id of MODELS) {
+      cardsWrap.appendChild(buildCard(id, lens));
+
       const tr = document.createElement("tr");
       const nameTd = document.createElement("td");
       nameTd.className = "model";
@@ -207,18 +270,9 @@
       }
 
       TASKS.forEach((t, i) => {
-        const taskData = data.models[id].tasks[t];
+        const { v, unit, pct } = cellValueFor(id, t, lens);
         const td = document.createElement("td");
         td.className = "cell";
-        let v, pct, unit;
-        if (lens === "quality") {
-          v = taskData.task_score; unit = ""; pct = Math.min(100, v);
-        } else if (lens === "latency") {
-          v = taskData.benchmark.p95_latency_ms; unit = "ms";
-          pct = Math.max(0, Math.min(100, ((latencyMax - v) / latencyMax) * 100));
-        } else {
-          v = taskData.benchmark.success_rate_pct; unit = "%"; pct = Math.min(100, v);
-        }
         td.innerHTML = `<div class="cellwrap"><span>${v.toLocaleString()}${unit}</span><div class="celltrack"><div class="cellfill" style="width:${pct}%"></div></div></div>`;
         if (lens === "quality") {
           td.classList.add("clickable");
