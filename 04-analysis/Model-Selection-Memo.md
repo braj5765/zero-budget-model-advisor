@@ -1,6 +1,8 @@
 # Model Selection Memo — free-tier LLMs, v1 index
 
-**2026-08-29 · Braj · Data: 1,500 benchmark calls, 1,200 judged responses, rubric v1.7, judge `minimax-m3` (κ=0.650 vs human calibration)**
+**2026-08-29 · Braj · Data: 1,500 benchmark calls, 1,200 judged responses, rubric v1.9, judge `minimax-m3`, prompt v1.3**
+
+> **Calibration status, updated 2026-09-03:** in-sample κ=0.650 · **held-out κ=0.358 — the calibration gate is invalidated and the judge is uncalibrated.** Every quality figure below is a judge score whose agreement with a careful human is unestablished. Read `Known-Limitations.md` §1 before citing any number here.
 
 **Audience:** a builder with no budget choosing what to ship on. **This memo does not name a best model, because the data does not support one.**
 
@@ -125,5 +127,5 @@ Note also that Mistral's two constraints nearly coincide: ~65,198/day averages ~
 - **That any of these numbers are precise.** n = 20 cases per task. Differences under ~5 points are not claimed as meaningful. Adversarial sub-scores rest on n = 3 and are directional signal, not measurement.
 - **That these results generalise to tuned prompts.** Every model got the same untuned prompt, deliberately (Decision B4). A model that responds well to tuning is undersold here.
 - **That they will hold next quarter.** Free tiers move. Every figure is dated; the index refreshes quarterly for exactly this reason.
-- **That the judge is neutral.** κ = 0.650 against 76 human-scored dimensions clears the 0.6 gate, but the margin is thin and the interval is wide. Four ≥2-point human/judge disagreements remain, audited and published.
+- **That the judge is calibrated. It is not, and the gate does not hold.** *Corrected 2026-09-03.* This bullet previously read: "κ = 0.650 against 76 human-scored dimensions clears the 0.6 gate, but the margin is thin and the interval is wide." That was true of the in-sample figure and wrong as a claim about the judge. κ=0.650 was measured on the same 20 calibration items the judge prompt had been iterated against four times. A held-out set of 20 fresh items — excluded by `case_id`, matched adversarial composition, hand-scored blind — returned **κ = 0.358**, below the 0.45 floor pre-registered in `JUDGE-RUN-PLAN.md` §6. **The gate is invalidated: this index ships with a judge whose agreement with a careful human is unestablished.** The held-out figure is not itself a clean measure of judge quality either — 13 scoring rules were operative in the case files and judge prompt but absent from the rubric the human scored from, so the two legs were never held to the same specification. Full account, including the four characterised failure modes and the demonstration that κ measures concordance rather than correctness, in `Known-Limitations.md` §1.
 - **That Mistral is bad at JSON in general.** It is bad at JSON *under this prompt, untuned, at this date*. That is exactly what a builder gets out of the box, which is why it is reported — but it is a narrower claim than "Mistral can't do JSON."

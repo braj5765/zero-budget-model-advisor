@@ -82,6 +82,20 @@ This document records verdicts. It does not change any score, does not recompute
 
 ---
 
+## 7. cal-h11 · held-out · extraction (ext-h05) · null_handling
+
+**Adjudicated separately and later than items 1–6, and the reason is stated here rather than left implicit.** This item was not among the six presented in the original round — it surfaced from the post-apply re-validation of rubric v1.8 (`Scoring-Rubric.md` v1.8 changelog, corrected 2026-09-03), which found it determinate under an anchor v1.8 didn't even touch, recorded as human 3 / judge 0, and never individually adjudicated the way the other six were — `heldout_human_review.md` says as much itself, having explicitly excluded both of cal-h11's dimensions from its review scope. Unlike items 1–6, both recorded scores here diverge from the rubric, in opposite directions — there was no side to vindicate, and the scorer was told so before answering.
+
+**Rule** — Scoring-Rubric.md §3.2, null-handling anchor (v1.1, base rubric, unchanged by v1.8): *"Fabrication scores 0; nulling a determinable value scores 1. The asymmetry is deliberate: inventing a value misleads silently, while over-nulling merely under-delivers, and the rubric should say which it considers worse."* Confirmed non-open by §3.8.2: *"null handling (§3.2) scores this **1** (over-abstention). Whether the same miss should also reduce recall... is not addressed... **Open.**"* — the open part attaches to recall, not to null_handling.
+
+**Checklist/rubric implies:** 1. **Human recorded:** 3. **Judge recorded:** 0.
+
+**Verdict:** Rubric determinate at 1. Both recorded scores wrong.
+
+**Reasoning (verbatim):** "Yes rubric was right giving 1 and both my score and judge score are wrong as condition is clearly stated but our scores didn't take care of it"
+
+---
+
 ## Count
 
 **5 of 6: checklist confirmed correct.** Of those five, **3 identify a human scoring error** (cal-18, cal-h17, cal-17 coverage) and **2 identify a judge scoring error** (cal-09, cal-17 instruction_adherence — see correction above; this item's human score of 3 matches the checklist, so confirming the checklist identifies the judge's 2 as the error, not the human's).
