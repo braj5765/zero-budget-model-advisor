@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results — Zero-Budget Model Advisor</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main>
+  <div class="intent">Results matrix</div>
+  <h1>Four models, five tasks</h1>
+  <p class="sub">Every scored model &times; task, one lens at a time. Toggle below — same grid, four readings.</p>
+
+  <div class="no-rank">
+    This index publishes no overall ranking and no single "best model" figure, on principle — the right model depends entirely on your workload, and a leaderboard would flatten that. Ask the <a href="index.html">advisor</a> for a query-specific answer instead.
+  </div>
+
+  <div id="success-note" class="success-note" hidden></div>
+
+  <div class="lens-tabs">
+    <div class="lens-tab active" data-lens="quality">Quality</div>
+    <div class="lens-tab" data-lens="latency">p95 Latency</div>
+    <div class="lens-tab" data-lens="success">Success rate</div>
+    <div class="lens-tab" data-lens="ceiling">Rate-limit ceiling</div>
+  </div>
+  <p id="lens-hint"></p>
+
+  <table class="matrix">
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Classification</th>
+        <th>Extraction</th>
+        <th>JSON output</th>
+        <th>RAG Q&amp;A</th>
+        <th>Summarization</th>
+      </tr>
+    </thead>
+    <tbody id="matrix-body"></tbody>
+  </table>
+
+  <div id="cell-expand" class="cell-expand" hidden></div>
+
+  <p class="footnote" style="margin-top:14px; border-top:none; padding:12px 0 0;">n=20 cases per task, median of 3 runs · adversarial sub-scores rest on n=3, directional only · a gap under ~5 points on any lens should be read as noise, not signal · full account in <a href="methodology.html" style="color:inherit;">Methodology</a>.</p>
+
+  <div id="excluded-mount"></div>
+
+  <div id="footer-feedback-mount"></div>
+</main>
+
+<div class="footnote">
+  <span class="direction-label"><b>Zero-Budget Model Advisor.</b></span>
+  Every figure above is read live from <span class="mono">data/index.json</span> — no hardcoded scores on this page.
+</div>
+
+<script src="data/index.data.js"></script>
+<script src="site.js"></script>
+<script>
+(async function () {
+  const data = await SITE.loadIndexData();
+  SITE.checkDataFreshness(data);
+  SITE.renderHeader(document.getElementById("site-header"), { active: "results", data });
+  let currentLens = "quality";
+  let currentExpandedCell = null;
+  SITE.mountPersistentFeedback(() => Object.assign({ route: "results", lens: currentLens }, currentExpandedCell ? { expanded_cell: currentExpandedCell } : {}));
+
+  const TASKS = ["classification", "extraction", "json-output", "rag-qa", "summarization"];
+  const TASK_LABELS = { classification: "Classification", extraction: "Extraction", "json-output": "JSON output", "rag-qa": "RAG Q&A", summarization: "Summarization" };
+  const MODELS = data.scored_models;
+
+  const KNOWN_LABELS = {
+    "gemini-3.5-flash-lite": "Gemini 3.5 Flash Lite",
+    "groq-llama-3.3-70b": "Groq Llama 3.3 70B",
+    "mistral-small-2603": "Mistral Small 2603",
+    "ollama-llama3.2-3b": "Ollama Llama 3.2 3B (local)",
+    "openrouter-gpt-oss-20b": "OpenRouter gpt-oss-20b",
+  };
+  const KNOWN_SUB = {
+    "gemini-3.5-flash-lite": "Google · hosted",
+    "groq-llama-3.3-70b": "Groq · hosted",
+    "mistral-small-2603": "Mistral · hosted",
+    "ollama-llama3.2-3b": "self-hosted, no network ceiling",
+  };
+  function labelFor(id) { return KNOWN_LABELS[id] || id; }
+  function subFor(id) { return KNOWN_SUB[id] || ""; }
+
+  // Shared reference for the latency-lens inversion fix (DESIGN-DECISION S7):
+  // the single slowest measured p95 anywhere on the grid.
+  let latencyMax = 0;
+  for (const id of MODELS) for (const t of TASKS) {
+    const p95 = data.models[id].tasks[t]?.benchmark?.p95_latency_ms;
+    if (p95 != null) latencyMax = Math.max(latencyMax, p95);
+  }
+
+  function ceilingInfoFor(id) {
+    const entry = data.models[id];
+    const c = entry.rate_limit_ceiling;
+    const perTask = TASKS.map((t) => entry.tasks[t]?.benchmark?.derived_token_ceiling);
+    const varies = perTask.some((d) => d != null);
+    if (!varies) {
+      let value, tag;
+      if (c.documented_rpm === "not applicable") {
+        value = "local — no rate limit exists to measure";
+        tag = "self-hosted — no network ceiling to vary";
+      } else {
+        const rpmPart = typeof c.documented_rpm === "number" ? c.documented_rpm.toLocaleString() + " rpm" : c.documented_rpm;
+        const rpdPart = typeof c.documented_rpd === "number" ? c.documented_rpd.toLocaleString() + " rpd" : c.documented_rpd;
+        value = rpmPart + " / " + rpdPart;
+        tag = "request-capped — same ceiling regardless of task";
+      }
+      return { constant: true, value, tag };
+    }
+    return {
+      constant: false,
+      perTask: perTask.map((d) => (d ? d.req_per_day_at_token_ceiling : null)),
+      tag: "derived from measured tokens — not a vendor figure",
+    };
+  }
+
+  const LENS_HINTS = {
+    quality: "Higher score, longer bar. Click a cell for the per-dimension breakdown and a dispute form.",
+    latency:
+      "Bar shows speed headroom, not raw duration — longer bar is still “better,” the same reading as every " +
+      "other lens here. Computed against the slowest measured result on this grid (" +
+      latencyMax.toLocaleString() + "ms p95). The ms figure beside each bar is the real number to read; the bar " +
+      "is deliberately inverted so a long, dark bar never reads as good performance the way it would on Quality.",
+    success: "Higher is better — and every cell here is 100%. Read the note above before assuming the table is broken.",
+    ceiling: "Two metering units on one grid: requests/day (fixed per model, doesn't vary by task) and a token-derived req/day equivalent for token-metered providers (varies by task — tagged “derived”, per Decision C5).",
+  };
+
+  function closeExpand() {
+    const panel = document.getElementById("cell-expand");
+    panel.hidden = true;
+    panel.innerHTML = "";
+    document.querySelectorAll("td.cell.expanded").forEach((td) => td.classList.remove("expanded"));
+    currentExpandedCell = null;
+  }
+
+  function openExpand(modelId, taskIdx, td) {
+    const wasOpen = td.classList.contains("expanded");
+    closeExpand();
+    if (wasOpen) return;
+    td.classList.add("expanded");
+    const task = TASKS[taskIdx];
+    currentExpandedCell = { model: labelFor(modelId), task: TASK_LABELS[task] };
+    const taskData = data.models[modelId].tasks[task];
+    const dims = Object.keys(taskData.dimension_means);
+    const panel = document.getElementById("cell-expand");
+    const rows = dims.map((d) => `<tr><td>${d.replace(/_/g, " ")}</td><td>${taskData.dimension_means[d].toFixed(1)}</td></tr>`).join("");
+    panel.innerHTML = `
+      <div class="cell-expand-head">
+        <span class="cell-expand-title">${labelFor(modelId)} — ${TASK_LABELS[task]}</span>
+        <button class="cell-expand-close" type="button">close ×</button>
+      </div>
+      <div class="cell-expand-body"><table>${rows}</table></div>
+      <div class="cell-expand-meta">Adversarial sub-score: <b>${taskData.adversarial_sub_score.toFixed(1)}</b> (n=3, directional) · ` +
+      `${taskData.n_na_dimension_marks} dimension mark${taskData.n_na_dimension_marks === 1 ? "" : "s"} scored n/a · ` +
+      `n=20 cases, median of 3 runs · judge ${data.judge_model} v${data.judge_prompt_version} · measured ${data.judged_at}</div>
+      <div id="dispute-mount"></div>`;
+    panel.querySelector(".cell-expand-close").addEventListener("click", closeExpand);
+    SITE.mountDisputeForm(panel.querySelector("#dispute-mount"), dims, currentExpandedCell);
+    panel.hidden = false;
+  }
+
+  function render(lens) {
+    currentLens = lens;
+    document.getElementById("lens-hint").textContent = LENS_HINTS[lens];
+    document.getElementById("success-note").hidden = lens !== "success";
+    if (lens !== "quality") closeExpand();
+
+    const body = document.getElementById("matrix-body");
+    body.innerHTML = "";
+
+    for (const id of MODELS) {
+      const tr = document.createElement("tr");
+      const nameTd = document.createElement("td");
+      nameTd.className = "model";
+      nameTd.innerHTML = `<a href="model.html?id=${encodeURIComponent(id)}">${labelFor(id)}</a><span>${subFor(id)}</span>`;
+      tr.appendChild(nameTd);
+
+      if (lens === "ceiling") {
+        const c = ceilingInfoFor(id);
+        if (c.constant) {
+          const td = document.createElement("td");
+          td.colSpan = 5;
+          td.className = "ceil-const-cell";
+          td.innerHTML = `<span class="ceil-const">${c.value}</span><span class="ceil-tag">${c.tag}</span>`;
+          tr.appendChild(td);
+        } else {
+          c.perTask.forEach((v) => {
+            const td = document.createElement("td");
+            td.innerHTML = v == null
+              ? "—"
+              : `<span class="ceil-derived">~${Math.round(v).toLocaleString()}/day</span><span class="ceil-tag">${c.tag}</span>`;
+            tr.appendChild(td);
+          });
+        }
+        body.appendChild(tr);
+        continue;
+      }
+
+      TASKS.forEach((t, i) => {
+        const taskData = data.models[id].tasks[t];
+        const td = document.createElement("td");
+        td.className = "cell";
+        let v, pct, unit;
+        if (lens === "quality") {
+          v = taskData.task_score; unit = ""; pct = Math.min(100, v);
+        } else if (lens === "latency") {
+          v = taskData.benchmark.p95_latency_ms; unit = "ms";
+          pct = Math.max(0, Math.min(100, ((latencyMax - v) / latencyMax) * 100));
+        } else {
+          v = taskData.benchmark.success_rate_pct; unit = "%"; pct = Math.min(100, v);
+        }
+        td.innerHTML = `<div class="cellwrap"><span>${v.toLocaleString()}${unit}</span><div class="celltrack"><div class="cellfill" style="width:${pct}%"></div></div></div>`;
+        if (lens === "quality") {
+          td.classList.add("clickable");
+          td.title = "Click for per-dimension breakdown";
+          td.addEventListener("click", () => openExpand(id, i, td));
+        }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    }
+  }
+
+  document.querySelectorAll(".lens-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".lens-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      SITE.track("results_lens_switch", { lens: tab.dataset.lens });
+      render(tab.dataset.lens);
+    });
+  });
+
+  // Success-rate lens annotation -- built from the real per-model success
+  // rates plus the excluded provider's, so the claim "all four are 100%"
+  // is never asserted if a future refresh's numbers say otherwise.
+  const allHundred = MODELS.every((id) => TASKS.every((t) => data.models[id].tasks[t].benchmark.success_rate_pct === 100));
+  const totalAttempts = MODELS.reduce((s, id) => s + TASKS.reduce((s2, t) => s2 + data.models[id].tasks[t].benchmark.n_attempts, 0), 0);
+  document.getElementById("success-note").innerHTML = allHundred
+    ? `<b>All four scored models: 100% success across ${(totalAttempts / MODELS.length).toLocaleString()} calls each</b> — zero refusals, timeouts, or malformed-transport failures over the whole run. That uniformity is not a broken table; it's the finding. Every failure in this benchmark belongs to the provider(s) that didn't make it into quality scoring at all — see <a href="#excluded">Excluded from quality scoring</a>, below.`
+    : `Success rates vary by model and task this refresh — read each cell individually rather than assuming uniform reliability.`;
+
+  // Excluded-provider panel(s) -- generic over data.excluded, per
+  // DESIGN-DECISION S8, so a future refresh's additional exclusions render
+  // the same way without a code change.
+  const excludedMount = document.getElementById("excluded-mount");
+  const excludedEntries = Object.entries(data.excluded || {});
+  excludedMount.innerHTML = excludedEntries.map(([id, ex]) => {
+    const bo = ex.benchmark_overall;
+    const failCode = Object.entries(bo.failure_code_distribution)[0];
+    const rl = ex.rate_limit_ceiling;
+    const sharedPool = rl.measured && rl.measured.shared_pool;
+    const dailyCap = rl.measured && rl.measured.daily_cap;
+    return `
+    <div id="excluded" class="excluded-panel">
+      <span class="excluded-tag">Excluded from quality scoring</span>
+      <h2>${labelFor(id)}</h2>
+      <p>${ex.reason} The exclusion and its reason are published here, not hidden: this model was tested, and its failure was the result.</p>
+      <div class="excluded-stats">
+        <div><div class="excluded-stat-label">Success rate</div><div class="excluded-stat-value">${bo.success_rate_pct}%</div></div>
+        <div><div class="excluded-stat-label">${failCode ? failCode[0] : "Failures"}</div><div class="excluded-stat-value">${failCode ? failCode[1] : 0} / ${bo.n_attempts}</div></div>
+        <div><div class="excluded-stat-label">Measured</div><div class="excluded-stat-value">${data.judged_at}</div></div>
+      </div>
+      ${dailyCap && sharedPool ? `<p>Two distinct ceilings, both real: a documented account-level cap (${rl.documented_rpm} rpm / ${rl.documented_rpd} rpd) that held accurately, and an undocumented <b>shared-pool</b> ceiling that rejected after just ${sharedPool.requests_before_first_rejection} request${sharedPool.requests_before_first_rejection === 1 ? "" : "s"} on a fresh daily quota (measured ${sharedPool.rpm_at_rejection} rpm at rejection) — contention from other ${labelFor(id).split(" ")[0]} users on the same upstream pool, not this account's own quota.</p>` : `<p>${rl.note || ""}</p>`}
+      <p class="excluded-cite">See <span class="mono">Model-Selection-Memo.md</span> §2.5 for why this reliability finding is treated as one of the most practically useful in the benchmark.</p>
+    </div>`;
+  }).join("");
+
+  SITE.mountFooterFeedback(document.getElementById("footer-feedback-mount"));
+
+  render("quality");
+})();
+</script>
+
+</body>
+</html>

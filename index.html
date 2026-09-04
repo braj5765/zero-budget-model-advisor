@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advisor — Zero-Budget Model Advisor</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main>
+  <div class="intent">Advisor</div>
+  <h1>What should you use?</h1>
+  <p class="sub">Four inputs. No account, no wizard — answer below and get a query-specific recommendation, ranked and filtered against real measurements.</p>
+
+  <div class="query-form">
+    <div class="form-row">
+      <label class="form-label">What are you building? (select any)</label>
+      <div class="task-grid" id="task-grid"></div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Volume — requests/day</label>
+      <div class="volume-row">
+        <input type="number" id="volume-input" min="0" step="1" value="500">
+        <div class="volume-presets">
+          <button type="button" class="preset-btn" data-preset="50">~side project (50/day)</button>
+          <button type="button" class="preset-btn" data-preset="500">~small app (500/day)</button>
+          <button type="button" class="preset-btn" data-preset="5000">~production (5,000/day)</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Latency need</label>
+      <div class="seg-group" id="latency-group">
+        <div class="seg-opt checked" data-value="doesnt_matter">Doesn't matter</div>
+        <div class="seg-opt" data-value="interactive">Interactive (&lt;3s)</div>
+        <div class="seg-opt" data-value="realtime">Real-time (&lt;1s)</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Quality bar</label>
+      <div class="seg-group" id="errorcost-group">
+        <div class="seg-opt" data-value="rough_draft">Rough draft is fine</div>
+        <div class="seg-opt checked" data-value="needs_to_be_right">Needs to be right</div>
+        <div class="seg-opt" data-value="user_facing_costly">User-facing, errors are costly</div>
+      </div>
+    </div>
+
+    <details class="advanced">
+      <summary>Advanced — weight dimensions yourself</summary>
+      <p class="sub" style="margin:12px 0 0;">Optional. Leave a dimension blank to use the rubric's unweighted mean (Rubric §3). Only appears once you've picked at least one task.</p>
+      <div class="weight-grid" id="weight-grid"></div>
+    </details>
+
+    <div class="submit-row">
+      <button type="button" class="submit-btn" id="submit-btn">Get a recommendation</button>
+      <span id="form-error" class="sub" style="color:#8f3226; margin-left:14px;"></span>
+    </div>
+  </div>
+
+  <div id="result-mount"></div>
+</main>
+
+<div class="footnote">
+  <b>Zero-Budget Model Advisor.</b> Every recommendation is computed live by <span class="mono">advisor/advisor.js</span> against <span class="mono">data/index.json</span> for the inputs above — nothing here is precomputed or illustrative.
+</div>
+
+<script src="data/index.data.js"></script>
+<script src="site.js"></script>
+<script type="module">
+import { recommend } from "./advisor/advisor.js";
+
+const TASKS = [
+  { key: "classification", label: "Classification" },
+  { key: "extraction", label: "Extraction" },
+  { key: "json-output", label: "JSON output" },
+  { key: "rag-qa", label: "RAG Q&A" },
+  { key: "summarization", label: "Summarization" },
+];
+const LATENCY_LABELS = { doesnt_matter: "Doesn't matter", interactive: "Interactive (<3s)", realtime: "Real-time (<1s)" };
+const ERRORCOST_LABELS = { rough_draft: "Rough draft is fine", needs_to_be_right: "Needs to be right", user_facing_costly: "User-facing, errors are costly" };
+const KNOWN_LABELS = {
+  "gemini-3.5-flash-lite": "Gemini 3.5 Flash Lite",
+  "groq-llama-3.3-70b": "Groq Llama 3.3 70B",
+  "mistral-small-2603": "Mistral Small 2603",
+  "ollama-llama3.2-3b": "Ollama Llama 3.2 3B (local)",
+};
+const KNOWN_PROVIDER = {
+  "gemini-3.5-flash-lite": "Google · hosted free tier",
+  "groq-llama-3.3-70b": "Groq · hosted free tier",
+  "mistral-small-2603": "Mistral · hosted free tier",
+  "ollama-llama3.2-3b": "Self-hosted, local",
+};
+function labelFor(id) { return KNOWN_LABELS[id] || id; }
+function providerFor(id) { return KNOWN_PROVIDER[id] || ""; }
+
+let DATA = null;
+let lastContext = {}; // supplied to the persistent feedback tab (SITE.mountPersistentFeedback)
+
+function buildTaskGrid() {
+  const grid = document.getElementById("task-grid");
+  grid.innerHTML = TASKS.map(
+    (t) => `<label class="task-chip"><input type="checkbox" value="${t.key}"> ${t.label}</label>`
+  ).join("");
+  grid.querySelectorAll("input").forEach((cb) => {
+    cb.addEventListener("change", () => {
+      cb.closest(".task-chip").classList.toggle("checked", cb.checked);
+      buildWeightGrid();
+    });
+  });
+}
+
+function selectedTasks() {
+  return Array.from(document.querySelectorAll('#task-grid input:checked')).map((cb) => cb.value);
+}
+
+function buildWeightGrid() {
+  const tasks = selectedTasks();
+  const dims = new Set();
+  for (const t of tasks) {
+    const sample = DATA.models[DATA.scored_models[0]].tasks[t];
+    if (sample) Object.keys(sample.dimension_means).forEach((d) => dims.add(d));
+  }
+  const grid = document.getElementById("weight-grid");
+  grid.innerHTML = Array.from(dims).map(
+    (d) => `<div class="weight-row"><span>${d.replace(/_/g, " ")}</span><input type="number" min="0" step="0.5" data-dim="${d}" placeholder="1"></div>`
+  ).join("");
+}
+
+function setupSegGroup(id) {
+  const group = document.getElementById(id);
+  group.querySelectorAll(".seg-opt").forEach((opt) => {
+    opt.addEventListener("click", () => {
+      group.querySelectorAll(".seg-opt").forEach((o) => o.classList.remove("checked"));
+      opt.classList.add("checked");
+    });
+  });
+}
+function segValue(id) {
+  return document.querySelector(`#${id} .seg-opt.checked`).dataset.value;
+}
+
+function buildWeights() {
+  const inputs = document.querySelectorAll("#weight-grid input");
+  const weights = {};
+  let any = false;
+  inputs.forEach((inp) => {
+    const v = parseFloat(inp.value);
+    if (!isNaN(v) && v > 0) { weights[inp.dataset.dim] = v; any = true; }
+  });
+  return any ? weights : null;
+}
+
+function scoreBlock(score, capText) {
+  return `
+    <div class="score-block">
+      <div class="score-num">${score.toFixed(1)}<sup>/100</sup></div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-track">
+          <div class="score-bar-fill" style="width:${score}%"></div>
+          <div class="score-bar-band" style="left:calc(${score}% - 5.5%)"></div>
+        </div>
+        <div class="score-cap">${capText}</div>
+      </div>
+    </div>`;
+}
+
+function filterSummaryText(filters) {
+  const failed = filters.filter((f) => !f.passes);
+  if (failed.length === 0) return "";
+  const axes = new Set();
+  failed.forEach((f) => f.reasons.forEach((r) => axes.add(r.split(":")[0])));
+  return `<b>${failed.length} of ${filters.length}</b> models filtered out — ${Array.from(axes).join(", ")}.`;
+}
+
+function filterTableHtml(filters) {
+  return filters.map((f) => {
+    const status = f.passes ? '<span class="fpass">passed</span>' : '<span class="ffail">failed</span>';
+    const reasons = f.passes ? "" : `<div class="frow"><span class="freason">${f.reasons.join(" · ")}</span></div>`;
+    return `<div class="frow"><span class="fname">${f.model}</span>${status}</div>${reasons}`;
+  }).join("");
+}
+
+function renderFits(result, input) {
+  lastContext = { tasks: input.tasks, requestsPerDay: input.requestsPerDay, latency: input.latency, errorCost: input.errorCost, primary_model: result.recommendation.model };
+  const rec = result.recommendation;
+  const tasks = input.tasks;
+  const singleTask = tasks.length === 1;
+
+  const scoreHtml = singleTask
+    ? scoreBlock(rec.fit.quality[0], `${TASKS.find((t) => t.key === tasks[0]).label} quality · n=20 cases · hatched band marks ±5pts, below which this index reads a gap as noise, not signal`)
+    : tasks.map((t, i) => `<div style="margin-bottom:18px;">
+        <div class="stat-label" style="margin-bottom:6px;">${TASKS.find((x) => x.key === t).label}</div>
+        ${scoreBlock(rec.fit.quality[i], "n=20 cases · hatched band marks ±5pts, below which this index reads a gap as noise, not signal")}
+      </div>`).join("");
+
+  const dimRows = tasks.map((t) => {
+    const means = DATA.models[rec.model].tasks[t].dimension_means;
+    const rows = Object.entries(means).map(([d, v]) => `<tr><td>${d.replace(/_/g, " ")}</td><td>${v.toFixed(1)}</td></tr>`).join("");
+    return `<div class="stat-label" style="margin:12px 0 4px;">${TASKS.find((x) => x.key === t).label}</div><table>${rows}</table>`;
+  }).join("");
+
+  const alsoSurvived = result.also_survived.map((id) => {
+    const meanScore = tasks.reduce((s, t) => s + DATA.models[id].tasks[t].task_score, 0) / tasks.length;
+    const worstP95 = Math.max(...tasks.map((t) => DATA.models[id].tasks[t].benchmark.p95_latency_ms));
+    const isFallback = id === (rec.fallback && rec.fallback.model);
+    return `<a class="alt" href="model.html?id=${encodeURIComponent(id)}">
+      <div>
+        <div class="alt-name">${labelFor(id)}</div>
+        <div class="alt-note">p95 ${worstP95.toLocaleString()}ms${isFallback ? " · your fallback pick above" : ""}</div>
+      </div>
+      <div class="alt-score">${meanScore.toFixed(1)}</div>
+    </a>`;
+  }).join("");
+
+  const rankNote = result.also_survived.length > 0
+    ? `<p class="rank-note">Ranked by quality among survivors, not by speed. Once a model clears your latency bar, extra speed doesn't raise its rank — latency is a filter, not a ranking weight (<a href="methodology.html#judging-protocol" style="color:inherit;">Tradeoff Framework</a> §2–3).</p>`
+    : "";
+
+  document.getElementById("result-mount").innerHTML = `
+  <h1 class="query">${tasks.map((t) => TASKS.find((x) => x.key === t).label).join(", ")}<span class="sep">·</span>${input.requestsPerDay.toLocaleString()} requests/day<span class="sep">·</span>${LATENCY_LABELS[input.latency]}<span class="sep">·</span>${ERRORCOST_LABELS[input.errorCost]}</h1>
+  <div class="layout">
+    <div class="primary">
+      <h2>${labelFor(rec.model)}</h2>
+      <div class="provider">${providerFor(rec.model)}</div>
+      <p class="verdict">${rec.verdict}</p>
+      ${scoreHtml}
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-label">Adversarial sub-score</div>
+          <div class="stat-value">${rec.adversarial_sub_score.map((s) => s.toFixed(1)).join(" / ")}</div>
+          <div class="stat-note">n=3 · directional, not a measurement</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">p95 latency</div>
+          <div class="stat-value">${rec.measured_p95_ms.toLocaleString()}ms</div>
+          <div class="stat-note">${LATENCY_LABELS[input.latency]}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Run-to-run spread</div>
+          <div class="stat-value">${rec.run_to_run_spread_pct_identical.map((s) => s.toFixed(1) + "%").join(" / ")}</div>
+          <div class="stat-note">identical output across judged runs</div>
+        </div>
+      </div>
+      <p class="headroom">Headroom at your volume: ${rec.fit.headroom}. Success rate <span class="mono">${rec.success_rate_pct.map((s) => s.toFixed(0) + "%").join(" / ")}</span>.</p>
+      ${rec.fallback ? `<div class="fallback">
+        <div class="fallback-label">Fallback pairing</div>
+        Fails over to <b>${rec.fallback.model}</b> — ${rec.fallback.reason}. Trigger: ${rec.fallback.failover_trigger}
+      </div>` : ""}
+      <details class="why">
+        <summary>Why this? — exact scores, n, judge version</summary>
+        <div class="why-body">
+          ${dimRows}
+          <div class="why-meta">n=20 cases, median of 3 runs · judge ${rec.judge_model} v${rec.judge_prompt_version} · measured ${rec.measurement_date} · ${rec.n_na_dimension_marks} dimension mark${rec.n_na_dimension_marks === 1 ? "" : "s"} scored n/a</div>
+        </div>
+      </details>
+    </div>
+    <div>
+      <div class="side-label">Also cleared your filters</div>
+      ${rankNote}
+      ${alsoSurvived || '<p class="sub">No other models cleared your filters — this is a normal outcome, not a bug (Decision C6).</p>'}
+      <p class="filter-summary">${filterSummaryText(result.filters) || "All four models cleared your filters."}</p>
+      <details class="filter-disclosure">
+        <summary>Show how all 4 models compared</summary>
+        <div class="filter-table">${filterTableHtml(result.filters)}</div>
+      </details>
+    </div>
+  </div>
+  <div id="feedback-mount"></div>`;
+
+  SITE.mountRecommendationFeedback(document.getElementById("feedback-mount"), lastContext);
+  wireFilterDisclosureTracking();
+}
+
+function renderNoFit(result, input) {
+  lastContext = { tasks: input.tasks, requestsPerDay: input.requestsPerDay, latency: input.latency, errorCost: input.errorCost };
+  const paidPath = result.cheapest_paid_path
+    ? `<div class="paid-path">
+        <div class="paid-path-label">Cheapest paid path</div>
+        <b>${result.cheapest_paid_path.model_id}</b> — ${result.cheapest_paid_path.note}
+      </div>`
+    : "";
+  document.getElementById("result-mount").innerHTML = `
+  <h1 class="query">${input.tasks.map((t) => TASKS.find((x) => x.key === t).label).join(", ")}<span class="sep">·</span>${input.requestsPerDay.toLocaleString()} requests/day<span class="sep">·</span>${LATENCY_LABELS[input.latency]}<span class="sep">·</span>${ERRORCOST_LABELS[input.errorCost]}</h1>
+  <div class="none-fit">
+    <h2>None of the four free-tier models clear your requirements.</h2>
+    <p>A tool that always finds an answer isn't advising, it's flattering — this is a real, normal result, not an error.</p>
+    ${paidPath}
+    <p class="filter-summary" style="margin-top:22px;">${filterSummaryText(result.filters)}</p>
+    <details class="filter-disclosure">
+      <summary>Show how all 4 models compared</summary>
+      <div class="filter-table">${filterTableHtml(result.filters)}</div>
+    </details>
+  </div>
+  <div id="feedback-mount"></div>`;
+  SITE.mountRecommendationFeedback(document.getElementById("feedback-mount"), lastContext);
+  wireFilterDisclosureTracking();
+}
+
+function wireFilterDisclosureTracking() {
+  const el = document.querySelector(".filter-disclosure");
+  if (el) el.addEventListener("toggle", () => { if (el.open) SITE.track("filter_table_open", { page: "advisor" }); });
+}
+
+async function init() {
+  DATA = await SITE.loadIndexData();
+  SITE.checkDataFreshness(DATA);
+  SITE.renderHeader(document.getElementById("site-header"), { active: "advisor", data: DATA });
+  SITE.mountPersistentFeedback(() => Object.assign({ route: "advisor" }, lastContext));
+  buildTaskGrid();
+  setupSegGroup("latency-group");
+  setupSegGroup("errorcost-group");
+
+  document.querySelectorAll(".preset-btn").forEach((btn) => {
+    btn.addEventListener("click", () => { document.getElementById("volume-input").value = btn.dataset.preset; });
+  });
+
+  document.getElementById("submit-btn").addEventListener("click", () => {
+    const tasks = selectedTasks();
+    const errorEl = document.getElementById("form-error");
+    if (tasks.length === 0) { errorEl.textContent = "Pick at least one task."; return; }
+    errorEl.textContent = "";
+    const input = {
+      tasks,
+      requestsPerDay: Math.max(0, Number(document.getElementById("volume-input").value) || 0),
+      latency: segValue("latency-group"),
+      errorCost: segValue("errorcost-group"),
+      dimensionWeights: buildWeights(),
+    };
+    SITE.track("advisor_submit", input);
+    const result = recommend(input, DATA);
+    SITE.track("recommendation_shown", result.fits
+      ? { fits: true, primary_model: result.recommendation.model, also_survived: result.also_survived }
+      : { fits: false });
+    if (result.fits) renderFits(result, input); else renderNoFit(result, input);
+    document.getElementById("result-mount").scrollIntoView({ behavior: "smooth" });
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>

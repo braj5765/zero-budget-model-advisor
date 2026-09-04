@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model profile — Zero-Budget Model Advisor</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main id="page-main">
+  <div class="intent">Model profile</div>
+  <div id="content"></div>
+</main>
+
+<div class="footnote">
+  <b>Zero-Budget Model Advisor.</b> Every figure below is read live from <span class="mono">data/index.json</span> for the requested model.
+</div>
+
+<script src="data/index.data.js"></script>
+<script src="site.js"></script>
+<script>
+(async function () {
+  const data = await SITE.loadIndexData();
+  SITE.checkDataFreshness(data);
+  SITE.renderHeader(document.getElementById("site-header"), { active: "results", data });
+
+  const TASKS = ["classification", "extraction", "json-output", "rag-qa", "summarization"];
+  const TASK_LABELS = { classification: "Classification", extraction: "Extraction", "json-output": "JSON output", "rag-qa": "RAG Q&A", summarization: "Summarization" };
+  const KNOWN_LABELS = {
+    "gemini-3.5-flash-lite": "Gemini 3.5 Flash Lite",
+    "groq-llama-3.3-70b": "Groq Llama 3.3 70B",
+    "mistral-small-2603": "Mistral Small 2603",
+    "ollama-llama3.2-3b": "Ollama Llama 3.2 3B (local)",
+  };
+  const KNOWN_PROVIDER = {
+    "gemini-3.5-flash-lite": "Google · hosted free tier",
+    "groq-llama-3.3-70b": "Groq · hosted free tier",
+    "mistral-small-2603": "Mistral · hosted free tier",
+    "ollama-llama3.2-3b": "Self-hosted, local — no rate limit exists to measure",
+  };
+  function labelFor(id) { return KNOWN_LABELS[id] || id; }
+
+  function ceilingInfoFor(id) {
+    const entry = data.models[id];
+    const c = entry.rate_limit_ceiling;
+    const perTask = TASKS.map((t) => entry.tasks[t]?.benchmark?.derived_token_ceiling);
+    const varies = perTask.some((d) => d != null);
+    if (!varies) {
+      let value, tag;
+      if (c.documented_rpm === "not applicable") {
+        value = "local — no rate limit exists to measure";
+        tag = "self-hosted — no network ceiling to vary";
+      } else {
+        const rpmPart = typeof c.documented_rpm === "number" ? c.documented_rpm.toLocaleString() + " rpm" : c.documented_rpm;
+        const rpdPart = typeof c.documented_rpd === "number" ? c.documented_rpd.toLocaleString() + " rpd" : c.documented_rpd;
+        value = rpmPart + " / " + rpdPart;
+        tag = "request-capped — same ceiling regardless of task";
+      }
+      return { constant: true, value, tag, note: c.note };
+    }
+    return {
+      constant: false,
+      perTask: TASKS.map((t, i) => ({ task: t, v: perTask[i] ? perTask[i].req_per_day_at_token_ceiling : null })),
+      tag: "derived from measured tokens — not a vendor figure, differs per task",
+      note: c.note,
+    };
+  }
+
+  function scoreBlock(score, capText) {
+    return `
+      <div class="score-block">
+        <div class="score-num">${score.toFixed(1)}<sup>/100</sup></div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-track">
+            <div class="score-bar-fill" style="width:${score}%"></div>
+            <div class="score-bar-band" style="left:calc(${score}% - 5.5%)"></div>
+          </div>
+          <div class="score-cap">${capText}</div>
+        </div>
+      </div>`;
+  }
+
+  function render(id) {
+    const content = document.getElementById("content");
+    const modelSwitch = `<div class="model-switch">${data.scored_models.map((m) =>
+      `<a href="model.html?id=${encodeURIComponent(m)}"${m === id ? ' class="current"' : ""}>${labelFor(m)}</a>`
+    ).join("")}</div>`;
+
+    if (!id || !data.models[id]) {
+      content.innerHTML = `${modelSwitch}<h1>No model matches "${id || ""}"</h1><p class="sub">Pick a model above, or start from <a href="results.html">Results</a>.</p>`;
+      return;
+    }
+
+    const entry = data.models[id];
+    const ceiling = ceilingInfoFor(id);
+    const ceilingHtml = ceiling.constant
+      ? `<span class="ceil-const">${ceiling.value}</span><span class="ceil-tag">${ceiling.tag}</span>`
+      : `<table class="decision"><tr>${ceiling.perTask.map((p) => `<th>${TASK_LABELS[p.task]}</th>`).join("")}</tr><tr>${ceiling.perTask.map((p) =>
+          `<td>${p.v ? "~" + Math.round(p.v).toLocaleString() + "/day" : "—"}</td>`
+        ).join("")}</tr></table><span class="ceil-tag">${ceiling.tag}</span>`;
+
+    const taskCards = TASKS.filter((t) => entry.tasks[t]).map((t) => {
+      const td = entry.tasks[t];
+      const dimRows = Object.entries(td.dimension_means).map(([d, v]) => `<tr><td>${d.replace(/_/g, " ")}</td><td>${v.toFixed(1)}</td></tr>`).join("");
+      return `
+      <div class="task-card">
+        <h2>${TASK_LABELS[t]}</h2>
+        <p class="verdict">Quality ${td.task_score.toFixed(1)}, p95 ${td.benchmark.p95_latency_ms.toLocaleString()}ms, success rate ${td.benchmark.success_rate_pct.toFixed(0)}%.</p>
+        ${scoreBlock(td.task_score, `${TASK_LABELS[t]} quality · n=20 cases · hatched band marks ±5pts, below which this index reads a gap as noise, not signal`)}
+        <div class="stat-row">
+          <div class="stat">
+            <div class="stat-label">Adversarial sub-score</div>
+            <div class="stat-value">${td.adversarial_sub_score.toFixed(1)}</div>
+            <div class="stat-note">n=3 · directional, not a measurement</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Run-to-run spread</div>
+            <div class="stat-value">${td.median_spread.pct_identical_across_runs.toFixed(1)}%</div>
+            <div class="stat-note">identical output across judged runs</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">n/a dimension marks</div>
+            <div class="stat-value">${td.n_na_dimension_marks}</div>
+            <div class="stat-note">of ${Object.keys(td.dimension_means).length * 20} dimension instances</div>
+          </div>
+        </div>
+        <details class="why">
+          <summary>Per-dimension breakdown</summary>
+          <div class="why-body"><table>${dimRows}</table>
+            <div class="why-meta">n=20 cases, median of 3 runs · judge ${data.judge_model} v${data.judge_prompt_version} · measured ${data.judged_at}</div>
+          </div>
+        </details>
+      </div>`;
+    }).join("");
+
+    content.innerHTML = `
+      ${modelSwitch}
+      <div class="model-head">
+        <div>
+          <h1>${labelFor(id)}</h1>
+          <p class="sub">${KNOWN_PROVIDER[id] || ""}</p>
+        </div>
+      </div>
+      <div class="ceiling-block">
+        <div class="side-label">Rate-limit ceiling</div>
+        ${ceilingHtml}
+        ${ceiling.note ? `<p class="sub" style="margin-top:10px;">${ceiling.note}</p>` : ""}
+      </div>
+      ${taskCards}
+      <p class="footnote" style="margin-top:8px; border-top:none; padding:0;">Known limits beyond what's above: see the filter table on <a href="results.html" style="color:inherit;">Results</a> for the specific thresholds this model fails against a given workload — a "failure mode" here is just a documented threshold read model-first instead of query-first.</p>
+    `;
+  }
+
+  const params = new URLSearchParams(location.search);
+  const requestedId = params.get("id");
+  SITE.mountPersistentFeedback(() => ({ route: "model", model_id: requestedId }));
+  render(requestedId);
+})();
+</script>
+
+</body>
+</html>
