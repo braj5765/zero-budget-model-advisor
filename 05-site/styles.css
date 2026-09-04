@@ -40,6 +40,20 @@ nav.routes{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; fon
 nav.routes a{color:var(--ink-soft); text-decoration:none; border-bottom:1px solid transparent; padding-bottom:2px;}
 nav.routes a.current{color:var(--ink); border-bottom-color:var(--rust);}
 
+/* Below ~600px the title/subtitle/nav row (flex space-between, fixed 32px
+   padding) doesn't have room: the wordmark wraps 4 lines and the nav
+   overflows the right edge with "About" clipped -- a real navigation
+   failure, not just a layout wobble. Stack title above nav instead of
+   squeezing both into one row, and shrink both so the stacked result stays
+   to a couple of lines each. */
+@media (max-width:600px){
+  .masthead-top{flex-direction:column; align-items:flex-start; gap:10px; padding:16px 20px 12px;}
+  .wordmark{font-size:1.15rem;}
+  .wordmark small{font-size:.6rem;}
+  nav.routes{flex-wrap:wrap; gap:8px 16px; font-size:.8rem; width:100%;}
+  .disclosure-inner{padding:10px 20px;}
+}
+
 .disclosure-strip{background:var(--amber-bg); border-top:1px solid var(--rule);}
 .disclosure-inner{max-width:1180px; margin:0 auto; padding:10px 32px; display:flex; align-items:flex-start; gap:14px; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.82rem; color:#463c26;}
 .disclosure-mark{font-family:ui-monospace,"SF Mono",Consolas,monospace; font-weight:700; font-size:.72rem; letter-spacing:.04em; background:var(--rust); color:#fff9ef; padding:2px 7px; border-radius:2px; flex:0 0 auto; margin-top:1px;}
@@ -212,6 +226,13 @@ details.advanced summary{cursor:pointer; font-family:-apple-system,"Segoe UI",Ro
   background:var(--rust); color:#fff9ef; cursor:pointer;
 }
 .persistent-feedback-tab:hover{background:var(--rust-deep);}
+/* At narrow widths the tab's own footprint (padding + border, even
+   rotated) was wider than main's 32px/20px side gutter, so it sat on top
+   of card content instead of beside it. Shrinking padding/font keeps it
+   inside the gutter; it stays fixed and reachable, just thinner. */
+@media (max-width:480px){
+  .persistent-feedback-tab{font-size:.6rem; padding:7px 4px; letter-spacing:.02em; bottom:88px;}
+}
 .persistent-feedback-panel{
   position:fixed; right:16px; bottom:16px; z-index:501; width:min(340px, calc(100vw - 32px));
   background:var(--paper-raised); border:1px solid var(--rule); box-shadow:0 8px 28px rgba(28,25,23,.18);
@@ -233,14 +254,24 @@ details.advanced summary{cursor:pointer; font-family:-apple-system,"Segoe UI",Ro
 .lens-tab.active{background:var(--paper-raised); color:var(--rust-deep);}
 #lens-hint{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.78rem; color:var(--ink-soft); background:var(--paper-raised); border:1px solid var(--rule); border-top:none; border-bottom:none; padding:10px 16px; margin:0;}
 
-table.matrix{width:100%; border-collapse:collapse; background:var(--paper-raised); border:1px solid var(--rule);}
+/* Matrix has 6 columns of near-equal minimum content width; on a narrow
+   viewport that overflows and (unwrapped) used to scroll the whole page,
+   with nothing signalling more columns exist. This wrapper contains the
+   scroll locally and a visible hint appears with it (below); the model
+   column stays sticky so the row's identity never scrolls out of view. */
+.matrix-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+.matrix-hint{display:none; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.76rem; color:var(--ink-soft); margin:0 0 8px; text-align:right;}
+@media (max-width:700px){ .matrix-hint{display:block;} }
+
+table.matrix{width:100%; min-width:640px; border-collapse:collapse; background:var(--paper-raised); border:1px solid var(--rule);}
 table.matrix th, table.matrix td{padding:14px 16px; text-align:left; border-bottom:1px solid var(--rule); vertical-align:top;}
 table.matrix thead th{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); font-weight:600; border-bottom:2px solid var(--rule);}
 table.matrix tbody tr:last-child td{border-bottom:none;}
-table.matrix td.model{font-weight:600;}
+table.matrix td.model, table.matrix thead th:first-child{position:sticky; left:0; background:var(--paper-raised); z-index:2;}
+table.matrix td.model{font-weight:600; min-width:170px; white-space:nowrap;}
 table.matrix td.model a{text-decoration:none; color:inherit; border-bottom:1px dotted var(--rule);}
 table.matrix td.model a:hover{border-bottom-color:var(--rust);}
-table.matrix td.model span{display:block; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.72rem; font-weight:400; color:var(--ink-soft);}
+table.matrix td.model span{display:block; font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:.72rem; font-weight:400; color:var(--ink-soft); white-space:normal;}
 td.cell{font-family:ui-monospace,"SF Mono",Consolas,monospace;}
 td.cell.clickable{cursor:pointer; transition:background .1s;}
 td.cell.clickable:hover{background:var(--amber-bg);}
